@@ -7,8 +7,8 @@
     <ProjectGuid>{7202F2D3-B513-4C63-93EA-63D0A1667485}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OrlovMikhail.GitTools.Tests</RootNamespace>
-    <AssemblyName>OrlovMikhail.GitTools.Tests</AssemblyName>
+    <RootNamespace>OrlovMikhail.GitTools</RootNamespace>
+    <AssemblyName>OrlovMikhail.GitTools</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -41,6 +41,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\ConsoleArgumentsHelper.cs" />
+    <Compile Include="Helpers\IConsoleArgumentsHelper.cs" />
+    <Compile Include="Helpers\ISettingsHelper.cs" />
+    <Compile Include="Helpers\ISettingsWrapper.cs" />
+    <Compile Include="Helpers\SettingsHelper.cs" />
+    <Compile Include="Helpers\SettingsWrapperBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleTools.cs" />
+    <Compile Include="Helpers\ConGitWriterSettingsWrapper.cs" />
+    <Compile Include="Helpers\IConGitWriterSettingsWrapper.cs" />
     <Compile Include="IWorker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,7 +53,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="SettingsTools.cs" />
     <Compile Include="Worker.cs" />
   </ItemGroup>
   <ItemGroup>
