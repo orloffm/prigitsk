@@ -5,9 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinGitWriter", "WinGitWriter\WinGitWriter.csproj", "{229D0160-3FF8-4E8F-A66B-BB70D19D7540}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrlovMikhail.GitTools.Tests", "OrlovMikhail.GitTools.Tests\OrlovMikhail.GitTools.Tests.csproj", "{86C3A76A-8E0D-4F9F-A526-99F20EDC89DD}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrlovMikhail.GitTools", "OrlovMikhail.GitTools\OrlovMikhail.GitTools.csproj", "{7202F2D3-B513-4C63-93EA-63D0A1667485}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrlovMikhail.GitTools.Tests", "OrlovMikhail.GitTools.Tests\OrlovMikhail.GitTools.Tests.csproj", "{86C3A76A-8E0D-4F9F-A526-99F20EDC89DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConGitWriter", "ConGitWriter\ConGitWriter.csproj", "{FF1BBF55-FC55-4D22-B07B-0E2C32FC3870}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +21,18 @@ Global
 		{229D0160-3FF8-4E8F-A66B-BB70D19D7540}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{229D0160-3FF8-4E8F-A66B-BB70D19D7540}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{229D0160-3FF8-4E8F-A66B-BB70D19D7540}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Release|Any CPU.Build.0 = Release|Any CPU
 		{86C3A76A-8E0D-4F9F-A526-99F20EDC89DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86C3A76A-8E0D-4F9F-A526-99F20EDC89DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86C3A76A-8E0D-4F9F-A526-99F20EDC89DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86C3A76A-8E0D-4F9F-A526-99F20EDC89DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7202F2D3-B513-4C63-93EA-63D0A1667485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF1BBF55-FC55-4D22-B07B-0E2C32FC3870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF1BBF55-FC55-4D22-B07B-0E2C32FC3870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF1BBF55-FC55-4D22-B07B-0E2C32FC3870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF1BBF55-FC55-4D22-B07B-0E2C32FC3870}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
