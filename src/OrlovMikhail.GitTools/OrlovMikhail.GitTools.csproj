@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LibGit2Sharp">
+      <HintPath>..\packages\LibGit2Sharp\lib\net40\LibGit2Sharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +50,18 @@
     <Compile Include="Helpers\ISettingsWrapper.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SettingsWrapperBase.cs" />
+    <Compile Include="Loading\Client\Common\Branch.cs" />
+    <Compile Include="Loading\Client\Common\Commit.cs" />
+    <Compile Include="Loading\Client\Common\IGitClient.cs" />
+    <Compile Include="Loading\Client\Common\IGitClientFactory.cs" />
+    <Compile Include="Loading\Client\Lib2Git\LibGit2ClientFactory.cs" />
+    <Compile Include="Loading\IRepositoryData.cs" />
+    <Compile Include="Loading\IRepositoryDataLoader.cs" />
+    <Compile Include="Loading\Client\Lib2Git\LibGit2Client.cs" />
+    <Compile Include="Loading\Client\Common\Reference.cs" />
+    <Compile Include="Loading\RepositoryData.cs" />
+    <Compile Include="Loading\RepositoryDataLoader.cs" />
+    <Compile Include="Loading\Client\Common\Tag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

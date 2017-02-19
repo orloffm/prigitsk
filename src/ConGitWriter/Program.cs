@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Autofac;
 using OrlovMikhail.GitTools.Helpers;
+using OrlovMikhail.GitTools.Loading;
+using OrlovMikhail.GitTools.Loading.Client.Common;
 
 namespace ConGitWriter
 {
@@ -36,6 +38,8 @@ namespace ConGitWriter
             builder.RegisterType<SettingsHelper>().As<ISettingsHelper>();
             builder.RegisterType<Worker>().As<IWorker>();
             builder.RegisterType<ConsoleArgumentsHelper>().As<IConsoleArgumentsHelper>();
+            builder.RegisterType<RepositoryDataLoader>().As<IRepositoryDataLoader>();
+            builder.RegisterType<LibGit2ClientFactory>().As<IGitClientFactory>();
         }
     }
 }

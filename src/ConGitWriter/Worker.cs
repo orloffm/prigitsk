@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using LibGit2Sharp;
 using OrlovMikhail.GitTools.Helpers;
+using OrlovMikhail.GitTools.Loading;
 
 namespace ConGitWriter
 {
@@ -14,17 +15,22 @@ namespace ConGitWriter
         private readonly IConGitWriterSettingsWrapper _settings;
         private readonly ISettingsHelper _settingsHelper;
         private readonly IConsoleArgumentsHelper _consoleHelper;
+        private readonly IRepositoryDataLoader _repositoryDataLoader;
         private const string RepositoryPathArgumentName = "repository";
         private const string DotExeArgumentName = "dot";
         private const string GitExeArgumentName = "git";
         private const string TargetFileArgumentName = "target";
         private const string TargetDotFormatArgumentName = "format";
 
-        public Worker(IConGitWriterSettingsWrapper settings, ISettingsHelper settingsHelper, IConsoleArgumentsHelper consoleHelper)
+        public Worker(IConGitWriterSettingsWrapper settings,
+            ISettingsHelper settingsHelper,
+            IConsoleArgumentsHelper consoleHelper,
+            IRepositoryDataLoader repositoryDataLoader)
         {
             _settings = settings;
             _settingsHelper = settingsHelper;
             _consoleHelper = consoleHelper;
+            _repositoryDataLoader = repositoryDataLoader;
         }
 
         public void Run(string[] args)
@@ -44,25 +50,9 @@ namespace ConGitWriter
             _settings.Save();
 
             string repositoryPath = _settings.RepositoryDirectory;
-            string gitPath = _settings.GitExePath;
 
-            //    ProcessStartInfo psi = new ProcessStartInfo();
-            //psi.FileName = gitPath;
-            //psi.Arguments = string.Format("--git-dir=\"{0}\" log --full-history --pretty=%h|%p|%d", repositoryPath);
-            //psi.CreateNoWindow = true;
-            //psi.UseShellExecute = false;
-            //psi.RedirectStandardError = true;
-            //psi.RedirectStandardOutput = true;
-
-            //Process process = new Process();
-            //process.StartInfo = psi;
-            //process.Start();
-
-            //string output = process.StandardOutput.ReadToEnd();
-
-            //process.WaitForExit();
-
-            //string[] lines = output.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            IRepositoryData data = _repositoryDataLoader.Load(repositoryPath);
+            
 
             StringBuilder dotData = new StringBuilder();
             dotData.AppendLine(@"strict digraph g
@@ -71,26 +61,39 @@ rankdir=""LR"";
 
 ");
 
-            Func<Commit, string> getSha = (c) => c.Id.Sha.Substring(0, 7);
+            //using (var repo = new Repository(repositoryPath))
+            //{
+            //    foreach (Commit c in repo.Commits)
+            //    {
+            //        string hash = getSha (c);
+            //        string[] parentHashes = c.Parents.Select(getSha).ToArray();
 
-            using (var repo = new Repository(repositoryPath))
-            {
-                foreach (Commit c in repo.Commits)
-                {
-                    string hash = getSha (c);
-                    string[] parentHashes = c.Parents.Select(getSha).ToArray();
+            //        if (parentHashes.Length == 0)
+            //            dotData.AppendFormat("\"{0}\";\r\n", hash);
+            //        else
+            //        {
+            //            foreach (string parentHash in parentHashes)
+            //            {
+            //                dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", parentHash, hash);
+            //            }
+            //        }
 
-                    if (parentHashes.Length == 0)
-                        dotData.AppendFormat("\"{0}\";\r\n", hash);
-                    else
-                    {
-                        foreach (string parentHash in parentHashes)
-                        {
-                            dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", parentHash, hash);
-                        }
-                    }
-                }
-            }
+                    
+            //    }
+
+            //    foreach (Branch b in repo.Branches)
+            //    {
+                    
+            //    }
+
+            //    foreach (Tag t in repo.Tags)
+            //    {
+            //        GitObject target = t.PeeledTarget;
+
+            //    }
+
+                
+            //}
 
 
             dotData.AppendLine("}");
@@ -116,5 +119,4 @@ rankdir=""LR"";
             //File.WriteAllText(_settings.TargetFilePath, dotResult);
         }
     }
-    
 }
