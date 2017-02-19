@@ -12,31 +12,31 @@ namespace ConGitWriter
         public string RepositoryDirectory
         {
             get { return Instance.RepositoryDirectory; }
-            set { RepositoryDirectory = value; }
+            set { Instance.RepositoryDirectory = value; }
         }
 
         public string DotExePath
         {
             get { return Instance.DotExePath; }
-            set { DotExePath = value; }
+            set { Instance.DotExePath = value; }
         }
 
         public string GitExePath
         {
             get { return Instance.GitExePath; }
-            set { GitExePath = value; }
+            set { Instance.GitExePath = value; }
         }
 
         public string TargetFilePath
         {
             get { return Instance.TargetFilePath; }
-            set { TargetFilePath = value; }
+            set { Instance.TargetFilePath = value; }
         }
 
         public string TargetFormat
         {
             get { return Instance.TargetFormat; }
-            set { TargetFormat = value; }
+            set { Instance.TargetFormat = value; }
         }
     }
 }

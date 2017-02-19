@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
+using LibGit2Sharp;
 using OrlovMikhail.GitTools.Helpers;
 
 namespace ConGitWriter
@@ -44,23 +46,23 @@ namespace ConGitWriter
             string repositoryPath = _settings.RepositoryDirectory;
             string gitPath = _settings.GitExePath;
 
-            ProcessStartInfo psi = new ProcessStartInfo();
-            psi.FileName = gitPath;
-            psi.Arguments = string.Format("--git-dir=\"{0}\" log --full-history --pretty=%h|%p|%d", repositoryPath);
-            psi.CreateNoWindow = true;
-            psi.UseShellExecute = false;
-            psi.RedirectStandardError = true;
-            psi.RedirectStandardOutput = true;
+            //    ProcessStartInfo psi = new ProcessStartInfo();
+            //psi.FileName = gitPath;
+            //psi.Arguments = string.Format("--git-dir=\"{0}\" log --full-history --pretty=%h|%p|%d", repositoryPath);
+            //psi.CreateNoWindow = true;
+            //psi.UseShellExecute = false;
+            //psi.RedirectStandardError = true;
+            //psi.RedirectStandardOutput = true;
 
-            Process process = new Process();
-            process.StartInfo = psi;
-            process.Start();
+            //Process process = new Process();
+            //process.StartInfo = psi;
+            //process.Start();
 
-            string output = process.StandardOutput.ReadToEnd();
+            //string output = process.StandardOutput.ReadToEnd();
 
-            process.WaitForExit();
+            //process.WaitForExit();
 
-            string[] lines = output.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            //string[] lines = output.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
             StringBuilder dotData = new StringBuilder();
             dotData.AppendLine(@"strict digraph g
@@ -69,23 +71,27 @@ rankdir=""LR"";
 
 ");
 
-            foreach (string s in lines)
-            {
-                string[] oneCommit = s.Split('|');
-                string hash = oneCommit[0];
-                string[] parentHashes = oneCommit[1].Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-                string[] branches = oneCommit[2].Trim('(',')').Split(',');
+            Func<Commit, string> getSha = (c) => c.Id.Sha.Substring(0, 7);
 
-                if (parentHashes.Length == 0)
-                    dotData.AppendFormat("\"{0}\";\r\n", hash);
-                else
+            using (var repo = new Repository(repositoryPath))
+            {
+                foreach (Commit c in repo.Commits)
                 {
-                    foreach (string parentHash in parentHashes)
+                    string hash = getSha (c);
+                    string[] parentHashes = c.Parents.Select(getSha).ToArray();
+
+                    if (parentHashes.Length == 0)
+                        dotData.AppendFormat("\"{0}\";\r\n", hash);
+                    else
                     {
-                        dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", parentHash, hash);
+                        foreach (string parentHash in parentHashes)
+                        {
+                            dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", parentHash, hash);
+                        }
                     }
                 }
             }
+
 
             dotData.AppendLine("}");
 
