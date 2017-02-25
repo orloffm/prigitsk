@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using ConGitWriter.Helpers;
 using OrlovMikhail.GitTools.Helpers;
-using OrlovMikhail.GitTools.Loading;
 using OrlovMikhail.GitTools.Loading.Client.Common;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
 
@@ -56,7 +55,7 @@ namespace ConGitWriter
 
             IRepositoryData data;
 
-            using (IGitClient client = _gitClientFactory.CreateClient(repositoryPath))
+            using (IGitClient client = _gitClientFactory.CreateClient(repositoryPath, _settings.GitExePath))
             {
                 client.Init();
 
@@ -71,18 +70,20 @@ rankdir=""LR"";
 
 ");
 
-                foreach (Node c in data.Nodes)
+            foreach (Node c in data.Nodes)
+            {
+                if (c.Parents.Length == 0)
                 {
-                    if (c.Parents.Length == 0)
-                        dotData.AppendFormat("\"{0}\";\r\n", c.Hash);
-                    else
+                    dotData.AppendFormat("\"{0}\";\r\n", c.Hash);
+                }
+                else
+                {
+                    foreach (Node p in c.Parents)
                     {
-                        foreach (Node p in c.Parents)
-                        {
-                            dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", p.Hash, c.Hash);
-                        }
+                        dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", p.Hash, c.Hash);
                     }
                 }
+            }
 
             dotData.AppendLine("}");
 

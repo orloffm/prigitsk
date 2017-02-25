@@ -8,10 +8,11 @@ nuget log4net 2.0.7
 nuget Moq 4.5.30
 nuget MvvmLight 5.3.0.0
 nuget MvvmLightLibs 5.3.0.0
+nuget system.io.abstractions
+nuget system.io.abstractions.testinghelpers
 nuget xunit 2.1.0
 nuget xunit.abstractions 2.0.0
 nuget xunit.assert 2.1.0
 nuget xunit.core 2.1.0
 nuget xunit.extensibility.core 2.1.0
 nuget xunit.extensibility.execution 2.1.0
-nuget LibGit2Sharp 0.23.1

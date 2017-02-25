@@ -5,7 +5,8 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
 {
     public class Node
     {
-        public Node(string hash, IEnumerable<Node> parentNodes, IEnumerable<string> branches, IEnumerable<string> tags, string description)
+        public Node(string hash, IEnumerable<Node> parentNodes, IEnumerable<string> branches, IEnumerable<string> tags,
+            string description)
         {
             Hash = hash;
             Parents = parentNodes.ToArray();

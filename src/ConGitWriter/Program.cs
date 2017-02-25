@@ -1,10 +1,10 @@
-﻿using Autofac;
+﻿using System.IO.Abstractions;
+using Autofac;
 using ConGitWriter.Helpers;
 using log4net.Config;
 using OrlovMikhail.GitTools.Helpers;
-using OrlovMikhail.GitTools.Loading;
 using OrlovMikhail.GitTools.Loading.Client.Common;
-using OrlovMikhail.GitTools.Loading.Client.Lib2Git;
+using OrlovMikhail.GitTools.Loading.Client.GitExe;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
 
 namespace ConGitWriter
@@ -37,7 +37,9 @@ namespace ConGitWriter
             builder.RegisterType<Worker>().As<IWorker>();
             builder.RegisterType<ConsoleArgumentsHelper>().As<IConsoleArgumentsHelper>();
             builder.RegisterType<RepositoryDataBuilderFactory>().As<IRepositoryDataBuilderFactory>();
-            builder.RegisterType<LibGit2ClientFactory>().As<IGitClientFactory>();
+            builder.RegisterType<GitExeClientFactory>().As<IGitClientFactory>();
+            builder.RegisterType<ProcessRunner>().As<IProcessRunner>();
+            builder.RegisterType<FileSystem>().As<IFileSystem>();
         }
     }
 }

@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Xml;
 
 namespace OrlovMikhail.GitTools.Loading.Client.Repository
 {
     public class RepositoryDataBuilder : IRepositoryDataBuilder
     {
-        private Dictionary<string, NodeRecord> _records;
+        private readonly Dictionary<string, NodeRecord> _records;
 
-        class NodeRecord
+        private class NodeRecord
         {
             public NodeRecord(string hash)
             {
@@ -30,7 +28,7 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             _records = new Dictionary<string, NodeRecord>();
         }
 
-        NodeRecord GetRecordForHash(string hash)
+        private NodeRecord GetRecordForHash(string hash)
         {
             NodeRecord node;
             if (!_records.TryGetValue(hash, out node))
@@ -41,10 +39,15 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             return node;
         }
 
-        public void AddCommit(string hash, string[] parentHashes, string description)
+        public void AddCommit(string hash, string[] parentHashes)
         {
             NodeRecord record = GetRecordForHash(hash);
             record.Parents.AddRange(parentHashes);
+        }
+
+        public void AddCommitDescription(string hash, string description)
+        {
+            NodeRecord record = GetRecordForHash(hash);
             record.Description = description;
         }
 
@@ -62,7 +65,7 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
 
         public IRepositoryData Build()
         {
-            Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+            var nodes = new Dictionary<string, Node>();
 
             foreach (NodeRecord nodeRecord in _records.Values)
             {
@@ -73,7 +76,8 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             return ret;
         }
 
-        private Node CreateNode(string currentHash, Dictionary<string, Node> targetDictionary, Dictionary<string, NodeRecord> allRecords)
+        private Node CreateNode(string currentHash, Dictionary<string, Node> targetDictionary,
+            Dictionary<string, NodeRecord> allRecords)
         {
             Node result;
 
@@ -86,7 +90,7 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             NodeRecord record = allRecords[currentHash];
 
             // Create children.
-            List<Node> parents = new List<Node>();
+            var parents = new List<Node>();
             foreach (string parentRecordHash in record.Parents)
             {
                 Node parent = CreateNode(parentRecordHash, targetDictionary, allRecords);
@@ -94,7 +98,7 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             }
 
             result = new Node(currentHash, parents, record.Branches, record.Tags, record.Description);
-            targetDictionary.Add(currentHash,result);
+            targetDictionary.Add(currentHash, result);
             return result;
         }
     }

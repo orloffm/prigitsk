@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LibGit2Sharp">
-      <HintPath>..\packages\LibGit2Sharp\lib\net40\LibGit2Sharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,16 +43,18 @@
   <ItemGroup>
     <Compile Include="Helpers\ConsoleArgumentsHelper.cs" />
     <Compile Include="Helpers\IConsoleArgumentsHelper.cs" />
+    <Compile Include="Helpers\IProcessRunner.cs" />
     <Compile Include="Helpers\ISettingsHelper.cs" />
     <Compile Include="Helpers\ISettingsWrapper.cs" />
+    <Compile Include="Helpers\ProcessRunner.cs" />
     <Compile Include="Helpers\SettingsHelper.cs" />
     <Compile Include="Helpers\SettingsWrapperBase.cs" />
     <Compile Include="Loading\Client\Common\GitClientLoadingOptions.cs" />
     <Compile Include="Loading\Client\Common\IGitClient.cs" />
     <Compile Include="Loading\Client\Common\IGitClientFactory.cs" />
-    <Compile Include="Loading\Client\Lib2Git\LibGit2ClientFactory.cs" />
+    <Compile Include="Loading\Client\GitExe\GitExeClient.cs" />
+    <Compile Include="Loading\Client\GitExe\GitExeClientFactory.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryData.cs" />
-    <Compile Include="Loading\Client\Lib2Git\LibGit2Client.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryDataBuilder.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryDataBuilderFactory.cs" />
     <Compile Include="Loading\Client\Repository\Node.cs" />
@@ -72,4 +71,15 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Choose>
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">
+      <ItemGroup>
+        <Reference Include="System.IO.Abstractions">
+          <HintPath>..\packages\System.IO.Abstractions\lib\net40\System.IO.Abstractions.dll</HintPath>
+          <Private>True</Private>
+          <Paket>True</Paket>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
 </Project>
