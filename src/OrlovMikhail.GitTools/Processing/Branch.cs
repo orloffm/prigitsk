@@ -1,6 +1,6 @@
 ﻿namespace OrlovMikhail.GitTools.Processing
 {
-    public class ProcessedRepository :IProcessedRepository
+    public class Branch : GitRef
     {
     }
 }

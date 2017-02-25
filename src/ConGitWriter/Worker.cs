@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ConGitWriter.Helpers;
@@ -30,7 +28,7 @@ namespace ConGitWriter
         public Worker(IConGitWriterSettingsWrapper settings,
             ISettingsHelper settingsHelper,
             IProcessRunner processRunner,
-                        IBranchingStrategy branchingStrategy,
+            IBranchingStrategy branchingStrategy,
             IRepositoryProcessor repositoryProcessor,
             IConsoleArgumentsHelper consoleHelper,
             IGitClientFactory gitClientFactory)
@@ -65,14 +63,15 @@ namespace ConGitWriter
 
             // Load the state.
             IRepositoryState state;
-            using (IGitClient client = _gitClientFactory.CreateClient(_settings.RepositoryDirectory, _settings.GitExePath))
+            using (
+                IGitClient client = _gitClientFactory.CreateClient(_settings.RepositoryDirectory, _settings.GitExePath))
             {
                 client.Init();
                 state = client.Load();
             }
 
             RepositoryProcessingOptions options = RepositoryProcessingOptions.Default;
-            IProcessedRepository processed = _repositoryProcessor.Process(state, options);
+            IGraphState processed = _repositoryProcessor.Process(state, options);
 
             StringBuilder dotData = new StringBuilder();
             dotData.AppendLine(@"strict digraph g
@@ -108,5 +107,4 @@ rankdir=""LR"";
             _processRunner.Run(_settings.DotExePath, arguments);
         }
     }
-
 }

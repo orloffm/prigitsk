@@ -5,6 +5,6 @@ namespace OrlovMikhail.GitTools.Processing
     [Flags]
     public enum RepositoryProcessingOptions
     {
-        Default = 0,
+        Default = 0
     }
 }

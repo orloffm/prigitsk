@@ -1,21 +1,32 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OrlovMikhail.GitTools.Common;
 
 namespace OrlovMikhail.GitTools.Structure
 {
     public class CommonBranchingStrategy : IBranchingStrategy
     {
+        private readonly string[][] colorMappings =
+        {
+            new[] {"master", "#27E4F9"},
+            new[] {"develop", "#FFE333"},
+            new[] {"hotfix", "#FD5965"},
+            new[] {"release", "#52C322"}
+        };
+
+        private readonly string fallBackColorHtml = "#C982AF";
+
         /// <summary>Orders branch names by priority according to the branching strategy.</summary>
         public IEnumerable<string> OrderBranchNames(IEnumerable<string> branches)
         {
-            HashSet<string> branchesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var branchesSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string branch in branches)
+            {
                 branchesSet.Add(branch);
+            }
 
-            string[] prioritized = new string[] { "master", "hotfix", "develop", "dev", "release" };
+            string[] prioritized = {"master", "hotfix", "develop", "dev", "release"};
 
             foreach (string item in prioritized)
             {
@@ -37,9 +48,26 @@ namespace OrlovMikhail.GitTools.Structure
                 }
             }
 
-            var theRestSorted = branchesSet.OrderBy(z => z);
+            IOrderedEnumerable<string> theRestSorted = branchesSet.OrderBy(z => z);
             foreach (string leftOver in theRestSorted)
+            {
                 yield return leftOver;
+            }
+        }
+
+        public Color GetColorForBranch(string branchName)
+        {
+            string nameLower = branchName.ToLower();
+
+            foreach (string[] pair in colorMappings)
+            {
+                if (nameLower.StartsWith(pair[0]))
+                {
+                    return Color.FromHTML(pair[1]);
+                }
+            }
+
+            return Color.FromHTML(fallBackColorHtml);
         }
     }
 }

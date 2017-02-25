@@ -5,7 +5,8 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
 {
     public class CommitInfo
     {
-        public CommitInfo(string hash, IEnumerable<CommitInfo> parentNodes, IEnumerable<string> branches, IEnumerable<string> tags,
+        public CommitInfo(string hash, IEnumerable<CommitInfo> parentNodes, IEnumerable<string> branches,
+            IEnumerable<string> tags,
             string description)
         {
             Hash = hash;

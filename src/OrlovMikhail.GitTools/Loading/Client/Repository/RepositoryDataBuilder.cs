@@ -17,9 +17,13 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             }
 
             public string Hash { get; private set; }
+
             public List<string> Parents { get; private set; }
+
             public List<string> Branches { get; private set; }
+
             public List<string> Tags { get; private set; }
+
             public string Description { get; set; }
         }
 

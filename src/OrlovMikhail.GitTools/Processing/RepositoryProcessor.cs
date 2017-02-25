@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
 using OrlovMikhail.GitTools.Structure;
 
@@ -17,31 +15,49 @@ namespace OrlovMikhail.GitTools.Processing
             _branchingStrategy = branchingStrategy;
         }
 
-        public IProcessedRepository Process(IRepositoryState state,  RepositoryProcessingOptions options)
+        public IGraphState Process(IRepositoryState state, RepositoryProcessingOptions options)
         {
-            IProcessedRepository p = new ProcessedRepository();
-
-            var allCommits = state.CommitInfos;
+            IGraphState p = new GraphState();
 
             // Create a list of branch pointers.
-            Dictionary<string, CommitInfo> branchSources = new Dictionary<string, CommitInfo>(StringComparer.OrdinalIgnoreCase);
-            foreach (CommitInfo commitInfo in allCommits)
+            var branchSources = new Dictionary<string, CommitInfo>(StringComparer.OrdinalIgnoreCase);
+
+            // First pass - add all commits to the graph and build the branch array.
+            foreach (CommitInfo commitInfo in state.CommitInfos)
             {
+                p.AddNode(commitInfo.Hash, commitInfo.Parents);
+
                 foreach (string branchName in commitInfo.Branches)
                 {
+                    p.AddBranch(commitInfo.Hash, branchName);
+
                     branchSources.Add(branchName, commitInfo);
+                }
+
+                foreach (string tagName in commitInfo.Tags)
+                {
+                    p.AddTag(commitInfo.Hash, tagName);
                 }
             }
 
             // Sorted branch names.
             string[] branchesSorted = _branchingStrategy.OrderBranchNames(branchSources.Keys).ToArray();
+
+            // Now apply the branch to the nodes.
             foreach (string branch in branchesSorted)
             {
                 CommitInfo source = branchSources[branch];
 
-                while (source.Parents.Length > 0)
+                IEnumerable<Node> treeUp = p.EnumerateUpFrom(source.Hash);
+                foreach (Node node in treeUp)
                 {
-                    // Get parent and set its branch.
+                    if (node.AssignedBranch != null)
+                    {
+                        // We go up till set branch name.
+                        break;
+                    }
+
+                    p.AssignBranch(node.Hash, branch);
                 }
             }
 
