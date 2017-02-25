@@ -6,7 +6,8 @@ namespace OrlovMikhail.GitTools.Helpers
 {
     public interface ISettingsHelper
     {
-        bool UpdateFrom<T>(Dictionary<string, string> argsDic, string repositoryPathArgumentName, T settings, Expression<Func<T, string>> propertyExpression)
+        bool UpdateFrom<T>(Dictionary<string, string> argsDic, string repositoryPathArgumentName, T settings,
+            Expression<Func<T, string>> propertyExpression)
             where T : ISettingsWrapper;
     }
 }

@@ -1,22 +1,20 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using LibGit2Sharp;
 using OrlovMikhail.GitTools.Loading.Client.Common;
-using Branch = OrlovMikhail.GitTools.Loading.Client.Common.Branch;
-using Commit = OrlovMikhail.GitTools.Loading.Client.Common.Commit;
-using Tag = OrlovMikhail.GitTools.Loading.Client.Common.Tag;
+using OrlovMikhail.GitTools.Loading.Client.Repository;
 
 namespace OrlovMikhail.GitTools.Loading
 {
     public class LibGit2Client : IGitClient
     {
+        private readonly IRepositoryDataBuilderFactory _builderFactory;
         private readonly string _repositoryPath;
-        private LibGit2Sharp.Repository _repository;
+        private Repository _repository;
 
-        public LibGit2Client(string repositoryPath)
+        public LibGit2Client(IRepositoryDataBuilderFactory builderFactory, string repositoryPath)
         {
-            this._repositoryPath = repositoryPath;
+            _builderFactory = builderFactory;
+            _repositoryPath = repositoryPath;
         }
 
         public void Dispose()
@@ -24,58 +22,49 @@ namespace OrlovMikhail.GitTools.Loading
             _repository.Dispose();
         }
 
-        string AbbreviateHash(GitObject source)
+        private string AbbreviateHash(GitObject source)
         {
             return source.Id.Sha.Substring(0, 7);
         }
 
-        public void Initialise()
+        public void Init()
         {
             _repository = new Repository(_repositoryPath);
         }
 
-        public IEnumerable<Commit> Commits
+        public IRepositoryData Load(GitClientLoadingOptions? options = null)
         {
-            get
-            {
-                foreach (LibGit2Sharp.Commit c in _repository.Commits)
-                {
-                    Commit ret = new Commit();
-                    ret.Hash = AbbreviateHash(c);
-                    ret.ParentHashes = c.Parents.Select(AbbreviateHash).ToArray();
-                    ret.Description = c.Message;
-                    yield return ret;
-                }
-            }
-        }
+            IRepositoryDataBuilder ret = _builderFactory.CreateBuilder();
 
-        public IEnumerable<Branch> Branches
-        {
-            get
+            foreach (Commit c in _repository.Commits)
             {
-                foreach (LibGit2Sharp.Branch b in _repository.Branches)
-                {
-                    Branch ret = new Branch();
-                    ret.Name = b.CanonicalName;
-                    ret.IsRemote = b.IsRemote;
-                    ret.TargetCommitHash = AbbreviateHash(b.Tip);
-                    yield return ret;
-                }
-            }
-        }
+                string hash = AbbreviateHash(c);
+                string[] parentHashes = c.Parents.Select(AbbreviateHash).ToArray();
 
-        public IEnumerable<Tag> Tags
-        {
-            get
-            {
-                foreach (LibGit2Sharp.Tag t in _repository.Tags)
-                {
-                    Tag ret = new Tag();
-                    ret.Name = t.CanonicalName;
-                    ret.TargetCommitHash = AbbreviateHash(t.PeeledTarget);
-                    yield return ret;
-                }
+                ret.AddCommit(hash, parentHashes, c.Message);
             }
+
+            foreach (Branch b in _repository.Branches)
+            {
+                if (!b.IsRemote)
+                {
+                    continue;
+                }
+
+                string sourceHash = AbbreviateHash(b.Tip);
+
+                ret.AddRemoteBranch(b.FriendlyName, sourceHash);
+            }
+
+            foreach (Tag t in _repository.Tags)
+            {
+                string sourceHash = AbbreviateHash(t.PeeledTarget);
+
+                ret.AddTag(t.FriendlyName, sourceHash);
+            }
+
+            IRepositoryData repositoryData = ret.Build();
+            return repositoryData;
         }
     }
 }

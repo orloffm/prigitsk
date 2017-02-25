@@ -7,10 +7,11 @@ namespace OrlovMikhail.GitTools.Helpers
 {
     public class SettingsHelper : ISettingsHelper
     {
-        public bool UpdateFrom<T>(Dictionary<string, string> argsDic, string key, T settings, Expression<Func<T, string>> propertyExpression) where T : ISettingsWrapper
+        public bool UpdateFrom<T>(Dictionary<string, string> argsDic, string key, T settings,
+            Expression<Func<T, string>> propertyExpression) where T : ISettingsWrapper
         {
-            MemberExpression memberExpression = (MemberExpression)propertyExpression.Body;
-            PropertyInfo propertyInfo = (PropertyInfo)memberExpression.Member;
+            MemberExpression memberExpression = (MemberExpression) propertyExpression.Body;
+            PropertyInfo propertyInfo = (PropertyInfo) memberExpression.Member;
 
             string value;
             argsDic.TryGetValue(key, out value);

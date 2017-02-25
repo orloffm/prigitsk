@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
+using log4net.Config;
 using OrlovMikhail.GitTools.Helpers;
 using OrlovMikhail.GitTools.Loading;
 using OrlovMikhail.GitTools.Loading.Client.Common;
+using OrlovMikhail.GitTools.Loading.Client.Repository;
 
 namespace ConGitWriter
 {
-    class Program
+    internal class Program
     {
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             ConfigureLog4Net();
 
@@ -27,7 +23,7 @@ namespace ConGitWriter
 
         private static void ConfigureLog4Net()
         {
-            log4net.Config.XmlConfigurator.Configure();
+            XmlConfigurator.Configure();
         }
 
         private static void RegisterClasses(ContainerBuilder builder)
@@ -38,7 +34,7 @@ namespace ConGitWriter
             builder.RegisterType<SettingsHelper>().As<ISettingsHelper>();
             builder.RegisterType<Worker>().As<IWorker>();
             builder.RegisterType<ConsoleArgumentsHelper>().As<IConsoleArgumentsHelper>();
-            builder.RegisterType<RepositoryDataLoader>().As<IRepositoryDataLoader>();
+            builder.RegisterType<RepositoryDataBuilderFactory>().As<IRepositoryDataBuilderFactory>();
             builder.RegisterType<LibGit2ClientFactory>().As<IGitClientFactory>();
         }
     }

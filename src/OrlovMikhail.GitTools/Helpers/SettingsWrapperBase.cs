@@ -2,8 +2,8 @@ using System.Configuration;
 
 namespace OrlovMikhail.GitTools.Helpers
 {
-    public abstract class SettingsWrapperBase<T>: ISettingsWrapper
-        where T: ApplicationSettingsBase
+    public abstract class SettingsWrapperBase<T> : ISettingsWrapper
+        where T : ApplicationSettingsBase
     {
         protected readonly T Instance;
 

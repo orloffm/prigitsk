@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using LibGit2Sharp;
 using OrlovMikhail.GitTools.Helpers;
 using OrlovMikhail.GitTools.Loading;
+using OrlovMikhail.GitTools.Loading.Client.Common;
 
 namespace ConGitWriter
 {
@@ -15,7 +13,7 @@ namespace ConGitWriter
         private readonly IConGitWriterSettingsWrapper _settings;
         private readonly ISettingsHelper _settingsHelper;
         private readonly IConsoleArgumentsHelper _consoleHelper;
-        private readonly IRepositoryDataLoader _repositoryDataLoader;
+        private readonly IGitClientFactory _gitClientFactory;
         private const string RepositoryPathArgumentName = "repository";
         private const string DotExeArgumentName = "dot";
         private const string GitExeArgumentName = "git";
@@ -25,12 +23,12 @@ namespace ConGitWriter
         public Worker(IConGitWriterSettingsWrapper settings,
             ISettingsHelper settingsHelper,
             IConsoleArgumentsHelper consoleHelper,
-            IRepositoryDataLoader repositoryDataLoader)
+            IGitClientFactory gitClientFactory)
         {
             _settings = settings;
             _settingsHelper = settingsHelper;
             _consoleHelper = consoleHelper;
-            _repositoryDataLoader = repositoryDataLoader;
+            _gitClientFactory = gitClientFactory;
         }
 
         public void Run(string[] args)
@@ -38,21 +36,31 @@ namespace ConGitWriter
             Dictionary<string, string> argsDic = _consoleHelper.ArgumentsToDictionary(args);
 
             bool correct = true;
-            correct &= _settingsHelper.UpdateFrom(argsDic, RepositoryPathArgumentName, _settings, s => s.RepositoryDirectory);
+            correct &= _settingsHelper.UpdateFrom(argsDic, RepositoryPathArgumentName, _settings,
+                s => s.RepositoryDirectory);
             correct &= _settingsHelper.UpdateFrom(argsDic, DotExeArgumentName, _settings, s => s.DotExePath);
             correct &= _settingsHelper.UpdateFrom(argsDic, GitExeArgumentName, _settings, s => s.GitExePath);
             correct &= _settingsHelper.UpdateFrom(argsDic, TargetFileArgumentName, _settings, s => s.TargetFilePath);
             correct &= _settingsHelper.UpdateFrom(argsDic, TargetDotFormatArgumentName, _settings, s => s.TargetFormat);
 
             if (!correct)
+            {
                 return;
+            }
 
             _settings.Save();
 
             string repositoryPath = _settings.RepositoryDirectory;
 
-            IRepositoryData data = _repositoryDataLoader.Load(repositoryPath);
-            
+            IRepositoryData data;
+
+            using (IGitClient client = _gitClientFactory.CreateClient(repositoryPath))
+            {
+                client.Init();
+
+                data = client.Load();
+            }
+
 
             StringBuilder dotData = new StringBuilder();
             dotData.AppendLine(@"strict digraph g
@@ -63,7 +71,7 @@ rankdir=""LR"";
 
             //using (var repo = new Repository(repositoryPath))
             //{
-            //    foreach (Commit c in repo.Commits)
+            //    foreach (CommitInfo c in repo.Commits)
             //    {
             //        string hash = getSha (c);
             //        string[] parentHashes = c.Parents.Select(getSha).ToArray();
@@ -78,21 +86,21 @@ rankdir=""LR"";
             //            }
             //        }
 
-                    
+
             //    }
 
-            //    foreach (Branch b in repo.Branches)
+            //    foreach (BranchInfo b in repo.Branches)
             //    {
-                    
+
             //    }
 
-            //    foreach (Tag t in repo.Tags)
+            //    foreach (TagInfo t in repo.Tags)
             //    {
             //        GitObject target = t.PeeledTarget;
 
             //    }
 
-                
+
             //}
 
 
@@ -103,7 +111,8 @@ rankdir=""LR"";
 
             ProcessStartInfo dotPsi = new ProcessStartInfo();
             dotPsi.FileName = _settings.DotExePath;
-            dotPsi.Arguments = string.Format("-T{0} {1} -o\"{2}\"", _settings.TargetFormat, tempPath, _settings.TargetFilePath);
+            dotPsi.Arguments = string.Format("-T{0} {1} -o\"{2}\"", _settings.TargetFormat, tempPath,
+                _settings.TargetFilePath);
             dotPsi.CreateNoWindow = true;
             dotPsi.UseShellExecute = false;
             //dotPsi.RedirectStandardError = true;
