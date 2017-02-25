@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace WinGitWriter
+namespace OrlovMikhail.WinGitWriter
 {
     /// <summary>
     ///     Interaction logic for App.xaml

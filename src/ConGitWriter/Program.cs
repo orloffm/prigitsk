@@ -1,8 +1,10 @@
 ﻿using Autofac;
+using ConGitWriter.Helpers;
 using log4net.Config;
 using OrlovMikhail.GitTools.Helpers;
 using OrlovMikhail.GitTools.Loading;
 using OrlovMikhail.GitTools.Loading.Client.Common;
+using OrlovMikhail.GitTools.Loading.Client.Lib2Git;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
 
 namespace ConGitWriter

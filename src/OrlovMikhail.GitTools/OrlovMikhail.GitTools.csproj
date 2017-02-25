@@ -58,6 +58,7 @@
     <Compile Include="Loading\Client\Lib2Git\LibGit2Client.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryDataBuilder.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryDataBuilderFactory.cs" />
+    <Compile Include="Loading\Client\Repository\Node.cs" />
     <Compile Include="Loading\Client\Repository\RepositoryData.cs" />
     <Compile Include="Loading\Client\Repository\RepositoryDataBuilder.cs" />
     <Compile Include="Loading\Client\Repository\RepositoryDataBuilderFactory.cs" />

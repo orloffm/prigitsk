@@ -1,6 +1,6 @@
 using OrlovMikhail.GitTools.Helpers;
 
-namespace ConGitWriter
+namespace ConGitWriter.Helpers
 {
     public interface IConGitWriterSettingsWrapper : ISettingsWrapper
     {

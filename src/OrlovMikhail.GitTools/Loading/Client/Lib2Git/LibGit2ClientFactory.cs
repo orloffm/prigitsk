@@ -1,7 +1,7 @@
 using OrlovMikhail.GitTools.Loading.Client.Common;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
 
-namespace OrlovMikhail.GitTools.Loading
+namespace OrlovMikhail.GitTools.Loading.Client.Lib2Git
 {
     public class LibGit2ClientFactory : IGitClientFactory
     {

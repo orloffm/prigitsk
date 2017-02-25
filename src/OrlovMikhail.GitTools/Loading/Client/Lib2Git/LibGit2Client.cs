@@ -3,13 +3,13 @@ using LibGit2Sharp;
 using OrlovMikhail.GitTools.Loading.Client.Common;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
 
-namespace OrlovMikhail.GitTools.Loading
+namespace OrlovMikhail.GitTools.Loading.Client.Lib2Git
 {
     public class LibGit2Client : IGitClient
     {
         private readonly IRepositoryDataBuilderFactory _builderFactory;
         private readonly string _repositoryPath;
-        private Repository _repository;
+        private LibGit2Sharp.Repository _repository;
 
         public LibGit2Client(IRepositoryDataBuilderFactory builderFactory, string repositoryPath)
         {
@@ -29,12 +29,14 @@ namespace OrlovMikhail.GitTools.Loading
 
         public void Init()
         {
-            _repository = new Repository(_repositoryPath);
+            _repository = new LibGit2Sharp.Repository(_repositoryPath);
         }
 
         public IRepositoryData Load(GitClientLoadingOptions? options = null)
         {
             IRepositoryDataBuilder ret = _builderFactory.CreateBuilder();
+
+            Commit[] commits = _repository.Commits.ToArray();
 
             foreach (Commit c in _repository.Commits)
             {

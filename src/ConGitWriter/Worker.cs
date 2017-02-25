@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using ConGitWriter.Helpers;
 using OrlovMikhail.GitTools.Helpers;
 using OrlovMikhail.GitTools.Loading;
 using OrlovMikhail.GitTools.Loading.Client.Common;
+using OrlovMikhail.GitTools.Loading.Client.Repository;
 
 namespace ConGitWriter
 {
@@ -69,40 +71,18 @@ rankdir=""LR"";
 
 ");
 
-            //using (var repo = new Repository(repositoryPath))
-            //{
-            //    foreach (CommitInfo c in repo.Commits)
-            //    {
-            //        string hash = getSha (c);
-            //        string[] parentHashes = c.Parents.Select(getSha).ToArray();
-
-            //        if (parentHashes.Length == 0)
-            //            dotData.AppendFormat("\"{0}\";\r\n", hash);
-            //        else
-            //        {
-            //            foreach (string parentHash in parentHashes)
-            //            {
-            //                dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", parentHash, hash);
-            //            }
-            //        }
-
-
-            //    }
-
-            //    foreach (BranchInfo b in repo.Branches)
-            //    {
-
-            //    }
-
-            //    foreach (TagInfo t in repo.Tags)
-            //    {
-            //        GitObject target = t.PeeledTarget;
-
-            //    }
-
-
-            //}
-
+                foreach (Node c in data.Nodes)
+                {
+                    if (c.Parents.Length == 0)
+                        dotData.AppendFormat("\"{0}\";\r\n", c.Hash);
+                    else
+                    {
+                        foreach (Node p in c.Parents)
+                        {
+                            dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", p.Hash, c.Hash);
+                        }
+                    }
+                }
 
             dotData.AppendLine("}");
 
