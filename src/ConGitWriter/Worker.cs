@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +7,8 @@ using ConGitWriter.Helpers;
 using OrlovMikhail.GitTools.Helpers;
 using OrlovMikhail.GitTools.Loading.Client.Common;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
+using OrlovMikhail.GitTools.Processing;
+using OrlovMikhail.GitTools.Structure;
 
 namespace ConGitWriter
 {
@@ -13,6 +16,9 @@ namespace ConGitWriter
     {
         private readonly IConGitWriterSettingsWrapper _settings;
         private readonly ISettingsHelper _settingsHelper;
+        private readonly IProcessRunner _processRunner;
+        private readonly IBranchingStrategy _branchingStrategy;
+        private readonly IRepositoryProcessor _repositoryProcessor;
         private readonly IConsoleArgumentsHelper _consoleHelper;
         private readonly IGitClientFactory _gitClientFactory;
         private const string RepositoryPathArgumentName = "repository";
@@ -23,11 +29,17 @@ namespace ConGitWriter
 
         public Worker(IConGitWriterSettingsWrapper settings,
             ISettingsHelper settingsHelper,
+            IProcessRunner processRunner,
+                        IBranchingStrategy branchingStrategy,
+            IRepositoryProcessor repositoryProcessor,
             IConsoleArgumentsHelper consoleHelper,
             IGitClientFactory gitClientFactory)
         {
             _settings = settings;
             _settingsHelper = settingsHelper;
+            _processRunner = processRunner;
+            _branchingStrategy = branchingStrategy;
+            _repositoryProcessor = repositoryProcessor;
             _consoleHelper = consoleHelper;
             _gitClientFactory = gitClientFactory;
         }
@@ -51,17 +63,16 @@ namespace ConGitWriter
 
             _settings.Save();
 
-            string repositoryPath = _settings.RepositoryDirectory;
-
-            IRepositoryData data;
-
-            using (IGitClient client = _gitClientFactory.CreateClient(repositoryPath, _settings.GitExePath))
+            // Load the state.
+            IRepositoryState state;
+            using (IGitClient client = _gitClientFactory.CreateClient(_settings.RepositoryDirectory, _settings.GitExePath))
             {
                 client.Init();
-
-                data = client.Load();
+                state = client.Load();
             }
 
+            RepositoryProcessingOptions options = RepositoryProcessingOptions.Default;
+            IProcessedRepository processed = _repositoryProcessor.Process(state, options);
 
             StringBuilder dotData = new StringBuilder();
             dotData.AppendLine(@"strict digraph g
@@ -70,7 +81,7 @@ rankdir=""LR"";
 
 ");
 
-            foreach (Node c in data.Nodes)
+            foreach (CommitInfo c in state.CommitInfos)
             {
                 if (c.Parents.Length == 0)
                 {
@@ -78,7 +89,7 @@ rankdir=""LR"";
                 }
                 else
                 {
-                    foreach (Node p in c.Parents)
+                    foreach (CommitInfo p in c.Parents)
                     {
                         dotData.AppendFormat("\"{0}\" -> \"{1}\";\r\n", p.Hash, c.Hash);
                     }
@@ -87,26 +98,15 @@ rankdir=""LR"";
 
             dotData.AppendLine("}");
 
+            // Save generated Dot file.
             string tempPath = Path.GetTempFileName();
             File.WriteAllText(tempPath, dotData.ToString());
 
-            ProcessStartInfo dotPsi = new ProcessStartInfo();
-            dotPsi.FileName = _settings.DotExePath;
-            dotPsi.Arguments = string.Format("-T{0} {1} -o\"{2}\"", _settings.TargetFormat, tempPath,
+            // Run Dot to create the output file.
+            string arguments = string.Format("-T{0} {1} -o\"{2}\"", _settings.TargetFormat, tempPath,
                 _settings.TargetFilePath);
-            dotPsi.CreateNoWindow = true;
-            dotPsi.UseShellExecute = false;
-            //dotPsi.RedirectStandardError = true;
-            //dotPsi.RedirectStandardOutput = true;
-
-            Process dotProcess = new Process();
-            dotProcess.StartInfo = dotPsi;
-            dotProcess.Start();
-
-            //string dotResult = process.StandardOutput.ReadToEnd();
-            dotProcess.WaitForExit();
-
-            //File.WriteAllText(_settings.TargetFilePath, dotResult);
+            _processRunner.Run(_settings.DotExePath, arguments);
         }
     }
+
 }

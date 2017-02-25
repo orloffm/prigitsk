@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace OrlovMikhail.GitTools.Loading.Client.Repository
 {
-    public class Node
+    public class CommitInfo
     {
-        public Node(string hash, IEnumerable<Node> parentNodes, IEnumerable<string> branches, IEnumerable<string> tags,
+        public CommitInfo(string hash, IEnumerable<CommitInfo> parentNodes, IEnumerable<string> branches, IEnumerable<string> tags,
             string description)
         {
             Hash = hash;
@@ -23,6 +23,6 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
 
         public string Hash { get; private set; }
 
-        public Node[] Parents { get; private set; }
+        public CommitInfo[] Parents { get; private set; }
     }
 }

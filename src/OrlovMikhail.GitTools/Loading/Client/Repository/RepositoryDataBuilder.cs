@@ -63,23 +63,23 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             record.Tags.Add(friendlyName);
         }
 
-        public IRepositoryData Build()
+        public IRepositoryState Build()
         {
-            var nodes = new Dictionary<string, Node>();
+            var nodes = new Dictionary<string, CommitInfo>();
 
             foreach (NodeRecord nodeRecord in _records.Values)
             {
                 CreateNode(nodeRecord.Hash, nodes, _records);
             }
 
-            IRepositoryData ret = new RepositoryData(nodes.Values);
+            IRepositoryState ret = new RepositoryState(nodes.Values);
             return ret;
         }
 
-        private Node CreateNode(string currentHash, Dictionary<string, Node> targetDictionary,
+        private CommitInfo CreateNode(string currentHash, Dictionary<string, CommitInfo> targetDictionary,
             Dictionary<string, NodeRecord> allRecords)
         {
-            Node result;
+            CommitInfo result;
 
             if (targetDictionary.TryGetValue(currentHash, out result))
             {
@@ -90,14 +90,14 @@ namespace OrlovMikhail.GitTools.Loading.Client.Repository
             NodeRecord record = allRecords[currentHash];
 
             // Create children.
-            var parents = new List<Node>();
+            var parents = new List<CommitInfo>();
             foreach (string parentRecordHash in record.Parents)
             {
-                Node parent = CreateNode(parentRecordHash, targetDictionary, allRecords);
+                CommitInfo parent = CreateNode(parentRecordHash, targetDictionary, allRecords);
                 parents.Add(parent);
             }
 
-            result = new Node(currentHash, parents, record.Branches, record.Tags, record.Description);
+            result = new CommitInfo(currentHash, parents, record.Branches, record.Tags, record.Description);
             targetDictionary.Add(currentHash, result);
             return result;
         }

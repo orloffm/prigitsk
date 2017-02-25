@@ -56,7 +56,7 @@ namespace OrlovMikhail.GitTools.Loading.Client.GitExe
             }
         }
 
-        public IRepositoryData Load(GitClientLoadingOptions? options = null)
+        public IRepositoryState Load(GitClientLoadingOptions? options = null)
         {
             IRepositoryDataBuilder builder = _builderFactory.CreateBuilder();
 
@@ -100,8 +100,8 @@ namespace OrlovMikhail.GitTools.Loading.Client.GitExe
                 }
             }
 
-            IRepositoryData data = builder.Build();
-            return data;
+            IRepositoryState state = builder.Build();
+            return state;
         }
     }
 }

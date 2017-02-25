@@ -54,14 +54,25 @@
     <Compile Include="Loading\Client\Common\IGitClientFactory.cs" />
     <Compile Include="Loading\Client\GitExe\GitExeClient.cs" />
     <Compile Include="Loading\Client\GitExe\GitExeClientFactory.cs" />
-    <Compile Include="Loading\Client\Repository\IRepositoryData.cs" />
+    <Compile Include="Loading\Client\Repository\IRepositoryState.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryDataBuilder.cs" />
     <Compile Include="Loading\Client\Repository\IRepositoryDataBuilderFactory.cs" />
-    <Compile Include="Loading\Client\Repository\Node.cs" />
-    <Compile Include="Loading\Client\Repository\RepositoryData.cs" />
+    <Compile Include="Loading\Client\Repository\CommitInfo.cs" />
+    <Compile Include="Loading\Client\Repository\RepositoryState.cs" />
     <Compile Include="Loading\Client\Repository\RepositoryDataBuilder.cs" />
     <Compile Include="Loading\Client\Repository\RepositoryDataBuilderFactory.cs" />
+    <Compile Include="Processing\IProcessedRepository.cs" />
+    <Compile Include="Processing\IRepositoryProcessor.cs" />
+    <Compile Include="Processing\Node.cs" />
+    <Compile Include="Processing\ProcessedRepository.cs" />
+    <Compile Include="Processing\RepositoryProcessingOptions.cs" />
+    <Compile Include="Processing\RepositoryProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Strategy\CommonBranchingStrategy.cs" />
+    <Compile Include="Strategy\IBranchingStrategy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Structure\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

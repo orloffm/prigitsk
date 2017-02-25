@@ -7,6 +7,6 @@
         void AddRemoteBranch(string friendlyName, string sourceHash);
         void AddTag(string friendlyName, string sourceHash);
 
-        IRepositoryData Build();
+        IRepositoryState Build();
     }
 }

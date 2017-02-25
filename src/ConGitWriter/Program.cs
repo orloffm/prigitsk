@@ -6,6 +6,8 @@ using OrlovMikhail.GitTools.Helpers;
 using OrlovMikhail.GitTools.Loading.Client.Common;
 using OrlovMikhail.GitTools.Loading.Client.GitExe;
 using OrlovMikhail.GitTools.Loading.Client.Repository;
+using OrlovMikhail.GitTools.Processing;
+using OrlovMikhail.GitTools.Structure;
 
 namespace ConGitWriter
 {
@@ -40,6 +42,9 @@ namespace ConGitWriter
             builder.RegisterType<GitExeClientFactory>().As<IGitClientFactory>();
             builder.RegisterType<ProcessRunner>().As<IProcessRunner>();
             builder.RegisterType<FileSystem>().As<IFileSystem>();
+
+            builder.RegisterType<CommonBranchingStrategy>().As<IBranchingStrategy>();
+            builder.RegisterType<RepositoryProcessor>().As<IRepositoryProcessor>();
         }
     }
 }
