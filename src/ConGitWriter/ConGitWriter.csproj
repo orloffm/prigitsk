@@ -45,24 +45,15 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="paket.references" />
-    <None Include="Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OrlovMikhail.GitTools\OrlovMikhail.GitTools.csproj">
-      <Project>{7202f2d3-b513-4c63-93ea-63d0a1667485}</Project>
-      <Name>OrlovMikhail.GitTools</Name>
+    <ProjectReference Include="..\GitWriter.Core\GitWriter.Core.csproj">
+      <Project>{b6a51ab9-2b61-49c7-b3d8-4afede30220c}</Project>
+      <Name>GitWriter.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
