@@ -2,10 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
+    <RootNamespace>GitWriter.Abstractions</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\GitWriter.Abstractions\GitWriter.Abstractions.csproj" />
-  </ItemGroup>
 
 </Project>

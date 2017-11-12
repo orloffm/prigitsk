@@ -29,7 +29,8 @@ namespace GitWriter.Core.Nodes
 
         public string ObjectType { get; set; }
 
-        public static GitRef FromForEachRef(string refName,
+        public static GitRef FromForEachRef(
+            string refName,
             string objectType)
         {
             GitRef c = new GitRef();
@@ -76,7 +77,8 @@ namespace GitWriter.Core.Nodes
 
         #region equality
 
-        public static bool AreEqual(GitRef a,
+        public static bool AreEqual(
+            GitRef a,
             GitRef b)
         {
             if (ReferenceEquals(a, b))
@@ -102,13 +104,15 @@ namespace GitWriter.Core.Nodes
             return Value.GetHashCode();
         }
 
-        public static bool operator ==(GitRef a,
+        public static bool operator ==(
+            GitRef a,
             GitRef b)
         {
             return AreEqual(a, b);
         }
 
-        public static bool operator !=(GitRef a,
+        public static bool operator !=(
+            GitRef a,
             GitRef b)
         {
             return !AreEqual(a, b);

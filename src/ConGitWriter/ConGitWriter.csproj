@@ -10,9 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConGitWriter</RootNamespace>
     <AssemblyName>ConGitWriter</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,9 +53,17 @@
     <None Include="paket.references" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GitWriter.Abstractions\GitWriter.Abstractions.csproj">
+      <Project>{874a79be-3d6e-426b-9a32-ba862558f6f1}</Project>
+      <Name>GitWriter.Abstractions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GitWriter.Core\GitWriter.Core.csproj">
       <Project>{b6a51ab9-2b61-49c7-b3d8-4afede30220c}</Project>
       <Name>GitWriter.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GitWriter.Windows\GitWriter.Windows.csproj">
+      <Project>{799a20f0-505c-45ad-b8fb-f3a8d34b76c1}</Project>
+      <Name>GitWriter.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
