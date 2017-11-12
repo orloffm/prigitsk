@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GitWriter.Core.Tools;
 
 namespace GitWriter.Core.Nodes
 {
-    public class Node
+    public class Node : IEquatable<Node>
     {
         public Node(string hash)
         {
-            Parents = new List<Node>();
-            Children = new List<Node>();
+            Parents = new OrderedSet<Node>();
+            Children = new HashSet<Node>();
             Hash = hash;
             SetCaptions(null);
         }
 
-        public List<Node> Parents { get; }
-        public List<Node> Children { get; }
+        public OrderedSet<Node> Parents { get; }
+        public HashSet<Node> Children { get; }
         public string Hash { get; }
         public GitRef[] GitRefs { get; private set; }
         public DateTime Time { get; set; }
@@ -27,6 +28,11 @@ namespace GitWriter.Core.Nodes
         public bool HasTagsOrNonLocalBranches
         {
             get { return GitRefs.Any(c => !c.IsLocalBranch); }
+        }
+
+        public bool Equals(Node other)
+        {
+            return AreEqual(this, other);
         }
 
         public void AddChild(Node immediateChild)
@@ -61,7 +67,7 @@ namespace GitWriter.Core.Nodes
 
         public override int GetHashCode()
         {
-            return Hash.GetHashCode();
+            return Hash?.GetHashCode() ?? 0;
         }
 
         public void RemoveItselfFromTheNodeGraph()
@@ -71,6 +77,7 @@ namespace GitWriter.Core.Nodes
             {
                 // Remove node.
                 parent.Children.Remove(this);
+
                 // Set its children to this parent.
                 foreach (Node immediateChild in Children)
                 {
@@ -80,7 +87,9 @@ namespace GitWriter.Core.Nodes
             // Children.
             foreach (Node child in Children)
             {
-                // Remove the node from parents, child.Parents.Remove(this);
+                // Remove the node from parents.
+                child.Parents.Remove(this);
+
                 // Set its parents to this child.
                 foreach (Node immediateParent in Parents)
                 {
@@ -94,6 +103,7 @@ namespace GitWriter.Core.Nodes
                 firstChild.Deletions += Deletions;
                 firstChild.SetAsSomethingWasMergedInto();
             }
+
             // Clear references.
             Parents.Clear();
             Children.Clear();
@@ -127,14 +137,18 @@ namespace GitWriter.Core.Nodes
             sb.Append(": ");
             if (Parents.Count > 0)
             {
-                for (int index = 0; index < Parents.Count; index++)
+                bool parentAdded = false;
+                foreach (Node parent in Parents)
                 {
-                    Node p = Parents[index];
-                    if (index > 0)
+                    if (parentAdded)
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(p.Hash);
+                    else
+                    {
+                        parentAdded = true;
+                    }
+                    sb.Append(parent.Hash);
                 }
                 sb.Append(" -> ");
             }
@@ -142,17 +156,43 @@ namespace GitWriter.Core.Nodes
             if (Children.Count > 0)
             {
                 sb.Append(" -> ");
-                for (int index = 0; index < Children.Count; index++)
+                bool childrenAdded = false;
+                foreach (Node child in Children)
                 {
-                    Node c = Children[index];
-                    if (index > 0)
+                    if (childrenAdded)
                     {
                         sb.Append(", ");
                     }
-                    sb.Append(c.Hash);
+                    else
+                    {
+                        childrenAdded = true;
+                    }
+                    sb.Append(child.Hash);
                 }
             }
             return sb.ToString();
+        }
+
+        public static bool AreEqual(Node a, Node b)
+        {
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+            if (ReferenceEquals(null, b))
+            {
+                return false;
+            }
+            if (ReferenceEquals(null, a))
+            {
+                return false;
+            }
+            return string.Equals(a.Hash, b.Hash);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return AreEqual(this, (Node) obj);
         }
     }
 }

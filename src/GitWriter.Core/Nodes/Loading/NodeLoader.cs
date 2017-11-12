@@ -67,21 +67,15 @@ namespace GitWriter.Core.Nodes.Loading
                 {
                     lineStat = null;
                 }
-                string[] parents;
-                string caption;
-                long time;
-                int insertions;
-                int deletions;
-                string hash;
                 ExtractValuesFromLine(
                     lineMain,
                     lineStat,
-                    out hash,
-                    out parents,
-                    out caption,
-                    out time,
-                    out insertions,
-                    out deletions);
+                    out string hash,
+                    out string[] parents,
+                    out string caption,
+                    out long time,
+                    out int insertions,
+                    out int deletions);
                 nm.SetData(hash, caption, time, insertions, deletions);
                 foreach (string parent in parents)
                 {

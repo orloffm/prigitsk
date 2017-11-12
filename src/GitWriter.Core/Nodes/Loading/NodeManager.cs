@@ -38,7 +38,7 @@ namespace GitWriter.Core.Nodes.Loading
         {
             Node child = GetOrCreate(hash);
             Node parent = GetOrCreate(parentHash);
-            child.Parents.Add(parent);
+            child.AddParent(parent);
             parent.Children.Add(child);
         }
 

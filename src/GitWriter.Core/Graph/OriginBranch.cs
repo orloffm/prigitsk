@@ -19,7 +19,7 @@ namespace GitWriter.Core.Graph
 
         public static OriginBranch FromCaption(GitRef c, Node node)
         {
-            if (c.IsTag == false)
+            if (c.IsOriginBranch == false)
             {
                 throw new InvalidOperationException();
             }

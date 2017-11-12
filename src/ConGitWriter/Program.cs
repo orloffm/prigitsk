@@ -17,7 +17,7 @@ namespace ConGitWriter
 {
     internal class Program
     {
-        private const string DotPath = @"C:\apps\graphviz\bin\dot.exe";
+        private const string DotPath = @"C:\apps\graphviz\dot.exe";
 
         internal static bool PickAll(Pointer b)
         {

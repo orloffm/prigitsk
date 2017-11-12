@@ -55,11 +55,13 @@ namespace GitWriter.Core.Graph.Writing
 
         private string MakeHandle(Pointer pointerObject)
         {
-            return @"""" + pointerObject.Label.Trim().Replace(".", "_")
-                       .Replace("-", "_").Replace(" ", "_") + @"""";
+            string pointerLabel = pointerObject.Label.Trim().Replace(".", "_")
+                .Replace("-", "_").Replace(" ", "_");
+
+            return @"""" + pointerLabel + @"""";
         }
 
-        private string MakeHandle(Node node)
+        private string MakeNodeHandle(Node node)
         {
             return @"""" + node.Hash + @"""";
         }
@@ -71,7 +73,7 @@ namespace GitWriter.Core.Graph.Writing
 
             // We draw it dotted.
             string formatToUse = childNote.SomethingWasMergedInto ? edgeFormatDotted : edgeFormatSimple;
-            sb.AppendLine(string.Format(formatToUse, MakeHandle(parentNode), MakeHandle(childNote)));
+            sb.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
         }
 
         private void WriteCurrentBranchesLabels(
@@ -80,7 +82,7 @@ namespace GitWriter.Core.Graph.Writing
         {
             sb.AppendLine(
                 @"// branch names
-    node[shape = none, fixedsize = false, penwidth = O, fillcolor = none, width = 0, height = 0, margin =""0.05"";");
+    node[shape = none, fixedsize = false, penwidth = O, fillcolor = none, width = 0, height = 0, margin =""0.05""];");
             // 0 - branch short name
             // 1 - branch label
             // 2 - repository path
@@ -127,7 +129,7 @@ rank = sink;
             double width = _weightInformer.GetWidth(n);
             string size = width.ToString("##.##", _ukCulture);
             const string nodeFormat = @"{0} [width={1}, height={1}, URL=""{3}/commit/{2}""];";
-            sb.AppendLine(string.Format(nodeFormat, MakeHandle(n), size, n.Hash, _repositoryPath));
+            sb.AppendLine(string.Format(nodeFormat, MakeNodeHandle(n), size, n.Hash, _repositoryPath));
         }
 
         private void WriteNodes(
@@ -141,8 +143,7 @@ rank = sink;
             _weightInformer.Init(graph.EnumerateAllContainedNodes());
             sb.AppendLine(
                 @"// graph
-node[width = 0.2, height = 0.2, fixedsize = true, label ="""",
-margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]
+node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]
 // branches");
             const string branchNodesStart = @"subgraph {";
             const string branchNodesEnd = @"
@@ -192,7 +193,7 @@ margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]
                 // 0 - last node in branch
                 // 1 - branch short name
                 const string branchEndEdge = @"{0} -> {1}	[color=""#b0b0b0"", style=dotted, arrowhead=none];";
-                string text = string.Format(branchEndEdge, MakeHandle(b.Source), MakeHandle(b));
+                string text = string.Format(branchEndEdge, MakeNodeHandle(b.Source), MakeHandle(b));
                 sb.AppendLine(text);
                 sb.AppendLine();
             }
@@ -233,8 +234,8 @@ margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]
                 const string edgeFormatUrl = @"{0} -> {1} [URL = ""{2}/compare/{3}...{4}""];";
                 text = string.Format(
                     edgeFormatUrl,
-                    MakeHandle(nodeA),
-                    MakeHandle(nodeB),
+                    MakeNodeHandle(nodeA),
+                    MakeNodeHandle(nodeB),
                     _repositoryPath,
                     nodeA.Hash,
                     nodeB.Hash);
@@ -296,7 +297,7 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
             {
                 string text = string.Format(
                     orphanedBranchLinkFormat,
-                    MakeHandle(b.Source),
+                    MakeNodeHandle(b.Source),
                     MakeHandle(b));
                 sb.AppendLine(text);
             }
@@ -308,14 +309,13 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
             // 1 - tag short name
             const string tagLinkFormat = @"subgraph {{
     rank = ""same"";
-        {0} -> {1};
-    }
-}";
+    {0} -> {1};
+}}";
             foreach (Tag tag in tags)
             {
                 string text = string.Format(
                     tagLinkFormat,
-                    MakeHandle(tag.Source),
+                    MakeNodeHandle(tag.Source),
                     MakeHandle(tag));
                 sb.AppendLine(text);
             }
