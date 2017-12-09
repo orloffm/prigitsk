@@ -10,12 +10,10 @@ using GitWriter.Core.Graph.Strategy;
 using GitWriter.Core.Graph.Writing;
 using GitWriter.Core.Nodes;
 using GitWriter.Core.Nodes.Loading;
-using GitWriter.Windows;
-using log4net.Config;
 
-namespace ConGitWriter
+namespace GitWriter.Console
 {
-    internal class Program
+    public class Executor
     {
         private const string DotPath = @"C:\apps\graphviz\dot.exe";
 
@@ -75,10 +73,8 @@ namespace ConGitWriter
             }
         }
 
-        private static void Main(string[] args)
+        public void Execute()
         {
-            ConfigureLog4Net();
-
             ContainerBuilder builder = new ContainerBuilder();
             IContainer container = builder.Build();
 
@@ -156,11 +152,6 @@ namespace ConGitWriter
             string graphContent = writer.GenerateGraph(assumedGraph, bs);
             string dotpath = Path.Combine(repositoryPath, fileName);
             File.WriteAllText(dotpath, graphContent);
-        }
-
-        private static void ConfigureLog4Net()
-        {
-            XmlConfigurator.Configure();
         }
     }
 }
