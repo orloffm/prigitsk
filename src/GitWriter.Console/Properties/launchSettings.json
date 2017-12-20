@@ -2,7 +2,7 @@
   "profiles": {
     "GitWriter.Console": {
       "commandName": "Project",
-      "workingDirectory": "C:\\dev\\WinGitWriter"
+      "workingDirectory": "C:\\dev\\loop"
     }
   }
 }

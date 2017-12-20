@@ -88,62 +88,102 @@ namespace GitWriter.Core.Nodes
         /// <summary>
         ///     Some child node An in the branch A contains an edge An->Bk
         ///     to the same branch B, and:
-        ///     {no nodes	between	A1	and	An	have	other	parents},
-        ///     {no nodes	between	B1	and	Bk	have	other	children}.
+        ///     {no nodes between A0 and An have other parents},
+        ///     {no nodes between B0 and Bk have other children}.
         ///     We call it a rhombus structure and Al->B1 the left side of that rhombus.
-        ///     <para />
-        ///     -- A1 — ... — Am — ... — An----------
-        ///     <para />
-        ///     \	\
-        ///     <para />
-        ///     -B1 — ... — Br —	... —	Bk —
+        ///     <para />     -- A0 -- ... --- Am -- ... -- An----------
+        ///     <para />         \            /             \
+        ///     <para />     --- B0 -- ... - Br -- ... ---- Bk --
         /// </summary>
         private bool IsLeftSideOfARhombus(
-            Node currentNode,
+            Node parent,
             Node child,
             IAssumedGraph graph)
         {
             OriginBranch branchB = graph.GetBranch(child);
+
+            Node an, bk;
+            bool foundClosure = TryFindRightSideOfARhombus(graph, parent, branchB, out an, out bk);
+            if (!foundClosure)
+            {
+                // If there is no right side to the rhombus, don't care.
+                return false;
+            }
+
+            var parentsInBetween = EnumerateNodesBetween(graph, parent, an);
+            var childrenInBetween = EnumerateNodesBetween(graph, child, bk).ToArray();
+
+            // Children may have third level of nodes on: themselves, their parents and the last children element.
+            var possibleThirdGeneration = childrenInBetween.Concat(parentsInBetween).Concat(new[]{ bk}).ToArray();
+            
+            // Check that these children don't have other children.
+            // In other words - that the left side doesn't leak.
+            bool noOtherChildren = CheckAllNonPrimaryChildrenAreFrom(childrenInBetween, possibleThirdGeneration);
+            return noOtherChildren;
+        }
+
+        private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<Node> nodesInQuestion, IEnumerable<Node> whitelist)
+        {
+            HashSet<Node> whitelistSet = new HashSet<Node>(whitelist);
+
+            foreach (var node in nodesInQuestion)
+            {
+                foreach (var c in node.Children)
+                {
+                    bool childIsInWhitelist = whitelistSet.Contains(c);
+                    if (!childIsInWhitelist)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private IEnumerable<Node> EnumerateNodesBetween(IAssumedGraph graph, Node parent, Node an)
+        {
+            foreach (var node in graph.EnumerateNodesDownTheBranch(parent))
+            {
+                if (node == an)
+                {
+                    yield break;
+                }
+
+                yield return node;
+            }
+        }
+
+        private bool TryFindRightSideOfARhombus(
+            IAssumedGraph graph,
+            Node parent,
+            OriginBranch branchB,
+            out Node an,
+            out Node bk)
+        {
+            an = null;
+            bk = null;
+
             if (branchB == null)
             {
                 // Only branches, no free-floating nodes,
                 return false;
             }
-            // Enumerate later nodes in our branch.
-            Node[] laterNodes = graph.EnumerateNodesDownTheBranch(currentNode).ToArray();
-            foreach (Node an in laterNodes)
+
+            foreach (Node am in graph.EnumerateNodesDownTheBranch(parent))
             {
-                Node[] childrenOnBranchB = an.Children
-                    .Where(c => graph.GetBranch(c) == branchB)
-                    .ToArray();
-                if (childrenOnBranchB.Length == 0)
-                {
-                    // This is Am, 1 < m < n.
-                    // Does it have other parents?
-                    if (an.Parents.Count > 1)
-                    {
-                        return false;
-                    }
-                    continue;
-                }
-                // Index of the nearest child Bn on B.
-                int bnIndex = childrenOnBranchB.Select(graph.GetIndexOnBranch).Min();
-                int blIndex = graph.GetIndexOnBranch(child);
+                var leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
+                    .OrderBy(graph.GetIndexOnBranch)
+                    .FirstOrDefault();
 
-                int countInBetween = bnIndex - blIndex - 1;
-
-                Node[] childrenInBetween = graph.EnumerateNodesDownTheBranch(child).Take(countInBetween).ToArray();
-                foreach (Node br in childrenInBetween)
+                if (leftmostChildOnB != null)
                 {
-                    // This is Br, 1 < r < k.
-                    // Does it have other children?
-                    if (br.Children.Count > 1)
-                    {
-                        return false;
-                    }
+                        an = am;
+                        bk = leftmostChildOnB;
+                        return true;
                 }
-                return true;
             }
+
             return false;
         }
 
