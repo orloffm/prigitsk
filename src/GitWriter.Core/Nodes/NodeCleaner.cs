@@ -19,11 +19,13 @@ namespace GitWriter.Core.Nodes
                 n.RemoveItselfFromTheNodeGraph();
                 graph.RemoveNodeFromLeftOvers(n);
             }
+
             // If asked, don't simplify anything,
             if (options.PreventSimplification)
             {
                 return;
             }
+
             int pass = 0;
             bool removedAnything;
             do
@@ -48,6 +50,7 @@ namespace GitWriter.Core.Nodes
                     // We always leave the main edge,
                     continue;
                 }
+
                 // Remove edges to other nodes below in the branch.
                 // Remove edges to allChildren of the other nodes below,
                 if (laterNodesInBranch.Contains(child) ||
@@ -57,6 +60,7 @@ namespace GitWriter.Core.Nodes
                     removedAnything = true;
                     continue;
                 }
+
                 // Remove edge to a child if there is an edge to a parent of the child:
                 // the change was effectively merged already. This edge is a derivative of
                 // some other simplification.
@@ -68,6 +72,7 @@ namespace GitWriter.Core.Nodes
                     removedAnything = true;
                     continue;
                 }
+
                 // Remove edge Al->B1 if it is a left side of a rhombus, see comments
                 // for func.
                 if (graph.GetIndexOnBranch(child) != 0)
@@ -82,6 +87,7 @@ namespace GitWriter.Core.Nodes
                     }
                 }
             }
+
             return removedAnything;
         }
 
@@ -91,9 +97,12 @@ namespace GitWriter.Core.Nodes
         ///     {no nodes between A0 and An have other parents},
         ///     {no nodes between B0 and Bk have other children}.
         ///     We call it a rhombus structure and Al->B1 the left side of that rhombus.
-        ///     <para />     -- A0 -- ... --- Am -- ... -- An----------
-        ///     <para />         \            /             \
-        ///     <para />     --- B0 -- ... - Br -- ... ---- Bk --
+        ///     <para />
+        ///     -- A0 -- ... --- Am -- ... -- An----------
+        ///     <para />
+        ///     \            /             \
+        ///     <para />
+        ///     --- B0 -- ... - Br -- ... ---- Bk --
         /// </summary>
         private bool IsLeftSideOfARhombus(
             Node parent,
@@ -110,12 +119,13 @@ namespace GitWriter.Core.Nodes
                 return false;
             }
 
-            var parentsInBetween = EnumerateNodesBetween(graph, parent, an);
-            var childrenInBetween = EnumerateNodesBetween(graph, child, bk).ToArray();
+            IEnumerable<Node> parentsInBetween = EnumerateNodesBetween(graph, parent, an);
+            Node[] childrenInBetween = EnumerateNodesBetween(graph, child, bk).ToArray();
 
-            // Children may have third level of nodes on: themselves, their parents and the last children element.
-            var possibleThirdGeneration = childrenInBetween.Concat(parentsInBetween).Concat(new[]{ bk}).ToArray();
-            
+            // Children may have third level of nodes on: themselves, their parents and the last elements.
+            Node[] possibleThirdGeneration =
+                childrenInBetween.Concat(parentsInBetween).Concat(new[] {an, bk}).ToArray();
+
             // Check that these children don't have other children.
             // In other words - that the left side doesn't leak.
             bool noOtherChildren = CheckAllNonPrimaryChildrenAreFrom(childrenInBetween, possibleThirdGeneration);
@@ -124,11 +134,11 @@ namespace GitWriter.Core.Nodes
 
         private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<Node> nodesInQuestion, IEnumerable<Node> whitelist)
         {
-            HashSet<Node> whitelistSet = new HashSet<Node>(whitelist);
+            var whitelistSet = new HashSet<Node>(whitelist);
 
-            foreach (var node in nodesInQuestion)
+            foreach (Node node in nodesInQuestion)
             {
-                foreach (var c in node.Children)
+                foreach (Node c in node.Children)
                 {
                     bool childIsInWhitelist = whitelistSet.Contains(c);
                     if (!childIsInWhitelist)
@@ -143,7 +153,7 @@ namespace GitWriter.Core.Nodes
 
         private IEnumerable<Node> EnumerateNodesBetween(IAssumedGraph graph, Node parent, Node an)
         {
-            foreach (var node in graph.EnumerateNodesDownTheBranch(parent))
+            foreach (Node node in graph.EnumerateNodesDownTheBranch(parent))
             {
                 if (node == an)
                 {
@@ -172,15 +182,15 @@ namespace GitWriter.Core.Nodes
 
             foreach (Node am in graph.EnumerateNodesDownTheBranch(parent))
             {
-                var leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
+                Node leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
                     .OrderBy(graph.GetIndexOnBranch)
                     .FirstOrDefault();
 
                 if (leftmostChildOnB != null)
                 {
-                        an = am;
-                        bk = leftmostChildOnB;
-                        return true;
+                    an = am;
+                    bk = leftmostChildOnB;
+                    return true;
                 }
             }
 
@@ -199,17 +209,20 @@ namespace GitWriter.Core.Nodes
                 {
                     return false;
                 }
+
                 // Is it a tip?
                 if (n == branch.Source)
                 {
                     return n.Children.Count == 0;
                 }
+
                 // Not yet a tip.
                 if (n.Children.Count != 1)
                 {
                     // Branching,
                     return false;
                 }
+
                 n = n.Children.Single();
             }
         }
@@ -264,6 +277,7 @@ namespace GitWriter.Core.Nodes
                     }
                 }
             }
+
             return removedAnything;
         }
 
