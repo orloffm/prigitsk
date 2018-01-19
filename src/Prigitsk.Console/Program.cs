@@ -9,11 +9,11 @@ namespace Prigitsk.Console
         {
             var builder = new ContainerBuilder();
             builder.RegisterModule<NLoggerModule>();
-            builder.RegisterType<Executor>();
+            builder.RegisterAssemblyTypes().AsImplementedInterfaces();
             var container = builder.Build();
 
-            Executor e = container.Resolve<Executor>();
-            e.Execute();
+            IExecutor e = container.Resolve<IExecutor>();
+            e.Execute(args);
         }
     }
 }

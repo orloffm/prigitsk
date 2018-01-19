@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Prigitsk.Console.Tests
+namespace Prigitsk.WebApi.Tests
 {
     public class UnitTest1
     {

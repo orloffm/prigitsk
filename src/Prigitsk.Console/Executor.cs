@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using Autofac;
+using Microsoft.Extensions.Logging;
 using Prigitsk.Core;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.Graph.Making;
@@ -13,8 +13,15 @@ using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Console
 {
-    public class Executor
+    public class Executor : IExecutor
     {
+        private readonly ILogger _log;
+
+        public Executor(ILogger log)
+        {
+            _log = log;
+        }
+
         private const string DotPath = @"C:\apps\graphviz\dot.exe";
 
         internal static bool PickAll(Pointer b)
@@ -77,7 +84,7 @@ namespace Prigitsk.Console
             }
         }
 
-        public void Execute()
+        public void Execute(string[] args)
         {
             ExtractionOptions extractOptions = new ExtractionOptions
             {

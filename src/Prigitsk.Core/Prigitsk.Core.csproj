@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
     <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj" />
   </ItemGroup>
 
