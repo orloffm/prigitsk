@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "GitWriter.Console": {
-      "commandName": "Project",
-      "workingDirectory": "C:\\dev\\loop"
-    }
-  }
-}
