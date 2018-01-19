@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Tests", "Prig
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.WebApi", "Prigitsk.WebApi\Prigitsk.WebApi.csproj", "{5F723B26-03F3-430E-906D-207FED2F9505}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConPrigitsk", "ConPrigitsk\ConPrigitsk.csproj", "{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Console", "Prigitsk.Console\Prigitsk.Console.csproj", "{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

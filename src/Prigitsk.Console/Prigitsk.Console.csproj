@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ConPrigitsk</RootNamespace>
-    <AssemblyName>ConPrigitsk</AssemblyName>
+    <RootNamespace>Prigitsk.Console</RootNamespace>
+    <AssemblyName>Prigitsk.Console</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
