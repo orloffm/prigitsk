@@ -39,10 +39,12 @@ namespace Prigitsk.Core.Nodes
                 refName = refName.Substring(OriginPrefix.Length);
                 c.IsOriginBranch = true;
             }
+
             if (objectType == "tag")
             {
                 c.IsTag = true;
             }
+
             c.Value = refName;
             return c;
         }
@@ -60,6 +62,7 @@ namespace Prigitsk.Core.Nodes
                 refNameEx = refNameEx.Substring(OriginPrefix.Length);
                 c.IsOriginBranch = true;
             }
+
             c.Value = refNameEx;
             return c;
         }
@@ -71,6 +74,7 @@ namespace Prigitsk.Core.Nodes
             {
                 sb.Append(TagPrefix);
             }
+
             sb.Append(Value);
             return sb.ToString();
         }
@@ -85,10 +89,12 @@ namespace Prigitsk.Core.Nodes
             {
                 return true;
             }
+
             if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
             {
                 return false;
             }
+
             return string.Equals(a.Value, b.Value) &&
                    a.IsCommit == b.IsCommit &&
                    a.IsOriginBranch == b.IsOriginBranch;

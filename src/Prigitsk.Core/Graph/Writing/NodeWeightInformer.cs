@@ -49,6 +49,7 @@ namespace Prigitsk.Core.Graph.Writing
                 _maxChange = 0;
                 return;
             }
+
             changes.Sort();
             int minIndex;
             int maxIndex;
@@ -62,6 +63,7 @@ namespace Prigitsk.Core.Graph.Writing
                 minIndex = 0;
                 maxIndex = changes.Count - 1;
             }
+
             _minChange = changes[minIndex];
             _maxChange = changes[maxIndex];
         }
@@ -73,6 +75,7 @@ namespace Prigitsk.Core.Graph.Writing
             {
                 return baseWidth;
             }
+
             int change = GetChange(n);
             double result = MinWidth + _widthDiff * change / diff;
             result = Math.Max(result, MinWidth);

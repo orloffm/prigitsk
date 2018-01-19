@@ -28,6 +28,7 @@ namespace Prigitsk.Console
             {
                 return false;
             }
+
             return PickAll(b);
         }
 
@@ -53,6 +54,7 @@ namespace Prigitsk.Console
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -65,19 +67,18 @@ namespace Prigitsk.Console
                 {
                     throw new IOException();
                 }
+
                 if (di.GetDirectories(".git", SearchOption.TopDirectoryOnly).Length == 1)
                 {
                     return di.FullName;
                 }
+
                 di = di.Parent;
             }
         }
 
         public void Execute()
         {
-            ContainerBuilder builder = new ContainerBuilder();
-            IContainer container = builder.Build();
-
             ExtractionOptions extractOptions = new ExtractionOptions
             {
                 ExtractStats = false

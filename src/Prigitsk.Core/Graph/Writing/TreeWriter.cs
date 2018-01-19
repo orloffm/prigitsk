@@ -155,6 +155,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 DateTime firstNodeDate = graph.GetFirstNodeDate(b);
                 firstNodeDates.Add(b, firstNodeDate);
             }
+
             OriginBranch[] currentBranchesSorted =
                 branchingStrategy.SortForWriting(currentBranches, firstNodeDates).ToArray();
             foreach (OriginBranch b in currentBranchesSorted)
@@ -178,16 +179,19 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                     {
                         edgesInBranch.Add(currentNode, nextNode);
                     }
+
                     // Other children.
                     foreach (Node child in currentNode.Children)
                     {
                         otherLinks.Add(currentNode, child);
                     }
                 }
+
                 foreach (Tuple<Node, Node> tuple in edgesInBranch.EnumerateItems())
                 {
                     WriteInBranchEdge(sb, tuple.Item1, tuple.Item2);
                 }
+
                 sb.AppendLine(branchNodesEnd);
                 // Now link to the branch name node.
                 // 0 - last node in branch
@@ -197,6 +201,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 sb.AppendLine(text);
                 sb.AppendLine();
             }
+
             Node[] allLeftOvers = graph.EnumerateAllLeftOvers().ToArray();
             if (allLeftOvers.Length > 0)
             {
@@ -241,6 +246,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                     nodeB.Hash);
                 sb.AppendLine(text);
             }
+
             sb.AppendLine();
         }
 
@@ -263,6 +269,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                     _repositoryPath);
                 sb.AppendLine(text);
             }
+
             sb.AppendLine(
                 @"// tags
 node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=""0.11,0.055""]");
@@ -301,6 +308,7 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                     MakeHandle(b));
                 sb.AppendLine(text);
             }
+
             sb.AppendLine();
             sb.AppendLine(
                 @"// tags

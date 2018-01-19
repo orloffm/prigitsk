@@ -22,6 +22,7 @@ namespace Prigitsk.Core.Tools
                 sub = new HashSet<U>();
                 _dic[key] = sub;
             }
+
             sub.Add(value);
         }
 
@@ -34,6 +35,7 @@ namespace Prigitsk.Core.Tools
             {
                 return false;
             }
+
             return sub.Contains(value);
         }
 

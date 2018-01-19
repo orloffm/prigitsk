@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace Prigitsk.Core.Tests
@@ -8,7 +7,6 @@ namespace Prigitsk.Core.Tests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

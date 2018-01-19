@@ -57,6 +57,7 @@ namespace Prigitsk.Core.Nodes
             {
                 yield return this;
             }
+
             Node n = Parents.FirstOrDefault();
             while (n != null)
             {
@@ -84,6 +85,7 @@ namespace Prigitsk.Core.Nodes
                     parent.AddChild(immediateChild);
                 }
             }
+
             // Children.
             foreach (Node child in Children)
             {
@@ -96,6 +98,7 @@ namespace Prigitsk.Core.Nodes
                     child.AddParent(immediateParent);
                 }
             }
+
             Node firstChild = Children.FirstOrDefault();
             if (firstChild != null)
             {
@@ -148,10 +151,13 @@ namespace Prigitsk.Core.Nodes
                     {
                         parentAdded = true;
                     }
+
                     sb.Append(parent.Hash);
                 }
+
                 sb.Append(" -> ");
             }
+
             sb.Append("[" + Hash + "]");
             if (Children.Count > 0)
             {
@@ -167,9 +173,11 @@ namespace Prigitsk.Core.Nodes
                     {
                         childrenAdded = true;
                     }
+
                     sb.Append(child.Hash);
                 }
             }
+
             return sb.ToString();
         }
 
@@ -179,14 +187,17 @@ namespace Prigitsk.Core.Nodes
             {
                 return true;
             }
+
             if (ReferenceEquals(null, b))
             {
                 return false;
             }
+
             if (ReferenceEquals(null, a))
             {
                 return false;
             }
+
             return string.Equals(a.Hash, b.Hash);
         }
 

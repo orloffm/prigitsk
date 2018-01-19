@@ -40,16 +40,19 @@ namespace Prigitsk.Core.Graph
                         {
                             return true;
                         }
+
                         // OK, it had something, but do we got them in the graph?
                         // Let's check if some tags or branches were sourced from it.
                         if (_tags.Any(t => t.Source == n))
                         {
                             return false;
                         }
+
                         if (_nodesByBranchConsecutive.Keys.Any(b => b.Source == n))
                         {
                             return false;
                         }
+
                         return true;
                     });
         }
@@ -83,6 +86,7 @@ namespace Prigitsk.Core.Graph
             {
                 return -1;
             }
+
             List<Node> nodesList = _nodesByBranchConsecutive[ba];
             int index = nodesList.IndexOf(child);
             return index;
@@ -104,6 +108,7 @@ namespace Prigitsk.Core.Graph
             {
                 yield return n;
             }
+
             foreach (Node n in EnumerateAllLeftOvers())
             {
                 yield return n;
@@ -162,6 +167,7 @@ namespace Prigitsk.Core.Graph
             {
                 yield break;
             }
+
             List<Node> nodesList = _nodesByBranchConsecutive[branch];
             int index = nodesList.IndexOf(nodeInQuestion);
             int step = up ? -1 : +1;

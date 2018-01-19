@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Module = Autofac.Module;
 
-namespace StandardAutofacTools
+namespace Prigitsk.Shared
 {
     public class NLoggerModule : Module
     {
@@ -20,9 +20,9 @@ namespace StandardAutofacTools
         }
 
         /// <summary>
-        /// Called when the module loads. As <see cref="CreateLogger"/>
-        /// returns an <see cref="ILogger"/>, we are able to register
-        /// this function as a creator if loggers.
+        ///     Called when the module loads. As <see cref="CreateLogger" />
+        ///     returns an <see cref="ILogger" />, we are able to register
+        ///     this function as a creator if loggers.
         /// </summary>
         /// <param name="builder"></param>
         protected override void Load(ContainerBuilder builder)
@@ -31,43 +31,46 @@ namespace StandardAutofacTools
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="ILogger"/>
+        ///     Creates an instance of <see cref="ILogger" />
         /// </summary>
         /// <param name="c">Not used.</param>
-        /// <param name="p">Parameters. Expects a Type parameter that specifies 
-        /// the type for which the logger is resolved.</param>
+        /// <param name="p">
+        ///     Parameters. Expects a Type parameter that specifies
+        ///     the type for which the logger is resolved.
+        /// </param>
         private ILogger CreateLogger(IComponentContext c, IEnumerable<Parameter> p)
         {
-            var parentType = p.TypedAs<Type>();
+            Type parentType = p.TypedAs<Type>();
 
-            var logger = _provider.CreateLogger(parentType.FullName);
+            ILogger logger = _provider.CreateLogger(parentType.FullName);
             return logger;
         }
 
         /// <summary>
-        /// Attaches a callback to the process of preparing for resolving items.
+        ///     Attaches a callback to the process of preparing for resolving items.
         /// </summary>
-        protected override void AttachToComponentRegistration(IComponentRegistry componentRegistry,
+        protected override void AttachToComponentRegistration(
+            IComponentRegistry componentRegistry,
             IComponentRegistration registration)
         {
             registration.Preparing += Registration_Preparing;
         }
 
         /// <summary>
-        /// The callback that is called when preparing to resolve an item.
-        /// A Type parameter with the owning Type is created,
-        /// but it is enabled only 
-        /// if one of the arguments is an <see cref="ILogger"/>.
+        ///     The callback that is called when preparing to resolve an item.
+        ///     A Type parameter with the owning Type is created,
+        ///     but it is enabled only
+        ///     if one of the arguments is an <see cref="ILogger" />.
         /// </summary>
         private void Registration_Preparing(object sender, PreparingEventArgs args)
         {
-            var forType = args.Component.Activator.LimitType;
+            Type forType = args.Component.Activator.LimitType;
 
-            var logParameter = new ResolvedParameter(
+            ResolvedParameter logParameter = new ResolvedParameter(
                 IsLoggerArgumentPresent,
                 (p, c) => LoggerCreator(c, forType));
 
-            args.Parameters = args.Parameters.Union(new[] { logParameter });
+            args.Parameters = args.Parameters.Union(new[] {logParameter});
         }
 
         private object LoggerCreator(IComponentContext c, Type forType)

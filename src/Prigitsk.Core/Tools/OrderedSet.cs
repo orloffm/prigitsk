@@ -21,7 +21,7 @@ namespace Prigitsk.Core.Tools
 
         public int Count => _dictionary.Count;
 
-        public virtual bool IsReadOnly => _dictionary.IsReadOnly;
+        public  bool IsReadOnly => false;
 
         void ICollection<T>.Add(T item)
         {
@@ -36,12 +36,12 @@ namespace Prigitsk.Core.Tools
 
         public bool Remove(T item)
         {
-            LinkedListNode<T> node;
-            bool found = _dictionary.TryGetValue(item, out node);
+            bool found = _dictionary.TryGetValue(item, out LinkedListNode<T> node);
             if (!found)
             {
                 return false;
             }
+
             _dictionary.Remove(item);
             _linkedList.Remove(node);
             return true;
@@ -73,6 +73,7 @@ namespace Prigitsk.Core.Tools
             {
                 return false;
             }
+
             LinkedListNode<T> node = _linkedList.AddLast(item);
             _dictionary.Add(item, node);
             return true;

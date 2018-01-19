@@ -43,12 +43,15 @@ namespace Prigitsk.Core.Graph.Making
                     {
                         break;
                     }
+
                     nodesInBranch.Add(node);
                     unprocessedNodes.Remove(node);
                 }
+
                 nodesInBranch.Reverse();
                 ret.SetBranchNodes(b, nodesInBranch);
             }
+
             ret.SetTags(allTags);
             ret.SetLeftOverNodes(unprocessedNodes);
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +11,7 @@ namespace Prigitsk.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var image = System.IO.File.OpenRead(@"C:\dev\WinPrigitsk\bin\full.svg");
+            FileStream image = System.IO.File.OpenRead(@"C:\dev\WinPrigitsk\bin\full.svg");
             return File(image, "image/svg+xml");
         }
     }

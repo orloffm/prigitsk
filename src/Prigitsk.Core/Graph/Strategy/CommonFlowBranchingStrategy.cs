@@ -33,15 +33,18 @@ namespace Prigitsk.Core.Graph.Strategy
                     {
                         continue;
                     }
+
                     applicableTo.Add(b);
                     branchesLeftToBeSorted.RemoveAt(i);
                 }
+
                 applicableTo.Sort(branchSorterByName);
                 foreach (OriginBranch b in applicableTo)
                 {
                     yield return b;
                 }
             }
+
             // Leftovers.
             branchesLeftToBeSorted.Sort(branchSorterByName);
             foreach (OriginBranch b in branchesLeftToBeSorted)
@@ -75,18 +78,22 @@ namespace Prigitsk.Core.Graph.Strategy
             {
                 return "#27E4F9";
             }
+
             if (label == "develop")
             {
                 return "#FFE333";
             }
+
             if (label.StartsWith("hotfix"))
             {
                 return "#FD5965";
             }
+
             if (IsRelease(label))
             {
                 return "#52C322";
             }
+
             return "#FB3DB5";
         }
 

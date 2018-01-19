@@ -32,6 +32,7 @@ namespace Prigitsk.Core.Nodes.Loading
             {
                 extractionCommand += " --shortstat";
             }
+
             // const string extractionCommand = @"—git-dir ""{0
             // —dense —all —format=format:,,,,%h|%p|%d,,",,;
             string gitCommand = string.Format(extractionCommand, gitSubDirectory);
@@ -56,6 +57,7 @@ namespace Prigitsk.Core.Nodes.Loading
                     index++;
                     continue;
                 }
+
                 // There may be no stat line,
                 string lineStat = null;
                 if (index < lines.Length - 1)
@@ -67,6 +69,7 @@ namespace Prigitsk.Core.Nodes.Loading
                 {
                     lineStat = null;
                 }
+
                 ExtractValuesFromLine(
                     lineMain,
                     lineStat,
@@ -81,6 +84,7 @@ namespace Prigitsk.Core.Nodes.Loading
                 {
                     nm.AddChildren(parent, hash);
                 }
+
                 // Go to next,
                 index++;
                 // If there was a stat line, we also skip it.
@@ -89,6 +93,7 @@ namespace Prigitsk.Core.Nodes.Loading
                     index++;
                 }
             }
+
             return nm.EnumerateNodes().ToArray();
         }
 

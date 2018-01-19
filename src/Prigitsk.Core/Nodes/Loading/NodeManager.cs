@@ -29,6 +29,7 @@ namespace Prigitsk.Core.Nodes.Loading
             {
                 n.SetCaptions(caption);
             }
+
             n.Time = UnixTimeStampToDateTime(time);
             n.Insertions = insertions;
             n.Deletions = deletions;
@@ -58,6 +59,7 @@ namespace Prigitsk.Core.Nodes.Loading
                 n = new Node(hash);
                 _nodes.Add(hash, n);
             }
+
             return n;
         }
     }

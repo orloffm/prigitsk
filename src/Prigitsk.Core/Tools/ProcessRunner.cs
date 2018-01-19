@@ -28,6 +28,7 @@ namespace Prigitsk.Core.Tools
             {
                 return ExecuteResult;
             }
+
             return string.Empty;
         }
     }
