@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Prigitsk.Abstractions\Prigitsk.Abstractions.csproj" />
+    <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj" />
   </ItemGroup>
 
 </Project>

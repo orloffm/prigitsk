@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Prigitsk.Abstractions;
+using Prigitsk.Shared;
 
 namespace Prigitsk.Windows
 {

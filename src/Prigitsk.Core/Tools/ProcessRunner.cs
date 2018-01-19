@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using Prigitsk.Abstractions;
 
-namespace Prigitsk.Console
+namespace Prigitsk.Core.Tools
 {
     public class ProcessRunner : IProcessRunner
     {

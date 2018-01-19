@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core", "Prigitsk.Core\Prigitsk.Core.csproj", "{B6A51AB9-2B61-49C7-B3D8-4AFEDE30220C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Abstractions", "Prigitsk.Abstractions\Prigitsk.Abstractions.csproj", "{874A79BE-3D6E-426B-9A32-BA862558F6F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Shared", "Prigitsk.Shared\Prigitsk.Shared.csproj", "{874A79BE-3D6E-426B-9A32-BA862558F6F1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4424EDE0-C65E-4730-9AA6-0B886F68F82E}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.WebApi", "Prigitsk.WebApi\Prigitsk.WebApi.csproj", "{5F723B26-03F3-430E-906D-207FED2F9505}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Console", "Prigitsk.Console\Prigitsk.Console.csproj", "{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{CE0D0B12-C2B0-4B9A-B68F-A30A932D3AFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,7 +50,11 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{B6A51AB9-2B61-49C7-B3D8-4AFEDE30220C} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
+		{874A79BE-3D6E-426B-9A32-BA862558F6F1} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
 		{9239C54D-2B3A-4163-9207-8FC000CFA7E7} = {4424EDE0-C65E-4730-9AA6-0B886F68F82E}
+		{5F723B26-03F3-430E-906D-207FED2F9505} = {CE0D0B12-C2B0-4B9A-B68F-A30A932D3AFC}
+		{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA} = {CE0D0B12-C2B0-4B9A-B68F-A30A932D3AFC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0BF1ADA-5CF8-498C-9A86-70CDB8394AD6}

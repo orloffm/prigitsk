@@ -44,9 +44,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Prigitsk.Abstractions\Prigitsk.Abstractions.csproj">
+    <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj">
       <Project>{874a79be-3d6e-426b-9a32-ba862558f6f1}</Project>
-      <Name>Prigitsk.Abstractions</Name>
+      <Name>Prigitsk.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

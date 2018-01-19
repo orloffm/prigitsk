@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Prigitsk.Abstractions;
+using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Core.Nodes.Loading
 {

@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Abstractions
+﻿namespace Prigitsk.Core.Tools
 {
     public interface IProcessRunner
     {

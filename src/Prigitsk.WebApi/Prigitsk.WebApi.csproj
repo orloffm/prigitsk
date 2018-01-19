@@ -5,11 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="nlog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.5.0-rc2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj" />
     <ProjectReference Include="..\Prigitsk.Core\Prigitsk.Core.csproj" />
   </ItemGroup>
 
