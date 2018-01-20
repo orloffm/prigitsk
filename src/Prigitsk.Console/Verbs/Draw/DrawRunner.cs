@@ -13,21 +13,16 @@ using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
-    public class DrawRunner : IDrawRunner
+    public class DrawRunner : VerbRunnerBase<IDrawRunnerOptions>, IDrawRunner
     {
-        public Func<IDrawRunnerOptions, IDrawRunner> Factory;
-
         private const string DotPath = @"C:\apps\graphviz\dot.exe";
-        private readonly ILogger _log;
-        private readonly DrawRunnerOptions _options;
 
-        public DrawRunner(ILogger log, DrawRunnerOptions options)
+        public DrawRunner( IDrawRunnerOptions options, ILogger log)
+        :base(options, log)
         {
-            _log = log;
-            _options = options;
         }
 
-        public void Run()
+        public override void Run()
         {
             ExtractionOptions extractOptions = new ExtractionOptions
             {

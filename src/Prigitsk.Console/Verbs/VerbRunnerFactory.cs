@@ -16,14 +16,14 @@ namespace Prigitsk.Console.Verbs
 
         public VerbRunnerFactory(
             Func<IDrawRunnerOptions, IDrawRunner> drawRunnerFactory,
-       // Func<IFetchRunnerOptions, IFetchRunner> fetchRunnerFactory,
-      //  Func<IConfigureRunnerOptions, IConfigureRunner> configureRunnerFactory,
+        Func<IFetchRunnerOptions, IFetchRunner> fetchRunnerFactory,
+        Func<IConfigureRunnerOptions, IConfigureRunner> configureRunnerFactory,
                 ILogger log)
         {
             _log = log;
             _drawRunnerFactory = drawRunnerFactory;
-       //     _fetchRunnerFactory = fetchRunnerFactory;
-       //     _configureRunnerFactory = configureRunnerFactory;
+            _fetchRunnerFactory = fetchRunnerFactory;
+            _configureRunnerFactory = configureRunnerFactory;
         }
 
         public IVerbRunner CreateRunner(Verb verb, object verbOptions)

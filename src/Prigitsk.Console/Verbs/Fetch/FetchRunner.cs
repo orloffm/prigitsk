@@ -1,12 +1,17 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace Prigitsk.Console.Verbs.Fetch
 {
-    public class FetchRunner : IFetchRunner
+    public class FetchRunner : VerbRunnerBase<IFetchRunnerOptions>, IFetchRunner
     {
-        public void Run()
+        public FetchRunner(IFetchRunnerOptions options, ILogger log):base(options,log)
         {
-            throw new NotImplementedException();
+        }
+
+        public override void Run()
+        {
+            
         }
     }
 }

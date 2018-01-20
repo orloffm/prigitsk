@@ -1,14 +1,17 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace Prigitsk.Console.Verbs.Configure
 {
-    public class ConfigureRunner : IConfigureRunner
+    public class ConfigureRunner : VerbRunnerBase<IConfigureRunnerOptions>, IConfigureRunner
     {
-        public void Run()
+        public ConfigureRunner(IConfigureRunnerOptions options, ILogger log):base(options,log)
         {
-            throw new NotImplementedException();
+        }
+
+        public override void Run()
+        {
         }
     }
 
-    public class 
 }

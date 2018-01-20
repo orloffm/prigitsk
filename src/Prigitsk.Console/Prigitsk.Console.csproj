@@ -111,6 +111,7 @@
     <Compile Include="Verbs\IVerbRunner.cs" />
     <Compile Include="Verbs\IVerbRunnerFactory.cs" />
     <Compile Include="Verbs\IVerbRunnerOptions.cs" />
+    <Compile Include="Verbs\VerbRunnerBase.cs" />
     <Compile Include="Verbs\VerbRunnerFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
