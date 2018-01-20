@@ -5,7 +5,7 @@
         /// <summary>
         ///     Creates a runner instance.
         /// </summary>
-        /// <param name="parseResultVerbOptions">Runner options.</param>
-        IVerbRunner Create(object parseResultVerbOptions);
+        /// <param name="verbOptions">Runner options.</param>
+        IVerbRunner Create(IVerbRunnerOptions verbOptions);
     }
 }

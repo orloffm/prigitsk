@@ -1,9 +1,10 @@
 ﻿using CommandLine;
+using Prigitsk.Console.Verbs;
 
 namespace Prigitsk.Console.CommandLine
 {
-    [Verb("draw", HelpText = "Create a diagram of the branch structure.")]
-    public class DrawOptions
+    [Verb(VerbConstants.Draw, HelpText = "Create a diagram of the branch structure.")]
+    public class DrawOptions : IVerbOptions
     {
         /// <summary>
         ///     The repository directory.

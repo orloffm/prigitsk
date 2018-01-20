@@ -1,9 +1,10 @@
 ﻿using CommandLine;
+using Prigitsk.Console.Verbs;
 
 namespace Prigitsk.Console.CommandLine
 {
-    [Verb("fetch", HelpText = "Clone or fetch the remote repository.")]
-    public class FetchOptions
+    [Verb(VerbConstants.Fetch, HelpText = "Clone or fetch the remote repository.")]
+    public class FetchOptions : IVerbOptions
     {
         /// <summary>
         ///     The repository directory.

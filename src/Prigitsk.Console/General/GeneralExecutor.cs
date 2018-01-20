@@ -40,22 +40,22 @@ namespace Prigitsk.Console.General
             _log.Trace("Application starting.");
 
             CommandLineParseResult parseResult = _parser.Parse(args);
-            if (!parseResult.IsCorrect)
+            if (!parseResult.IsCorrect || !parseResult.Verb.HasValue)
             {
                 _log.Error("Command line arguments incorrect.");
                 return 1;
             }
 
-            IVerbRunner verbRunner = CreateVerbRunner(parseResult);
+            IVerbRunner verbRunner = CreateVerbRunner(parseResult.Verb.Value, parseResult.VerbOptions);
             verbRunner.Run();
 
             return 0;
         }
 
-        private IVerbRunner CreateVerbRunner(CommandLineParseResult parseResult)
+        private IVerbRunner CreateVerbRunner(Verb verb, IVerbRunnerOptions options)
         {
-            IVerbRunnerFactory factory = _factorySelector[parseResult.Verb];
-            IVerbRunner runner = factory.Create(parseResult.VerbOptions);
+            IVerbRunnerFactory factory = _factorySelector[verb];
+            IVerbRunner runner = factory.Create(options);
             return runner;
         }
     }

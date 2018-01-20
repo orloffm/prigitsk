@@ -7,7 +7,7 @@
     <ProjectGuid>{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Prigitsk.Console</RootNamespace>
-    <AssemblyName>Prigitsk.Console</AssemblyName>
+    <AssemblyName>prigitsk</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -91,6 +91,7 @@
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\CommandLineParseResult.cs" />
     <Compile Include="CommandLine\ConfigureOptions.cs" />
+    <Compile Include="CommandLine\IVerbOptions.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="Verbs\VerbRunnerFactoryBase.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Verbs\Verb.cs" />
+    <Compile Include="General\Verb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

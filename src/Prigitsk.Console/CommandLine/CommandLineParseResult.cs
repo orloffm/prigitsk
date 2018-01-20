@@ -4,8 +4,19 @@ namespace Prigitsk.Console.CommandLine
 {
     public class CommandLineParseResult
     {
-        public bool IsCorrect { get; set; }
-        public Verb Verb { get; set; }
-        public object VerbOptions { get; set; }
+        protected CommandLineParseResult()
+        {
+        }
+
+        public static CommandLineParseResult Failed => new CommandLineParseResult {IsCorrect = false};
+
+        public bool IsCorrect { get; private set; }
+        public Verb? Verb { get; private set; }
+        public IVerbRunnerOptions VerbOptions { get; private set; }
+
+        public static CommandLineParseResult Correct(Verb verb, IVerbRunnerOptions options)
+        {
+            return new CommandLineParseResult {IsCorrect = true, Verb = verb, VerbOptions = options};
+        }
     }
 }

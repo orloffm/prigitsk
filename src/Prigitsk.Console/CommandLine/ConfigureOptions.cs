@@ -1,9 +1,10 @@
 ﻿using CommandLine;
+using Prigitsk.Console.Verbs;
 
 namespace Prigitsk.Console.CommandLine
 {
-    [Verb("configure", HelpText = "Configure the application settings.")]
-    public class ConfigureOptions
+    [Verb(VerbConstants.Configure, HelpText = "Configure the application settings.")]
+    public class ConfigureOptions : IVerbOptions
     {
     }
 }

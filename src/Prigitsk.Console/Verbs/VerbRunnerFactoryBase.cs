@@ -12,7 +12,7 @@ namespace Prigitsk.Console.Verbs
 
         protected ILogger Log { get; }
 
-        public IVerbRunner Create(object verbOptions)
+        public IVerbRunner Create(IVerbRunnerOptions verbOptions)
         {
             TOptions optionsTyped = verbOptions as TOptions;
             if (optionsTyped == null)
