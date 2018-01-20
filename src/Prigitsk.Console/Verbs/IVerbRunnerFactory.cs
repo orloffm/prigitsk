@@ -2,6 +2,10 @@
 {
     public interface IVerbRunnerFactory
     {
-        IVerbRunner CreateRunner(Verb verb, object verbOptions);
+        /// <summary>
+        ///     Creates a runner instance.
+        /// </summary>
+        /// <param name="parseResultVerbOptions">Runner options.</param>
+        IVerbRunner Create(object parseResultVerbOptions);
     }
 }

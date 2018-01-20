@@ -32,7 +32,7 @@ namespace Prigitsk
 
         public static void Error(this ILogger logger, Exception ex)
         {
-            logger.LogError(ex, null);
+            logger.LogError(ex, "An exception has occured.");
         }
 
         public static void Fatal(this ILogger logger, string message, params object[] args)

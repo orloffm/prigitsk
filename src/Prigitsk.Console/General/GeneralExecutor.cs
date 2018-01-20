@@ -1,4 +1,5 @@
 ﻿using System;
+using Autofac.Features.Indexed;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.CommandLine;
 using Prigitsk.Console.Verbs;
@@ -10,14 +11,14 @@ namespace Prigitsk.Console.General
     /// </summary>
     public class GeneralExecutor : IGeneralExecutor
     {
+        private readonly IIndex<Verb, IVerbRunnerFactory> _factorySelector;
         private readonly ILogger _log;
         private readonly ICommandLineParser _parser;
-        private readonly IVerbRunnerFactory _verbRunnerFactory;
 
-        public GeneralExecutor(ICommandLineParser parser, IVerbRunnerFactory verbRunnerFactory, ILogger log)
+        public GeneralExecutor(ICommandLineParser parser, IIndex<Verb, IVerbRunnerFactory> factorySelector, ILogger log)
         {
             _parser = parser;
-            _verbRunnerFactory = verbRunnerFactory;
+            _factorySelector = factorySelector;
             _log = log;
         }
 
@@ -41,7 +42,7 @@ namespace Prigitsk.Console.General
             CommandLineParseResult parseResult = _parser.Parse(args);
             if (!parseResult.IsCorrect)
             {
-                _log.Trace("Command line arguments incorrect.");
+                _log.Error("Command line arguments incorrect.");
                 return 1;
             }
 
@@ -53,7 +54,9 @@ namespace Prigitsk.Console.General
 
         private IVerbRunner CreateVerbRunner(CommandLineParseResult parseResult)
         {
-            return _verbRunnerFactory.CreateRunner(parseResult.Verb, parseResult.VerbOptions);
+            IVerbRunnerFactory factory = _factorySelector[parseResult.Verb];
+            IVerbRunner runner = factory.Create(parseResult.VerbOptions);
+            return runner;
         }
     }
 }

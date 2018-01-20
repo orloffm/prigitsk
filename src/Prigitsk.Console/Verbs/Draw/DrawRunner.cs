@@ -17,12 +17,12 @@ namespace Prigitsk.Console.Verbs.Draw
     {
         private const string DotPath = @"C:\apps\graphviz\dot.exe";
 
-        public DrawRunner( IDrawRunnerOptions options, ILogger log)
-        :base(options, log)
+        public DrawRunner(IDrawRunnerOptions options, ILogger log)
+            : base(options, log)
         {
         }
 
-        public override void Run()
+        protected override void RunInternal()
         {
             ExtractionOptions extractOptions = new ExtractionOptions
             {
