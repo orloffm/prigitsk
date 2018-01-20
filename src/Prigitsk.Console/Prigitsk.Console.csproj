@@ -88,10 +88,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Executor.cs" />
-    <Compile Include="IExecutor.cs" />
+    <Compile Include="CommandLine\CommandLineParser.cs" />
+    <Compile Include="CommandLine\CommandLineParseResult.cs" />
+    <Compile Include="CommandLine\ConfigureOptions.cs" />
+    <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
+    <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />
+    <Compile Include="Verbs\Draw\IDrawRunnerOptions.cs" />
+    <Compile Include="Verbs\Fetch\IFetchRunner.cs" />
+    <Compile Include="Verbs\Draw\DrawRunner.cs" />
+    <Compile Include="CommandLine\DrawOptions.cs" />
+    <Compile Include="CommandLine\FetchOptions.cs" />
+    <Compile Include="CommandLine\ICommandLineParser.cs" />
+    <Compile Include="Verbs\Draw\IDrawRunner.cs" />
+    <Compile Include="Verbs\Configure\ConfigureRunner.cs" />
+    <Compile Include="Verbs\Configure\ConfigureRunnerOptions.cs" />
+    <Compile Include="Verbs\Draw\DrawRunnerOptions.cs" />
+    <Compile Include="Verbs\Fetch\FetchRunner.cs" />
+    <Compile Include="Verbs\Fetch\FetchRunnerOptions.cs" />
+    <Compile Include="General\GeneralExecutor.cs" />
+    <Compile Include="General\IGeneralExecutor.cs" />
+    <Compile Include="Verbs\Fetch\IFetchRunnerOptions.cs" />
+    <Compile Include="Verbs\IVerbRunner.cs" />
+    <Compile Include="Verbs\IVerbRunnerFactory.cs" />
+    <Compile Include="Verbs\IVerbRunnerOptions.cs" />
+    <Compile Include="Verbs\VerbRunnerFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Verbs\Verb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -114,5 +137,6 @@
       <Name>Prigitsk.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

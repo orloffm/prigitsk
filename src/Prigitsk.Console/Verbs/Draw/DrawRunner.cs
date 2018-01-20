@@ -11,18 +11,47 @@ using Prigitsk.Core.Nodes;
 using Prigitsk.Core.Nodes.Loading;
 using Prigitsk.Core.Tools;
 
-namespace Prigitsk.Console
+namespace Prigitsk.Console.Verbs.Draw
 {
-    public class Executor : IExecutor
+    public class DrawRunner : IDrawRunner
     {
-        private readonly ILogger _log;
-
-        public Executor(ILogger log)
-        {
-            _log = log;
-        }
+        public Func<IDrawRunnerOptions, IDrawRunner> Factory;
 
         private const string DotPath = @"C:\apps\graphviz\dot.exe";
+        private readonly ILogger _log;
+        private readonly DrawRunnerOptions _options;
+
+        public DrawRunner(ILogger log, DrawRunnerOptions options)
+        {
+            _log = log;
+            _options = options;
+        }
+
+        public void Run()
+        {
+            ExtractionOptions extractOptions = new ExtractionOptions
+            {
+                ExtractStats = false
+            };
+            string repositoryPath = FindRepositoryPath();
+            string gitSubDirectory = Path.Combine(repositoryPath, ".git");
+            IProcessRunner processRunner = new ProcessRunner();
+            INodeLoader loader = new NodeLoader(processRunner);
+            loader.LoadFrom(gitSubDirectory, extractOptions);
+            string writeTo = Path.Combine(repositoryPath, "bin");
+            Directory.CreateDirectory(writeTo);
+            WriteToFileAndMakeSvg(loader, writeTo, "full.dot", PickAll);
+            WriteToFileAndMakeSvg(loader, writeTo, "no-tags.dot", PickNoTags);
+            WriteToFileAndMakeSvg(loader, writeTo, "simple.dot", PickSimplified);
+            string runBat = Path.Combine(repositoryPath, "run.bat");
+            if (File.Exists(runBat))
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.WorkingDirectory = repositoryPath;
+                psi.FileName = runBat;
+                Process.Start(psi);
+            }
+        }
 
         internal static bool PickAll(Pointer b)
         {
@@ -81,32 +110,6 @@ namespace Prigitsk.Console
                 }
 
                 di = di.Parent;
-            }
-        }
-
-        public void Execute(string[] args)
-        {
-            ExtractionOptions extractOptions = new ExtractionOptions
-            {
-                ExtractStats = false
-            };
-            string repositoryPath = FindRepositoryPath();
-            string gitSubDirectory = Path.Combine(repositoryPath, ".git");
-            IProcessRunner processRunner = new ProcessRunner();
-            INodeLoader loader = new NodeLoader(processRunner);
-            loader.LoadFrom(gitSubDirectory, extractOptions);
-            string writeTo = Path.Combine(repositoryPath, "bin");
-            Directory.CreateDirectory(writeTo);
-            WriteToFileAndMakeSvg(loader, writeTo, "full.dot", PickAll);
-            WriteToFileAndMakeSvg(loader, writeTo, "no-tags.dot", PickNoTags);
-            WriteToFileAndMakeSvg(loader, writeTo, "simple.dot", PickSimplified);
-            string runBat = Path.Combine(repositoryPath, "run.bat");
-            if (File.Exists(runBat))
-            {
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.WorkingDirectory = repositoryPath;
-                psi.FileName = runBat;
-                Process.Start(psi);
             }
         }
 

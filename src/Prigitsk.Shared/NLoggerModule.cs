@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Module = Autofac.Module;
 
-namespace Prigitsk.Shared
+namespace Prigitsk
 {
     public class NLoggerModule : Module
     {
