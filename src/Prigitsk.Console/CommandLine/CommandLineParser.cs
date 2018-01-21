@@ -12,10 +12,10 @@ namespace Prigitsk.Console.CommandLine
 {
     public class CommandLineParser : ICommandLineParser
     {
-        private readonly IIndex<Verb, IVerbOptionsConverterFactory> _factories;
+        private readonly IIndex<Verb, IVerbOptionsConverter> _factories;
         private readonly ILogger _log;
 
-        public CommandLineParser(ILogger log, IIndex<Verb, IVerbOptionsConverterFactory> factories)
+        public CommandLineParser(ILogger log, IIndex<Verb, IVerbOptionsConverter> factories)
         {
             _log = log;
             _factories = factories;
@@ -24,7 +24,7 @@ namespace Prigitsk.Console.CommandLine
         public CommandLineParseResult Parse(string[] args)
         {
             ParserResult<object> result =
-                Parser.Default.ParseArguments<ConfigureOptions, DrawOptions, FetchOptions>(args: args);
+                Parser.Default.ParseArguments<ConfigureOptions, DrawOptions, FetchOptions>(args);
             if (result is NotParsed<object>)
             {
                 IEnumerable<Error> errors = (result as NotParsed<object>).Errors;
@@ -41,23 +41,22 @@ namespace Prigitsk.Console.CommandLine
             if (options == null)
             {
                 string message = "Unexpected problem parsing command line.";
-                _log.Fatal(message: message);
-                throw new LoggedAsFatalException(message: message);
+                _log.Fatal(message);
+                throw new LoggedAsFatalException(message);
             }
 
-            Verb v = GetVerbFrom(parsed: options);
-            IVerbOptionsConverterFactory converterFactory = _factories[key: v];
-            IVerbOptionsConverter converter = converterFactory.Create();
-            IVerbRunnerOptions runnerOptions = converter.ConvertOptions(source: options);
+            Verb v = GetVerbFrom(options);
+            IVerbOptionsConverter converter = _factories[v];
+            IVerbRunnerOptions runnerOptions = converter.ConvertOptions(options);
 
-            return CommandLineParseResult.Correct(verb: v, options: runnerOptions);
+            return CommandLineParseResult.Correct(v, options: runnerOptions);
         }
 
         private Verb GetVerbFrom(IVerbOptions parsed)
         {
             VerbAttribute verbAttribute = parsed.GetType().GetCustomAttribute<VerbAttribute>();
             string verbName = verbAttribute.Name;
-            Verb verb = VerbHelper.FromName(verbName: verbName);
+            Verb verb = VerbHelper.FromName(verbName);
             return verb;
         }
     }

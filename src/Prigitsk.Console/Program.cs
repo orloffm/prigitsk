@@ -21,19 +21,16 @@ namespace Prigitsk.Console
             builder.RegisterModule<NLoggerModule>();
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
             builder.RegisterAssemblyTypes(typeof(NodeLoader).Assembly).AsImplementedInterfaces();
-            builder.RegisterType<ConfigureRunnerFactory>().Keyed<IVerbRunnerFactory>(serviceKey: Verb.Configure);
-            builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(serviceKey: Verb.Draw);
-            builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(serviceKey: Verb.Fetch);
-            builder.RegisterType<ConfigureVerbOptionsConverterFactory>()
-                .Keyed<IVerbOptionsConverterFactory>(serviceKey: Verb.Configure);
-            builder.RegisterType<DrawVerbOptionsConverterFactory>()
-                .Keyed<IVerbOptionsConverterFactory>(serviceKey: Verb.Draw);
-            builder.RegisterType<FetchVerbOptionsConverterFactory>()
-                .Keyed<IVerbOptionsConverterFactory>(serviceKey: Verb.Fetch);
+            builder.RegisterType<ConfigureRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Configure).InstancePerLifetimeScope();
+            builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Draw).InstancePerLifetimeScope();
+            builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Fetch).InstancePerLifetimeScope();
+            builder.RegisterType<ConfigureVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Configure).InstancePerLifetimeScope();
+            builder.RegisterType<DrawVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Draw).InstancePerLifetimeScope();
+            builder.RegisterType<FetchVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Fetch).InstancePerLifetimeScope();
             IContainer container = builder.Build();
 
             IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
-            int exitCode = exec.RunSafe(args: args);
+            int exitCode = exec.RunSafe(args);
 
             return exitCode;
         }

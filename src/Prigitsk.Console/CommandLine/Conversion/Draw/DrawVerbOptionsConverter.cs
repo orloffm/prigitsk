@@ -7,14 +7,14 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
     public class DrawVerbOptionsConverter
         : VerbOptionsConverterBase<DrawOptions, IDrawRunnerOptions>, IDrawVerbOptionsConverter
     {
-        public DrawVerbOptionsConverter(ILogger log) : base(log: log)
+        public DrawVerbOptionsConverter(ILogger log) : base(log)
         {
         }
 
         protected override IDrawRunnerOptions ConvertOptionsInternal(DrawOptions source)
         {
             return new DrawRunnerOptions(
-                repository: source.Repository,
+                source.Repository,
                 target: source.Target,
                 output: source.Output,
                 format: source.Format);

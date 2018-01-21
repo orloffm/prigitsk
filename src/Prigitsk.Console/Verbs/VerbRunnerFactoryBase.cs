@@ -22,7 +22,7 @@ namespace Prigitsk.Console.Verbs
                     typeof(TOptions).Name);
             }
 
-            return CreateInternal(options: optionsTyped);
+            return CreateInternal(optionsTyped);
         }
 
         protected abstract IVerbRunner<TOptions> CreateInternal(TOptions options);
