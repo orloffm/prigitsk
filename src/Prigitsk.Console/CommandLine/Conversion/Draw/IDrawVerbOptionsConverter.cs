@@ -5,6 +5,5 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
 {
     public interface IDrawVerbOptionsConverter : IVerbOptionsConverter<DrawOptions, IDrawRunnerOptions>
     {
-
     }
 }

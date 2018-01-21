@@ -5,6 +5,5 @@ namespace Prigitsk.Console.CommandLine.Conversion.Configure
 {
     public interface IConfigureVerbOptionsConverter : IVerbOptionsConverter<ConfigureOptions, IConfigureRunnerOptions>
     {
-
     }
 }

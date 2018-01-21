@@ -4,9 +4,10 @@ using Prigitsk.Console.Verbs.Configure;
 
 namespace Prigitsk.Console.CommandLine.Conversion.Configure
 {
-    public class ConfigureVerbOptionsConverter : VerbOptionsConverterBase<ConfigureOptions, IConfigureRunnerOptions>, IConfigureVerbOptionsConverter
+    public class ConfigureVerbOptionsConverter
+        : VerbOptionsConverterBase<ConfigureOptions, IConfigureRunnerOptions>, IConfigureVerbOptionsConverter
     {
-        public ConfigureVerbOptionsConverter(ILogger log) : base(log)
+        public ConfigureVerbOptionsConverter(ILogger log) : base(log: log)
         {
         }
 

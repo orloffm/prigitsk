@@ -15,7 +15,7 @@ namespace Prigitsk.Console.General
                 case VerbConstants.Draw:
                     return Verb.Draw;
                 default:
-                    throw new NotSupportedException(verbName);
+                    throw new NotSupportedException(message: verbName);
             }
         }
     }

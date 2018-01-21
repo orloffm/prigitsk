@@ -2,8 +2,8 @@
 {
     public enum Verb
     {
-        Configure ,
+        Configure,
         Fetch,
-        Draw ,
+        Draw
     }
 }

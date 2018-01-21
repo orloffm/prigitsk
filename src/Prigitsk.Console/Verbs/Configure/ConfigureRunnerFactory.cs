@@ -7,14 +7,15 @@ namespace Prigitsk.Console.Verbs.Configure
     {
         private readonly Func<IConfigureRunnerOptions, IConfigureRunner> _maker;
 
-        public ConfigureRunnerFactory(ILogger log, Func<IConfigureRunnerOptions, IConfigureRunner> maker) : base(log)
+        public ConfigureRunnerFactory(ILogger log, Func<IConfigureRunnerOptions, IConfigureRunner> maker) : base(
+            log: log)
         {
             _maker = maker;
         }
 
         protected override IVerbRunner<IConfigureRunnerOptions> CreateInternal(IConfigureRunnerOptions options)
         {
-            return _maker.Invoke(options);
+            return _maker.Invoke(arg: options);
         }
     }
 }

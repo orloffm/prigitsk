@@ -9,14 +9,14 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
     {
         private readonly Func<IDrawVerbOptionsConverter> _maker;
 
-        public DrawVerbOptionsConverterFactory(ILogger log, Func<IDrawVerbOptionsConverter> maker) : base(log)
+        public DrawVerbOptionsConverterFactory(ILogger log, Func<IDrawVerbOptionsConverter> maker) : base(log: log)
         {
             _maker = maker;
         }
 
         protected override IVerbOptionsConverter<DrawOptions, IDrawRunnerOptions> CreateInternal()
         {
-            return   _maker.Invoke();
+            return _maker.Invoke();
         }
     }
 }

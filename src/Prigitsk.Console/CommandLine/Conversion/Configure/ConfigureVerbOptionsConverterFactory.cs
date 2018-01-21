@@ -5,18 +5,20 @@ using Prigitsk.Console.Verbs.Configure;
 
 namespace Prigitsk.Console.CommandLine.Conversion.Configure
 {
-    public class ConfigureVerbOptionsConverterFactory : VerbOptionsConverterFactoryBase<ConfigureOptions, IConfigureRunnerOptions>
+    public class ConfigureVerbOptionsConverterFactory
+        : VerbOptionsConverterFactoryBase<ConfigureOptions, IConfigureRunnerOptions>
     {
         private readonly Func<IConfigureVerbOptionsConverter> _maker;
 
-        public ConfigureVerbOptionsConverterFactory(ILogger log, Func<IConfigureVerbOptionsConverter> maker) : base(log)
+        public ConfigureVerbOptionsConverterFactory(ILogger log, Func<IConfigureVerbOptionsConverter> maker) : base(
+            log: log)
         {
             _maker = maker;
         }
 
         protected override IVerbOptionsConverter<ConfigureOptions, IConfigureRunnerOptions> CreateInternal()
         {
-            return   _maker.Invoke();
+            return _maker.Invoke();
         }
     }
 }

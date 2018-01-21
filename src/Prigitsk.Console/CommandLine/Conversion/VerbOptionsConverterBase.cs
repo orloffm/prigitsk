@@ -8,7 +8,7 @@ namespace Prigitsk.Console.CommandLine.Conversion
         where TSource : IVerbOptions
         where TTarget : IVerbRunnerOptions
     {
-        protected VerbOptionsConverterBase( ILogger log)
+        protected VerbOptionsConverterBase(ILogger log)
         {
             Log = log;
         }

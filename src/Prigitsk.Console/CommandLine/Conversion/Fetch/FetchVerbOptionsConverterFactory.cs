@@ -9,14 +9,14 @@ namespace Prigitsk.Console.CommandLine.Conversion.Fetch
     {
         private readonly Func<IFetchVerbOptionsConverter> _maker;
 
-        public FetchVerbOptionsConverterFactory(ILogger log, Func<IFetchVerbOptionsConverter> maker) : base(log)
+        public FetchVerbOptionsConverterFactory(ILogger log, Func<IFetchVerbOptionsConverter> maker) : base(log: log)
         {
             _maker = maker;
         }
 
         protected override IVerbOptionsConverter<FetchOptions, IFetchRunnerOptions> CreateInternal()
         {
-            return   _maker.Invoke();
+            return _maker.Invoke();
         }
     }
 }

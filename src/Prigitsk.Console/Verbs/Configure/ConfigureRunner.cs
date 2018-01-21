@@ -4,7 +4,7 @@ namespace Prigitsk.Console.Verbs.Configure
 {
     public class ConfigureRunner : VerbRunnerBase<IConfigureRunnerOptions>, IConfigureRunner
     {
-        public ConfigureRunner(IConfigureRunnerOptions options, ILogger log) : base(options, log)
+        public ConfigureRunner(IConfigureRunnerOptions options, ILogger log) : base(options: options, log: log)
         {
         }
 

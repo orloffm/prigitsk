@@ -4,8 +4,8 @@
     {
         public FetchRunnerOptions(string url = null, string repository = null)
         {
-            this.Url = url;
-            this.Repository = repository;
+            Url = url;
+            Repository = repository;
         }
 
         public string Url { get; }

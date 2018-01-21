@@ -26,7 +26,7 @@ namespace Prigitsk.Console.General
         {
             try
             {
-                return RunInternal(args);
+                return RunInternal(args: args);
             }
             catch (LoggedAsFatalException)
             {
@@ -35,7 +35,7 @@ namespace Prigitsk.Console.General
             }
             catch (Exception ex)
             {
-                _log.Fatal(ex, "Unhandled exception occurred. Aborting execution.");
+                _log.Fatal(ex: ex, message: "Unhandled exception occurred. Aborting execution.");
                 return 1;
             }
         }
@@ -44,14 +44,14 @@ namespace Prigitsk.Console.General
         {
             _log.Trace("Application starting.");
 
-            CommandLineParseResult parseResult = _parser.Parse(args);
+            CommandLineParseResult parseResult = _parser.Parse(args: args);
             if (!parseResult.IsCorrect || !parseResult.Verb.HasValue)
             {
                 _log.Error("Command line arguments incorrect.");
                 return 1;
             }
 
-            IVerbRunner verbRunner = CreateVerbRunner(parseResult.Verb.Value, parseResult.VerbOptions);
+            IVerbRunner verbRunner = CreateVerbRunner(verb: parseResult.Verb.Value, options: parseResult.VerbOptions);
             verbRunner.Run();
 
             return 0;
@@ -59,8 +59,8 @@ namespace Prigitsk.Console.General
 
         private IVerbRunner CreateVerbRunner(Verb verb, IVerbRunnerOptions options)
         {
-            IVerbRunnerFactory factory = _factorySelector[verb];
-            IVerbRunner runner = factory.Create(options);
+            IVerbRunnerFactory factory = _factorySelector[key: verb];
+            IVerbRunner runner = factory.Create(verbOptions: options);
             return runner;
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using Autofac;
-using Prigitsk.Console.CommandLine;
 using Prigitsk.Console.CommandLine.Conversion;
 using Prigitsk.Console.CommandLine.Conversion.Configure;
 using Prigitsk.Console.CommandLine.Conversion.Draw;
@@ -22,16 +21,19 @@ namespace Prigitsk.Console
             builder.RegisterModule<NLoggerModule>();
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
             builder.RegisterAssemblyTypes(typeof(NodeLoader).Assembly).AsImplementedInterfaces();
-            builder.RegisterType<ConfigureRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Configure);
-            builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Draw);
-            builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Fetch);
-            builder.RegisterType<ConfigureVerbOptionsConverterFactory>().Keyed<IVerbOptionsConverterFactory>(Verb.Configure);
-            builder.RegisterType<DrawVerbOptionsConverterFactory>().Keyed<IVerbOptionsConverterFactory>(Verb.Draw);
-            builder.RegisterType<FetchVerbOptionsConverterFactory>().Keyed<IVerbOptionsConverterFactory>(Verb.Fetch);
+            builder.RegisterType<ConfigureRunnerFactory>().Keyed<IVerbRunnerFactory>(serviceKey: Verb.Configure);
+            builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(serviceKey: Verb.Draw);
+            builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(serviceKey: Verb.Fetch);
+            builder.RegisterType<ConfigureVerbOptionsConverterFactory>()
+                .Keyed<IVerbOptionsConverterFactory>(serviceKey: Verb.Configure);
+            builder.RegisterType<DrawVerbOptionsConverterFactory>()
+                .Keyed<IVerbOptionsConverterFactory>(serviceKey: Verb.Draw);
+            builder.RegisterType<FetchVerbOptionsConverterFactory>()
+                .Keyed<IVerbOptionsConverterFactory>(serviceKey: Verb.Fetch);
             IContainer container = builder.Build();
 
             IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
-            int exitCode = exec.RunSafe(args);
+            int exitCode = exec.RunSafe(args: args);
 
             return exitCode;
         }

@@ -5,6 +5,5 @@ namespace Prigitsk.Console.CommandLine.Conversion.Fetch
 {
     public interface IFetchVerbOptionsConverter : IVerbOptionsConverter<FetchOptions, IFetchRunnerOptions>
     {
-
     }
 }

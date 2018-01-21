@@ -3,7 +3,7 @@ using Prigitsk.Console.General;
 
 namespace Prigitsk.Console.CommandLine.Parsing
 {
-    [Verb(VerbConstants.Fetch, HelpText = "Clone or fetch the remote repository.")]
+    [Verb(name: VerbConstants.Fetch, HelpText = "Clone or fetch the remote repository.")]
     public class FetchOptions : IVerbOptions
     {
         /// <summary>

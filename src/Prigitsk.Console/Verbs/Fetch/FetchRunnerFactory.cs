@@ -7,14 +7,14 @@ namespace Prigitsk.Console.Verbs.Fetch
     {
         private readonly Func<IFetchRunnerOptions, IFetchRunner> _maker;
 
-        public FetchRunnerFactory(ILogger log, Func<IFetchRunnerOptions, IFetchRunner> maker) : base(log)
+        public FetchRunnerFactory(ILogger log, Func<IFetchRunnerOptions, IFetchRunner> maker) : base(log: log)
         {
             _maker = maker;
         }
 
         protected override IVerbRunner<IFetchRunnerOptions> CreateInternal(IFetchRunnerOptions options)
         {
-            return _maker.Invoke(options);
+            return _maker.Invoke(arg: options);
         }
     }
 }

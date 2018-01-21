@@ -7,14 +7,14 @@ namespace Prigitsk.Console.Verbs.Draw
     {
         private readonly Func<IDrawRunnerOptions, IDrawRunner> _maker;
 
-        public DrawRunnerFactory(ILogger log, Func<IDrawRunnerOptions, IDrawRunner> maker) : base(log)
+        public DrawRunnerFactory(ILogger log, Func<IDrawRunnerOptions, IDrawRunner> maker) : base(log: log)
         {
             _maker = maker;
         }
 
         protected override IVerbRunner<IDrawRunnerOptions> CreateInternal(IDrawRunnerOptions options)
         {
-            return _maker.Invoke(options);
+            return _maker.Invoke(arg: options);
         }
     }
 }
