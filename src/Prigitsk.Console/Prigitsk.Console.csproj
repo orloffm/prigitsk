@@ -90,8 +90,23 @@
   <ItemGroup>
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\CommandLineParseResult.cs" />
-    <Compile Include="CommandLine\ConfigureOptions.cs" />
-    <Compile Include="CommandLine\IVerbOptions.cs" />
+    <Compile Include="CommandLine\Parsing\ConfigureOptions.cs" />
+    <Compile Include="CommandLine\Conversion\Configure\ConfigureVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Configure\ConfigureVerbOptionsConverterFactory.cs" />
+    <Compile Include="CommandLine\Conversion\Draw\DrawVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Fetch\FetchVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Fetch\FetchVerbOptionsConverterFactory.cs" />
+    <Compile Include="CommandLine\Conversion\Draw\DrawVerbOptionsConverterFactory.cs" />
+    <Compile Include="CommandLine\Conversion\Configure\IConfigureVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Draw\IDrawVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Fetch\IFetchVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Parsing\IVerbOptions.cs" />
+    <Compile Include="CommandLine\Conversion\IVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\IVerbOptionsConverterFactory.cs" />
+    <Compile Include="CommandLine\Conversion\VerbOptionsConverterBase.cs" />
+    <Compile Include="CommandLine\Conversion\VerbOptionsConverterFactoryBase.cs" />
+    <Compile Include="General\VerbConstants.cs" />
+    <Compile Include="General\VerbHelper.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />
@@ -100,8 +115,8 @@
     <Compile Include="Verbs\Fetch\FetchRunnerFactory.cs" />
     <Compile Include="Verbs\Fetch\IFetchRunner.cs" />
     <Compile Include="Verbs\Draw\DrawRunner.cs" />
-    <Compile Include="CommandLine\DrawOptions.cs" />
-    <Compile Include="CommandLine\FetchOptions.cs" />
+    <Compile Include="CommandLine\Parsing\DrawOptions.cs" />
+    <Compile Include="CommandLine\Parsing\FetchOptions.cs" />
     <Compile Include="CommandLine\ICommandLineParser.cs" />
     <Compile Include="Verbs\Draw\IDrawRunner.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunner.cs" />

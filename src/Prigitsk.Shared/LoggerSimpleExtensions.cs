@@ -30,9 +30,19 @@ namespace Prigitsk
             logger.LogError(ex, message, args);
         }
 
+        public static void Fatal(this ILogger logger, Exception ex, string message, params object[] args)
+        {
+            logger.LogCritical(ex, message, args);
+        }
+
         public static void Error(this ILogger logger, Exception ex)
         {
             logger.LogError(ex, "An exception has occured.");
+        }
+
+        public static void Fatal(this ILogger logger, Exception ex)
+        {
+            logger.LogCritical(ex, "An exception has occured.");
         }
 
         public static void Fatal(this ILogger logger, string message, params object[] args)

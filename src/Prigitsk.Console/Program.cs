@@ -1,5 +1,10 @@
 ﻿using System.Reflection;
 using Autofac;
+using Prigitsk.Console.CommandLine;
+using Prigitsk.Console.CommandLine.Conversion;
+using Prigitsk.Console.CommandLine.Conversion.Configure;
+using Prigitsk.Console.CommandLine.Conversion.Draw;
+using Prigitsk.Console.CommandLine.Conversion.Fetch;
 using Prigitsk.Console.General;
 using Prigitsk.Console.Verbs;
 using Prigitsk.Console.Verbs.Configure;
@@ -20,6 +25,9 @@ namespace Prigitsk.Console
             builder.RegisterType<ConfigureRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Configure);
             builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Draw);
             builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Fetch);
+            builder.RegisterType<ConfigureVerbOptionsConverterFactory>().Keyed<IVerbOptionsConverterFactory>(Verb.Configure);
+            builder.RegisterType<DrawVerbOptionsConverterFactory>().Keyed<IVerbOptionsConverterFactory>(Verb.Draw);
+            builder.RegisterType<FetchVerbOptionsConverterFactory>().Keyed<IVerbOptionsConverterFactory>(Verb.Fetch);
             IContainer container = builder.Build();
 
             IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();

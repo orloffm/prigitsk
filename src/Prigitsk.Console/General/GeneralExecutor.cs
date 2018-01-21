@@ -28,9 +28,14 @@ namespace Prigitsk.Console.General
             {
                 return RunInternal(args);
             }
+            catch (LoggedAsFatalException)
+            {
+                _log.Fatal("Aborting execution.");
+                return 1;
+            }
             catch (Exception ex)
             {
-                _log.Error(ex);
+                _log.Fatal(ex, "Unhandled exception occurred. Aborting execution.");
                 return 1;
             }
         }

@@ -1,7 +1,7 @@
 ﻿using CommandLine;
-using Prigitsk.Console.Verbs;
+using Prigitsk.Console.General;
 
-namespace Prigitsk.Console.CommandLine
+namespace Prigitsk.Console.CommandLine.Parsing
 {
     [Verb(VerbConstants.Draw, HelpText = "Create a diagram of the branch structure.")]
     public class DrawOptions : IVerbOptions
