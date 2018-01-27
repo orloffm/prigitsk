@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 
 namespace Prigitsk.Console.Abstractions
 {
@@ -13,7 +14,7 @@ namespace Prigitsk.Console.Abstractions
 
         public string GetEnvironmentVariable(string variable)
         {
-            string value = System.Environment.GetEnvironmentVariable(variable);
+            string value = Environment.GetEnvironmentVariable(variable);
             _log.Debug("Environment variable {0} = '{1}'.", variable, value);
             return value;
         }

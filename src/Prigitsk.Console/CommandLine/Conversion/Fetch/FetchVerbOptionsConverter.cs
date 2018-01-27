@@ -15,7 +15,7 @@ namespace Prigitsk.Console.CommandLine.Conversion.Fetch
         {
             return new FetchRunnerOptions(
                 source.Url,
-                repository: source.Repository);
+                source.Repository);
         }
     }
 }

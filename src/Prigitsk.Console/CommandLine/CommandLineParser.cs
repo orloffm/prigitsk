@@ -49,7 +49,7 @@ namespace Prigitsk.Console.CommandLine
             IVerbOptionsConverter converter = _factories[v];
             IVerbRunnerOptions runnerOptions = converter.ConvertOptions(options);
 
-            return CommandLineParseResult.Correct(v, options: runnerOptions);
+            return CommandLineParseResult.Correct(v, runnerOptions);
         }
 
         private Verb GetVerbFrom(IVerbOptions parsed)

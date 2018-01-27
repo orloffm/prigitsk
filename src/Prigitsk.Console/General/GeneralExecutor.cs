@@ -35,7 +35,7 @@ namespace Prigitsk.Console.General
             }
             catch (Exception ex)
             {
-                _log.Fatal(ex, message: "Unhandled exception occurred. Aborting execution.");
+                _log.Fatal(ex, "Unhandled exception occurred. Aborting execution.");
                 return 1;
             }
         }
@@ -51,7 +51,7 @@ namespace Prigitsk.Console.General
                 return 1;
             }
 
-            IVerbRunner verbRunner = CreateVerbRunner(parseResult.Verb.Value, options: parseResult.VerbOptions);
+            IVerbRunner verbRunner = CreateVerbRunner(parseResult.Verb.Value, parseResult.VerbOptions);
             verbRunner.Run();
 
             return 0;

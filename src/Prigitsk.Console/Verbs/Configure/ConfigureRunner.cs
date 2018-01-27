@@ -7,14 +7,15 @@ namespace Prigitsk.Console.Verbs.Configure
     {
         private readonly ISettingsWrapper _settings;
 
-        public ConfigureRunner(IConfigureRunnerOptions options, ISettingsWrapper settings, ILogger log) : base(options, log: log)
+        public ConfigureRunner(IConfigureRunnerOptions options, ISettingsWrapper settings, ILogger log) : base(
+            options,
+            log)
         {
             _settings = settings;
         }
 
         protected override void RunInternal()
         {
-            
         }
     }
 }

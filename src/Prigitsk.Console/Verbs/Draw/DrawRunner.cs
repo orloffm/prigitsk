@@ -18,7 +18,7 @@ namespace Prigitsk.Console.Verbs.Draw
         private const string DotPath = @"C:\apps\graphviz\dot.exe";
 
         public DrawRunner(IDrawRunnerOptions options, ILogger log)
-            : base(options, log: log)
+            : base(options, log)
         {
         }
 
@@ -29,24 +29,24 @@ namespace Prigitsk.Console.Verbs.Draw
                 ExtractStats = false
             };
             string repositoryPath = FindRepositoryPath();
-            string gitSubDirectory = Path.Combine(repositoryPath, path2: ".git");
+            string gitSubDirectory = Path.Combine(repositoryPath, ".git");
             IProcessRunner processRunner = new ProcessRunner();
             INodeLoader loader = new NodeLoader(processRunner);
-            loader.LoadFrom(gitSubDirectory, extractOptions: extractOptions);
-            string writeTo = Path.Combine(repositoryPath, path2: "bin");
+            loader.LoadFrom(gitSubDirectory, extractOptions);
+            string writeTo = Path.Combine(repositoryPath, "bin");
             Directory.CreateDirectory(writeTo);
-            WriteToFileAndMakeSvg(loader, repositoryPath: writeTo, fileName: "full.dot", pickStrategy: PickAll);
+            WriteToFileAndMakeSvg(loader, writeTo, "full.dot", PickAll);
             WriteToFileAndMakeSvg(
                 loader,
-                repositoryPath: writeTo,
-                fileName: "no-tags.dot",
-                pickStrategy: PickNoTags);
+                writeTo,
+                "no-tags.dot",
+                PickNoTags);
             WriteToFileAndMakeSvg(
                 loader,
-                repositoryPath: writeTo,
-                fileName: "simple.dot",
-                pickStrategy: PickSimplified);
-            string runBat = Path.Combine(repositoryPath, path2: "run.bat");
+                writeTo,
+                "simple.dot",
+                PickSimplified);
+            string runBat = Path.Combine(repositoryPath, "run.bat");
             if (File.Exists(runBat))
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
@@ -124,17 +124,17 @@ namespace Prigitsk.Console.Verbs.Draw
         {
             WriteToDotFile(
                 loader,
-                repositoryPath: repositoryPath,
-                fileName: fileName,
-                pickStrategy: pickStrategy);
-            ConvertTo(repositoryPath, fileName: fileName, format: "svg");
-            ConvertTo(repositoryPath, fileName: fileName, format: "pdf");
+                repositoryPath,
+                fileName,
+                pickStrategy);
+            ConvertTo(repositoryPath, fileName, "svg");
+            ConvertTo(repositoryPath, fileName, "pdf");
         }
 
         private static void ConvertTo(string repositoryPath, string fileName, string format)
         {
-            string svgFileName = Path.ChangeExtension(fileName, extension: format);
-            string arguments = string.Format("{0} -T{2} -o{1}", fileName, arg1: svgFileName, arg2: format);
+            string svgFileName = Path.ChangeExtension(fileName, format);
+            string arguments = string.Format("{0} -T{2} -o{1}", fileName, svgFileName, format);
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.Arguments = arguments;
             psi.FileName = DotPath;
@@ -153,7 +153,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IBranchingStrategy bs = new CommonFlowBranchingStrategy();
             // Try to distribute the nodes among the branches,
             // according to the branching strategy.
-            IBranchAssumer ba = new BranchAssumer(bs, pickStrategy: pickStrategy);
+            IBranchAssumer ba = new BranchAssumer(bs, pickStrategy);
             IAssumedGraph assumedGraph = ba.AssumeTheBranchGraph(allNodes);
             INodeCleaner cleaner = new NodeCleaner();
             SimplificationOptions options = new SimplificationOptions
@@ -162,14 +162,14 @@ namespace Prigitsk.Console.Verbs.Draw
                 AggressivelyRemoveFirstBranchNodes = true,
                 LeaveNodesAfterLastMerge = false
             };
-            cleaner.CleanUpGraph(assumedGraph, options: options);
+            cleaner.CleanUpGraph(assumedGraph, options);
             // Write the graph.
             // TODO: extract from git remote -v?
             ITreeWriter writer
                 = new TreeWriter(@"https://github.com/torvalds/linux");
-            string graphContent = writer.GenerateGraph(assumedGraph, branchingStrategy: bs);
-            string dotpath = Path.Combine(repositoryPath, path2: fileName);
-            File.WriteAllText(dotpath, contents: graphContent);
+            string graphContent = writer.GenerateGraph(assumedGraph, bs);
+            string dotpath = Path.Combine(repositoryPath, fileName);
+            File.WriteAllText(dotpath, graphContent);
         }
     }
 }

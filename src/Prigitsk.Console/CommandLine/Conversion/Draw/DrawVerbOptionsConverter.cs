@@ -15,9 +15,9 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
         {
             return new DrawRunnerOptions(
                 source.Repository,
-                target: source.Target,
-                output: source.Output,
-                format: source.Format);
+                source.Target,
+                source.Output,
+                source.Format);
         }
     }
 }
