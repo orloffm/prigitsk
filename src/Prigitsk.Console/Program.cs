@@ -19,6 +19,16 @@ namespace Prigitsk.Console
     {
         private static int Main(string[] args)
         {
+            IContainer container = PrepareContainer();
+
+            IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
+            int exitCode = exec.RunSafe(args);
+
+            return exitCode;
+        }
+
+        private static IContainer PrepareContainer()
+        {
             ContainerBuilder builder = new ContainerBuilder();
             // external
             builder.RegisterModule<NLoggerModule>();
@@ -32,6 +42,7 @@ namespace Prigitsk.Console
                 .InstancePerLifetimeScope();
             builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Draw).InstancePerLifetimeScope();
             builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Fetch).InstancePerLifetimeScope();
+
             builder.RegisterType<ConfigureVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Configure)
                 .InstancePerLifetimeScope();
             builder.RegisterType<DrawVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Draw)
@@ -43,11 +54,7 @@ namespace Prigitsk.Console
             builder.RegisterAssemblyTypes(typeof(NodeLoader).Assembly).AsImplementedInterfaces();
 
             IContainer container = builder.Build();
-
-            IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
-            int exitCode = exec.RunSafe(args);
-
-            return exitCode;
+            return container;
         }
     }
 }

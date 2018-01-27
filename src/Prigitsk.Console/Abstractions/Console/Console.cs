@@ -1,7 +1,4 @@
-﻿using System;
-using System.ServiceModel.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
+﻿using Microsoft.Extensions.Logging;
 using SysConsole = System.Console;
 
 namespace Prigitsk.Console.Abstractions.Console
@@ -31,14 +28,28 @@ namespace Prigitsk.Console.Abstractions.Console
             }
             else
             {
-                WriteLine(String.Format(format, arg));
+                WriteLine(string.Format(format, arg));
             }
         }
 
         public void WriteLine(string text)
         {
-                SysConsole.WriteLine(text);
+            SysConsole.WriteLine(text);
             LogWritten(text);
+        }
+
+        public void Write(string text)
+        {
+            SysConsole.Write(text);
+            LogWritten(text);
+        }
+
+        public string ReadLine()
+        {
+            _log.Log(_level, $"Console in starting...");
+            string text = SysConsole.ReadLine();
+            _log.Log(_level, $"Console in: {text}");
+            return text;
         }
 
         private void LogWritten(string text)

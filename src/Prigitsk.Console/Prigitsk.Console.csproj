@@ -107,6 +107,10 @@
     <Compile Include="CommandLine\Parsing\IVerbOptions.cs" />
     <Compile Include="CommandLine\Conversion\IVerbOptionsConverter.cs" />
     <Compile Include="CommandLine\Conversion\VerbOptionsConverterBase.cs" />
+    <Compile Include="General\Programs\ExternalApp.cs" />
+    <Compile Include="General\Programs\ExternalAppInfo.cs" />
+    <Compile Include="General\Programs\ExternalAppPathProvider.cs" />
+    <Compile Include="General\Programs\IExternalAppPathProvider.cs" />
     <Compile Include="Tools\ExeInformer.cs" />
     <Compile Include="Abstractions\IWindowsEnvironment.cs" />
     <Compile Include="Tools\IExeInformer.cs" />

@@ -1,51 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq.Expressions;
-using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.Console;
 using Prigitsk.Console.Abstractions.Settings;
-using Prigitsk.Console.Tools;
+using Prigitsk.Console.General.Programs;
 
 namespace Prigitsk.Console.Verbs.Configure
 {
     public class ConfigureRunner : VerbRunnerBase<IConfigureRunnerOptions>, IConfigureRunner
     {
-        private readonly IFileSystem _fileSystem;
-        private readonly ISettingsWrapper _settings;
+        private const string CleanSettingString = ".";
+        private readonly IExternalAppPathProvider _appPathProvider;
         private readonly IConsole _console;
-        private readonly IExeInformer _exeInformer;
+        private readonly IFileSystem _fileSystem;
 
-        public ConfigureRunner(IConfigureRunnerOptions options, IFileSystem fileSystem, ISettingsWrapper settings, IConsoleFactory consoleFactory, IExeInformer exeInformer, ILogger log) : base(
+        public ConfigureRunner(
+            IConfigureRunnerOptions options,
+            IExternalAppPathProvider appPathProvider,
+            IFileSystem fileSystem,
+            IConsoleFactory consoleFactory,
+            ILogger log) : base(
             options,
             log)
         {
+            _appPathProvider = appPathProvider;
             _fileSystem = fileSystem;
-            _settings = settings;
             _console = consoleFactory.Create();
-            _exeInformer = exeInformer;
         }
 
         protected override void RunInternal()
         {
-            AskForExe("Git", "git.exe", s => s.GitPath);
-            AskForExe("GraphViz", "graphviz.exe", s => s.GraphVizPath);
+            bool allGood = true;
+            foreach (ExternalApp p in _appPathProvider.EnumerateApps())
+            {
+                bool isOkNow = AskFor(p);
+                allGood &= isOkNow;
+            }
+
+            if (allGood)
+            {
+                _console.WriteLine("All values set successfully.");
+            }
+            else
+            {
+                _console.WriteLine(
+                    "Some of the values were not set successfully. Please rerun the configuration before using the application.");
+            }
         }
 
-        private void AskForExe(string appTitle, string exeName, Expression<Func<ISettingsWrapper, string>> propertyExpression)
+        private bool AskFor(ExternalApp externalApp)
         {
-            _console.WriteLine("Path to {0} application ({1}).", appTitle, exeName);
+            ExternalAppInfo info = _appPathProvider.GetAppInformation(externalApp);
 
-            MemberExpression memberExpression = propertyExpression.Body as MemberExpression;
-            PropertyInfo propertyInfo = memberExpression.Member as PropertyInfo;
-            string currentPath = propertyInfo.GetValue(_settings) as string;
-            bool currentPathSet = !String.IsNullOrWhiteSpace(currentPath);
-            _console.WriteLine("Current explicit path: {0}", ToStringOr(currentPath, "not set", currentPathSet));
-            bool currentPathExists = currentPathSet && _fileSystem.File.Exists(currentPath);
-            if (currentPathSet)
+            _console.WriteLine("Path to {0} application ({1}).", info.Title, info.ExeName);
+
+            // Info about default app.
+            _console.WriteLine("System app path: {0}", ToStringOr(info.FallbackPath, "not found"));
+
+            // Info about app set in settings.
+            _console.WriteLine("Current explicit path: {0}", ToStringOr(info.SettingsPath, "not set"));
+            if (info.SettingsPathIsSet)
             {
-                if (currentPathExists)
+                if (info.SettingsPathExists)
                 {
                     _console.WriteLine("The specified file exists.");
                 }
@@ -55,44 +72,89 @@ namespace Prigitsk.Console.Verbs.Configure
                 }
             }
 
-            string autoPath;
-            bool autoPathExists = _exeInformer.TryFindFullPath(exeName, out autoPath);
-            _console.WriteLine("Fallback path: {0}", ToStringOr(currentPath, "not found", autoPathExists));
+            bool appIsUsableAfterwards = false;
+            bool enteredCorrectly = false;
+            while (!enteredCorrectly)
+            {
+                enteredCorrectly = QueryAndUpdateSettingsValue(info, out appIsUsableAfterwards);
+                if (!enteredCorrectly)
+                {
+                    _console.WriteLine("The entered path is not valid.");
+                }
+            }
 
-            bool mustSet = !currentPathExists && !autoPathExists;
-            string result = AskForValue(mustSet);
-
-            //string value;
-            //argsDic.TryGetValue(key, out value);
-            //if (String.IsNullOrEmpty(value))
-            //{
-            //    value = propertyInfo.GetValue(settings) as string;
-            //}
-            //else
-            //{
-            //    propertyInfo.SetValue(settings, value);
-            //}
-
-            //if (String.IsNullOrEmpty(value))
-            //{
-            //    log.ErrorFormat("No {0} known. Please specify it as /{0}=\"abc\" in the command line.", key);
-            //    return false;
-            //}
-            //else
-            //{
-            //    log.DebugFormat("Using {0}={1}.", key, value);
-            //    return true;
-            //}
-        }
-         
-        private string AskForValue(bool mustSet)
-        {
-            throw new NotImplementedException();
+            return appIsUsableAfterwards;
         }
 
-        private string ToStringOr(string currentPath, string fallbackValue, bool? explicitlyConfirm = null)
+        private bool QueryAndUpdateSettingsValue(ExternalAppInfo info, out bool appIsUsableAfterwards)
         {
-            bool shouldFallback = (explicitlyConfirm == false) || string.IsNullOrWhiteSpace(currentPath);
+            string enteredValue = WriteInvitationAndPerformQuery(info);
+
+            bool enteredCorrectly = ProcessEnteredValue(enteredValue, info, out appIsUsableAfterwards);
+
+            return enteredCorrectly;
+        }
+
+        private bool ProcessEnteredValue(string enteredValue, ExternalAppInfo info, out bool appIsUsableAfterwards)
+        {
+            bool enteredCorrectly = true;
+
+            if (string.IsNullOrWhiteSpace(enteredValue))
+            {
+                // User wants to use the current value.
+                // So no changes to settings.
+
+                // We're good if we have the fallback
+                appIsUsableAfterwards = info.UsableApplicationIsPresent;
+            }
+            else if (enteredValue == CleanSettingString)
+            {
+                // Users wants to clean the set value.
+                _appPathProvider.SetSettingsPathFor(info.App, string.Empty);
+
+                // Can we use the system one?
+                appIsUsableAfterwards = info.FallbackPathExists;
+            }
+            else
+            {
+                // Something specific was entered.
+                string fullPath = _fileSystem.Path.GetFullPath(enteredValue);
+                enteredCorrectly = _fileSystem.File.Exists(fullPath);
+
+                if (enteredCorrectly)
+                {
+                    _appPathProvider.SetSettingsPathFor(info.App, fullPath);
+                }
+
+                appIsUsableAfterwards = enteredCorrectly;
+            }
+
+            return enteredCorrectly;
+        }
+
+        private string WriteInvitationAndPerformQuery(ExternalAppInfo info)
+        {
+            // General invitation.
+            _console.WriteLine($"Please enter the full path to {info.ExeName}.");
+            if (info.FallbackPathExists)
+            {
+                _console.WriteLine($"(Enter {CleanSettingString} to use system app.)");
+            }
+
+            // We may omit this if there is something right now.
+            if (info.UsableApplicationIsPresent)
+            {
+                _console.WriteLine("(Skip to keep the current setting.)");
+            }
+
+            _console.Write("> ");
+            string enteredValue = _console.ReadLine();
+            return enteredValue;
+        }
+
+        private string ToStringOr(string currentPath, string fallbackValue)
+        {
+            bool shouldFallback = string.IsNullOrWhiteSpace(currentPath);
             if (shouldFallback)
             {
                 return $"<{fallbackValue}>";

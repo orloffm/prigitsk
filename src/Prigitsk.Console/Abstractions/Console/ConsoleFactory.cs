@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Prigitsk.Console.Abstractions.Console
 {
-    public  class ConsoleFactory : IConsoleFactory
+    public class ConsoleFactory : IConsoleFactory
     {
         private readonly Func<LogLevel?, IConsole> _consoleMaker;
 
