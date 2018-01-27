@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Properties;
 
-namespace Prigitsk.Console.Settings
+namespace Prigitsk.Console.Abstractions.Settings
 {
     internal class SettingsWrapper : ISettingsWrapper
     {

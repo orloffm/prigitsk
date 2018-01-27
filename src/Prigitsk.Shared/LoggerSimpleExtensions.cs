@@ -54,5 +54,15 @@ namespace Prigitsk
         {
             logger.LogWarning(message, args);
         }
+
+        public static void Log(this ILogger logger, LogLevel? level, string message, params object[] args)
+        {
+            if (level == null)
+            {
+                return;
+            }
+
+            logger.Log(level.Value, 0, string.Format(message, args), null, (s, ex) => s);
+        }
     }
 }

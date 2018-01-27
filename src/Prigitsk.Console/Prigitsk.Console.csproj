@@ -91,6 +91,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\Console\Console.cs" />
+    <Compile Include="Abstractions\Console\ConsoleFactory.cs" />
+    <Compile Include="Abstractions\Console\IConsole.cs" />
+    <Compile Include="Abstractions\Console\IConsoleFactory.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\CommandLineParseResult.cs" />
     <Compile Include="CommandLine\Parsing\ConfigureOptions.cs" />
@@ -118,8 +122,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AppSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Settings\ISettingsWrapper.cs" />
-    <Compile Include="Settings\SettingsWrapper.cs" />
+    <Compile Include="Abstractions\Settings\ISettingsWrapper.cs" />
+    <Compile Include="Abstractions\Settings\SettingsWrapper.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />
