@@ -15,7 +15,7 @@ namespace Prigitsk.Console.Verbs
 
         public void Run()
         {
-            Log.Trace("Starting run.");
+            Log.Info($"Running {GetType().Name}...");
 
             RunInternal();
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO.Abstractions;
-using System.Linq.Expressions;
+﻿using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.Console;
-using Prigitsk.Console.Abstractions.Settings;
 using Prigitsk.Console.General.Programs;
 
 namespace Prigitsk.Console.Verbs.Configure
@@ -53,7 +50,7 @@ namespace Prigitsk.Console.Verbs.Configure
         {
             ExternalAppInfo info = _appPathProvider.GetAppInformation(externalApp);
 
-            _console.WriteLine("Path to {0} application ({1}).", info.Title, info.ExeName);
+            _console.WriteLine("=== Path to {0} application ({1}) ===", info.Title, info.ExeName);
 
             // Info about default app.
             _console.WriteLine("System app path: {0}", ToStringOr(info.FallbackPath, "not found"));
@@ -113,17 +110,36 @@ namespace Prigitsk.Console.Verbs.Configure
                 _appPathProvider.SetSettingsPathFor(info.App, string.Empty);
 
                 // Can we use the system one?
-                appIsUsableAfterwards = info.FallbackPathExists;
+                if (info.FallbackPathExists)
+                {
+                    appIsUsableAfterwards = true;
+                    _console.WriteLine("The system app will be used.");
+                }
+                else
+                {
+                    appIsUsableAfterwards = false;
+                }
             }
             else
             {
-                // Something specific was entered.
-                string fullPath = _fileSystem.Path.GetFullPath(enteredValue);
-                enteredCorrectly = _fileSystem.File.Exists(fullPath);
+                string fullPath = null;
+                try
+                {
+                    enteredValue = enteredValue.Trim(' ', '"');
 
+                    fullPath = _fileSystem.Path.GetFullPath(enteredValue);
+                    enteredCorrectly = _fileSystem.File.Exists(fullPath);
+                }
+                catch
+                {
+                    enteredCorrectly = false;
+                }
+
+                // Something specific was entered.
                 if (enteredCorrectly)
                 {
                     _appPathProvider.SetSettingsPathFor(info.App, fullPath);
+                    _console.WriteLine($"{fullPath} will be used.");
                 }
 
                 appIsUsableAfterwards = enteredCorrectly;

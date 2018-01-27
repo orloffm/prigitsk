@@ -19,6 +19,9 @@ namespace Prigitsk.Console
     {
         private static int Main(string[] args)
         {
+            //LogManager.LoadConfiguration("nlog.config");
+            //Logger logger = LogManager.GetCurrentClassLogger();
+            //logger.Info("ABC");
             IContainer container = PrepareContainer();
 
             IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();

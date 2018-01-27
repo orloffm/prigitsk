@@ -12,9 +12,9 @@ namespace Prigitsk.Console.General.Programs
 {
     public class ExternalAppPathProvider : IExternalAppPathProvider
     {
-        private static readonly Dictionary<ExternalApp, string> _titles;
-        private static readonly Dictionary<ExternalApp, string> _exeNames;
-        private static readonly Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>> _settingsProps;
+        private static readonly Dictionary<ExternalApp, string> Titles;
+        private static readonly Dictionary<ExternalApp, string> ExeNames;
+        private static readonly Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>> SettingsProps;
         private readonly IExeInformer _exeInformer;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger _log;
@@ -22,17 +22,17 @@ namespace Prigitsk.Console.General.Programs
 
         static ExternalAppPathProvider()
         {
-            _titles = new Dictionary<ExternalApp, string>
+            Titles = new Dictionary<ExternalApp, string>
             {
                 {ExternalApp.Git, "Git"},
                 {ExternalApp.GraphViz, "GraphViz"}
             };
-            _exeNames = new Dictionary<ExternalApp, string>
+            ExeNames = new Dictionary<ExternalApp, string>
             {
                 {ExternalApp.Git, "git.exe"},
-                {ExternalApp.GraphViz, "graphviz.exe"}
+                {ExternalApp.GraphViz, "dot.exe"}
             };
-            _settingsProps = new Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>>
+            SettingsProps = new Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>>
             {
                 {ExternalApp.Git, w => w.GitPath},
                 {ExternalApp.GraphViz, w => w.GraphVizPath}
@@ -60,7 +60,7 @@ namespace Prigitsk.Console.General.Programs
             }
 
             string fallbackPath;
-            string exeName = _exeNames[app];
+            string exeName = ExeNames[app];
             bool fallbackPathExists = _exeInformer.TryFindFullPath(exeName, out fallbackPath);
             if (fallbackPathExists)
             {
@@ -68,10 +68,8 @@ namespace Prigitsk.Console.General.Programs
             }
 
             // Fail.
-            string message =
-                $"Cannot find path for {app}. Please configure application by running it with {VerbConstants.Configure} option.";
-            _log.Fatal(message);
-            throw new LoggedAsFatalException(message);
+            string message = $"Cannot find path for {Titles[app]}. Please configure application by running it with {VerbConstants.Configure} option.";
+            throw new Exception(message);
         }
 
         public IEnumerable<ExternalApp> EnumerateApps()
@@ -84,12 +82,12 @@ namespace Prigitsk.Console.General.Programs
             string settingsPath = GetFullSettingsPathFor(app);
             bool settingsPathExists = _fileSystem.File.Exists(settingsPath);
             string fallbackPath;
-            string exeName = _exeNames[app];
+            string exeName = ExeNames[app];
             bool fallbackPathExists = _exeInformer.TryFindFullPath(exeName, out fallbackPath);
 
             return new ExternalAppInfo(
                 app,
-                _titles[app],
+                Titles[app],
                 exeName,
                 settingsPath,
                 settingsPathExists,
@@ -121,7 +119,7 @@ namespace Prigitsk.Console.General.Programs
 
         private static PropertyInfo GetPropertyInfo(ExternalApp app)
         {
-            MemberExpression memberExpression = (MemberExpression) _settingsProps[app].Body;
+            MemberExpression memberExpression = (MemberExpression) SettingsProps[app].Body;
             PropertyInfo propertyInfo = (PropertyInfo) memberExpression.Member;
             return propertyInfo;
         }
