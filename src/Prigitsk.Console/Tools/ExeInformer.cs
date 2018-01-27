@@ -1,14 +1,15 @@
-﻿using System.IO.Abstractions;
+﻿using System;
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.Registry;
 
-namespace Prigitsk.Console.Abstractions
+namespace Prigitsk.Console.Tools
 {
     public class ExeInformer : IExeInformer
     {
         private readonly IFileSystem _fileSystem;
-        private readonly IRegistry _registry;
         private readonly ILogger _log;
+        private readonly IRegistry _registry;
 
         public ExeInformer(IFileSystem fileSystem, IRegistry registry, ILogger log)
         {
@@ -24,11 +25,13 @@ namespace Prigitsk.Console.Abstractions
             {
                 return true;
             }
+
             // Exists in registry?
             if (TryFindInRegistry(exeName, out fullPath))
             {
                 return true;
             }
+
             // Exists in PATH?
             if (TryFindInPathVariable(exeName, out fullPath))
             {
@@ -41,7 +44,7 @@ namespace Prigitsk.Console.Abstractions
 
         private bool TryFindInPathVariable(string exeName, out string fullPath)
         {
-            string path = System.Environment.GetEnvironmentVariable("path");
+            string path = Environment.GetEnvironmentVariable("path");
             string[] folders = path.Split(';');
             foreach (string dir in folders)
             {
@@ -65,19 +68,19 @@ namespace Prigitsk.Console.Abstractions
             const string keyBase = @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths";
             string expectedKey = string.Format(@"{0}\{1}", keyBase, exeName);
 
-            var hklm = _registry.LocalMachine;
-          var fileKey =  hklm.OpenSubKey(expectedKey);
+            IRegistryKey hklm = _registry.LocalMachine;
+            IRegistryKey fileKey = hklm.OpenSubKey(expectedKey);
             if (fileKey == null)
             {
                 return false;
             }
 
-            object result ;
+            object result;
             try
             {
-result = fileKey.GetValue(string.Empty);
+                result = fileKey.GetValue(string.Empty);
             }
-           finally
+            finally
             {
                 fileKey.Close();
             }
@@ -91,7 +94,10 @@ result = fileKey.GetValue(string.Empty);
             bool exists = _fileSystem.File.Exists(suggestedPath);
             if (!exists)
             {
-                _log.Debug("{0} was specified in registry to be located at {1}, but it wasn't found there.", exeName, suggestedPath);
+                _log.Debug(
+                    "{0} was specified in registry to be located at {1}, but it wasn't found there.",
+                    exeName,
+                    suggestedPath);
                 return false;
             }
 
@@ -100,7 +106,7 @@ result = fileKey.GetValue(string.Empty);
             return true;
         }
 
-    private bool TryFindLocally(string exeName, out string fullPath)
+        private bool TryFindLocally(string exeName, out string fullPath)
         {
             string dir = _fileSystem.Directory.GetCurrentDirectory();
             string localPath = _fileSystem.Path.Combine(dir, exeName);

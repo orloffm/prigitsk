@@ -103,9 +103,9 @@
     <Compile Include="CommandLine\Parsing\IVerbOptions.cs" />
     <Compile Include="CommandLine\Conversion\IVerbOptionsConverter.cs" />
     <Compile Include="CommandLine\Conversion\VerbOptionsConverterBase.cs" />
-    <Compile Include="Abstractions\ExeInformer.cs" />
+    <Compile Include="Tools\ExeInformer.cs" />
     <Compile Include="Abstractions\IWindowsEnvironment.cs" />
-    <Compile Include="Abstractions\IExeInformer.cs" />
+    <Compile Include="Tools\IExeInformer.cs" />
     <Compile Include="Abstractions\Registry\IRegistry.cs" />
     <Compile Include="Abstractions\Registry\IRegistryKey.cs" />
     <Compile Include="Abstractions\Registry\Registry.cs" />

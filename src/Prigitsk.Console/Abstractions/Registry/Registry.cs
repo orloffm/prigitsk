@@ -1,11 +1,7 @@
-﻿
-namespace Prigitsk.Console.Abstractions.Registry
+﻿namespace Prigitsk.Console.Abstractions.Registry
 {
     public class Registry : IRegistry
     {
-        public IRegistryKey LocalMachine
-        {
-            get { return RegistryKey.Wrap(Microsoft.Win32.Registry.LocalMachine); }
-        }
+        public IRegistryKey LocalMachine => RegistryKey.Wrap(Microsoft.Win32.Registry.LocalMachine);
     }
 }
