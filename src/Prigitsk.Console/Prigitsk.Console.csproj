@@ -68,6 +68,9 @@
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Abstractions, Version=2.1.0.178, Culture=neutral, PublicKeyToken=96bf224d23c43e59, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Abstractions.2.1.0.178\lib\net40\System.IO.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO.Compression, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
@@ -100,8 +103,23 @@
     <Compile Include="CommandLine\Parsing\IVerbOptions.cs" />
     <Compile Include="CommandLine\Conversion\IVerbOptionsConverter.cs" />
     <Compile Include="CommandLine\Conversion\VerbOptionsConverterBase.cs" />
+    <Compile Include="Abstractions\ExeInformer.cs" />
+    <Compile Include="Abstractions\IWindowsEnvironment.cs" />
+    <Compile Include="Abstractions\IExeInformer.cs" />
+    <Compile Include="Abstractions\Registry\IRegistry.cs" />
+    <Compile Include="Abstractions\Registry\IRegistryKey.cs" />
+    <Compile Include="Abstractions\Registry\Registry.cs" />
+    <Compile Include="Abstractions\Registry\RegistryKey.cs" />
+    <Compile Include="Abstractions\WindowsEnvironment.cs" />
     <Compile Include="General\VerbConstants.cs" />
     <Compile Include="General\VerbHelper.cs" />
+    <Compile Include="Properties\AppSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AppSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\ISettingsWrapper.cs" />
+    <Compile Include="Settings\SettingsWrapper.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />
@@ -137,6 +155,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="Properties\AppSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AppSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj">
@@ -152,8 +174,6 @@
       <Name>Prigitsk.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Settings\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
