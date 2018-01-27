@@ -7,19 +7,19 @@ namespace Prigitsk.Core.Nodes.Loading
 {
     public class NodeLoader : INodeLoader
     {
-        private const string GitPath = @"C:\Program Files\Git\bin\git.exe";
-
         private const string InsDelRegexString =
             @"changed(?:, (?<ins>\d+) insertions\(\+\))?(?:, (?<del>\d+) deletions\(\-\))?";
 
         private readonly IProcessRunner _processRunner;
+        private readonly string _gitPath;
 
         private readonly Regex InsDelRegex;
         private string _result;
 
-        public NodeLoader(IProcessRunner processRunner)
+        public NodeLoader(IProcessRunner processRunner, string gitPath)
         {
             _processRunner = processRunner;
+            _gitPath = gitPath;
             InsDelRegex = new Regex(InsDelRegexString);
         }
 
@@ -36,7 +36,7 @@ namespace Prigitsk.Core.Nodes.Loading
             // const string extractionCommand = @"—git-dir ""{0
             // —dense —all —format=format:,,,,%h|%p|%d,,",,;
             string gitCommand = string.Format(extractionCommand, gitSubDirectory);
-            _result = _processRunner.Execute(GitPath, gitCommand);
+            _result = _processRunner.Execute(_gitPath, gitCommand);
             //	_result = @"A|||1
             //B|A|origin/master|2
             //C|A||3

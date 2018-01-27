@@ -68,7 +68,8 @@ namespace Prigitsk.Console.General.Programs
             }
 
             // Fail.
-            string message = $"Cannot find path for {Titles[app]}. Please configure application by running it with {VerbConstants.Configure} option.";
+            string message =
+                $"Cannot find path for {Titles[app]}. Please configure application by running it with {VerbConstants.Configure} option.";
             throw new Exception(message);
         }
 

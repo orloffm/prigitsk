@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Logging;
+using Prigitsk.Console.General.Programs;
 using Prigitsk.Core;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.Graph.Making;
@@ -15,11 +16,12 @@ namespace Prigitsk.Console.Verbs.Draw
 {
     public class DrawRunner : VerbRunnerBase<IDrawRunnerOptions>, IDrawRunner
     {
-        private const string DotPath = @"C:\apps\graphviz\dot.exe";
+        private readonly IExternalAppPathProvider _appPathProvider;
 
-        public DrawRunner(IDrawRunnerOptions options, ILogger log)
+        public DrawRunner(IDrawRunnerOptions options, IExternalAppPathProvider appPathProvider, ILogger log)
             : base(options, log)
         {
+            _appPathProvider = appPathProvider;
         }
 
         protected override void RunInternal()
@@ -31,7 +33,8 @@ namespace Prigitsk.Console.Verbs.Draw
             string repositoryPath = FindRepositoryPath();
             string gitSubDirectory = Path.Combine(repositoryPath, ".git");
             IProcessRunner processRunner = new ProcessRunner();
-            INodeLoader loader = new NodeLoader(processRunner);
+            string gitPath = _appPathProvider.GetProperAppPath(ExternalApp.Git);
+            INodeLoader loader = new NodeLoader(processRunner, gitPath);
             loader.LoadFrom(gitSubDirectory, extractOptions);
             string writeTo = Path.Combine(repositoryPath, "bin");
             Directory.CreateDirectory(writeTo);
@@ -56,12 +59,12 @@ namespace Prigitsk.Console.Verbs.Draw
             }
         }
 
-        internal static bool PickAll(Pointer b)
+        internal bool PickAll(Pointer b)
         {
             return true;
         }
 
-        internal static bool PickNoTags(Pointer b)
+        internal bool PickNoTags(Pointer b)
         {
             if (b is Tag)
             {
@@ -71,7 +74,7 @@ namespace Prigitsk.Console.Verbs.Draw
             return PickAll(b);
         }
 
-        internal static bool PickSimplified(Pointer b)
+        internal bool PickSimplified(Pointer b)
         {
             string label = b.Label.ToLower();
             if (b is Tag)
@@ -97,7 +100,7 @@ namespace Prigitsk.Console.Verbs.Draw
             return false;
         }
 
-        private static string FindRepositoryPath()
+        private string FindRepositoryPath()
         {
             DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
             while (true)
@@ -116,7 +119,7 @@ namespace Prigitsk.Console.Verbs.Draw
             }
         }
 
-        private static void WriteToFileAndMakeSvg(
+        private void WriteToFileAndMakeSvg(
             INodeLoader loader,
             string repositoryPath,
             string fileName,
@@ -131,18 +134,18 @@ namespace Prigitsk.Console.Verbs.Draw
             ConvertTo(repositoryPath, fileName, "pdf");
         }
 
-        private static void ConvertTo(string repositoryPath, string fileName, string format)
+        private void ConvertTo(string repositoryPath, string fileName, string format)
         {
             string svgFileName = Path.ChangeExtension(fileName, format);
             string arguments = string.Format("{0} -T{2} -o{1}", fileName, svgFileName, format);
             ProcessStartInfo psi = new ProcessStartInfo();
             psi.Arguments = arguments;
-            psi.FileName = DotPath;
+            psi.FileName = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
             psi.WorkingDirectory = repositoryPath;
             Process.Start(psi);
         }
 
-        private static void WriteToDotFile(
+        private void WriteToDotFile(
             INodeLoader loader,
             string repositoryPath,
             string fileName,
