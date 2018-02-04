@@ -1,11 +1,14 @@
 const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   template: './src/index.html',
   filename: 'index.html',
   inject: 'body'
-})
+});
+const ExtractTextPluginConfig = new ExtractTextPlugin("styles.css");
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -28,7 +31,15 @@ module.exports = {
             { test: /\.tsx?$/, loader: "awesome-typescript-loader", exclude: /node_modules/ },
 
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-             { enforce: "pre", test: /\.js$/, loader: "source-map-loader", exclude: /node_modules/ },
+            { test: /\.js$/, enforce: "pre", loader: "source-map-loader", exclude: /node_modules/ },
+
+            {
+                test:/\.css$/, 
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader"
+                })
+            },
 
             // { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
       
@@ -45,5 +56,5 @@ module.exports = {
     //     "react-dom": "ReactDOM"
     // },
 
-    plugins: [HtmlWebpackPluginConfig]
+    plugins: [HtmlWebpackPluginConfig, ExtractTextPluginConfig]
 };
