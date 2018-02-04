@@ -36,8 +36,8 @@ module.exports = {
             {
                 test:/\.css$/, 
                 use: ExtractTextPlugin.extract({
-                    fallback: "style-loader",
-                    use: "css-loader"
+                    fallback: 'style-loader',
+                    use: 'typings-for-css-modules-loader?modules&namedExport&camelCase'
                 })
             },
 
@@ -56,5 +56,12 @@ module.exports = {
     //     "react-dom": "ReactDOM"
     // },
 
-    plugins: [HtmlWebpackPluginConfig, ExtractTextPluginConfig]
+    plugins: [
+        HtmlWebpackPluginConfig,
+        ExtractTextPluginConfig,
+        // Ignores .d.ts files for typescript
+        new webpack.WatchIgnorePlugin([
+            /css\.d\.ts$/
+          ])
+    ]
 };
