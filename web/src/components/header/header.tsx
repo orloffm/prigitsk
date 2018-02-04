@@ -1,13 +1,12 @@
 import * as React from "react";
+import { InputForm } from "./inputForm";
 
-export interface HeaderProps { }
+type HeaderProps = { };
 
 export class Header extends React.Component<HeaderProps, {}> {
     render() {
         return (
-            <div>
-                Hello world!
-            </div>
+           <InputForm/>
         );
     }
 }

@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as styles from '../prigitsk.css';
 
-import { Header } from "./header";
+import { Header } from "./header/header";
 import { Viewport } from "./viewport";
 import { Options } from "./options";
 import { Footer } from "./footer";
