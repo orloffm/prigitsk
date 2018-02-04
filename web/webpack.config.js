@@ -1,4 +1,5 @@
 const path = require('path');
+var webpack = require('webpack');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
@@ -8,7 +9,13 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
   filename: 'index.html',
   inject: 'body'
 });
-const ExtractTextPluginConfig = new ExtractTextPlugin("styles.css");
+const ExtractTextPluginConfig = new ExtractTextPlugin(
+    "styles.css"
+);
+const WatchIgnorePluginConfig = new webpack.WatchIgnorePlugin([
+    /css\.d\.ts$/
+]);
+
 
 module.exports = {
     entry: "./src/index.tsx",
@@ -28,10 +35,19 @@ module.exports = {
     module: {
         rules: [
             // All files with a '.ts' or '.tsx' extension will be handled by 'awesome-typescript-loader'.
-            { test: /\.tsx?$/, loader: "awesome-typescript-loader", exclude: /node_modules/ },
+            {
+                test: /\.tsx?$/,
+                loader: "awesome-typescript-loader",
+                exclude: /node_modules/
+            },
 
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-            { test: /\.js$/, enforce: "pre", loader: "source-map-loader", exclude: /node_modules/ },
+            {
+                test: /\.js$/,
+                enforce: "pre",
+                loader: "source-map-loader",
+                exclude: /node_modules/
+            },
 
             {
                 test:/\.css$/, 
@@ -57,11 +73,11 @@ module.exports = {
     // },
 
     plugins: [
+        // Injects .js and .css into html.
         HtmlWebpackPluginConfig,
+        // Saves .css to files.
         ExtractTextPluginConfig,
         // Ignores .d.ts files for typescript
-        new webpack.WatchIgnorePlugin([
-            /css\.d\.ts$/
-          ])
+        //WatchIgnorePluginConfig
     ]
 };

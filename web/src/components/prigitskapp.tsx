@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as styles from '../prigitsk.css';
+
 import { Header } from "./header";
 import { Viewport } from "./viewport";
 import { Options } from "./options";
@@ -16,11 +17,11 @@ export class PrigitskApp extends React.Component<PrigitskAppProps, {}> {
                 <div className={styles.prigitskHeader}>
                     <Header/>
                 </div>  
-                <div className={styles.prigitskViewport}>
-                   <Viewport/>
-                </div>  
                 <div className={styles.prigitskOptions}>
                    <Options/>
+                </div>  
+                <div className={styles.prigitskViewport}>
+                   <Viewport/>
                 </div>  
                 <div className={styles.prigitskFooter}>
                    <Footer/>
