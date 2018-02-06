@@ -27,5 +27,11 @@ namespace Prigitsk.Core.Tests.Nodes
             INode[] allNodes = tw.EnumerateAllParentsBreadthFirst(d, minimum: null).ToArray();
             Assert.Equal(new []{b, c, a}, allNodes);
         }
+
+        [Fact]
+        public void GivenTreeAndMinimumDate_ThenDoesNotGoBeyondIt()
+        {
+
+        }
     }
 }
