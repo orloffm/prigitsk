@@ -7,7 +7,7 @@ namespace Prigitsk.Core.Graph.Strategy
 {
     public sealed class CommonFlowBranchingStrategy : IBranchingStrategy
     {
-        private static readonly string[] _regexStrings =
+        private static readonly string[] RegexStrings =
         {
             "^master$",
             "^develop?",
@@ -22,7 +22,7 @@ namespace Prigitsk.Core.Graph.Strategy
         {
             var branchesLeftToBeSorted = new List<OriginBranch>(branchesEnumerable);
             BranchSorterByName branchSorterByName = new BranchSorterByName();
-            foreach (string regexString in _regexStrings)
+            foreach (string regexString in RegexStrings)
             {
                 Regex r = new Regex(regexString, RegexOptions.IgnoreCase);
                 var applicableTo = new List<OriginBranch>(branchesLeftToBeSorted.Count / 2);
@@ -71,7 +71,7 @@ namespace Prigitsk.Core.Graph.Strategy
             return ret;
         }
 
-        public string GetHTMLColorFor(OriginBranch branch)
+        public string GetHtmlColorFor(OriginBranch branch)
         {
             string label = branch.Label.ToLower();
             if (label == "master")

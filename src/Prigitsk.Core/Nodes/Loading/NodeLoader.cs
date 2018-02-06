@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Prigitsk.Core.Tools;
@@ -11,16 +12,18 @@ namespace Prigitsk.Core.Nodes.Loading
             @"changed(?:, (?<ins>\d+) insertions\(\+\))?(?:, (?<del>\d+) deletions\(\-\))?";
 
         private readonly IProcessRunner _processRunner;
+        private readonly INodeKeeperFactory _nodeKeeperFactory;
         private readonly string _gitPath;
 
-        private readonly Regex InsDelRegex;
+        private readonly Regex _insDelRegex;
         private string _result;
 
-        public NodeLoader(IProcessRunner processRunner, string gitPath)
+        public NodeLoader(IProcessRunner processRunner, INodeKeeperFactory nodeKeeperFactory, string gitPath)
         {
             _processRunner = processRunner;
+            _nodeKeeperFactory = nodeKeeperFactory;
             _gitPath = gitPath;
-            InsDelRegex = new Regex(InsDelRegexString);
+            _insDelRegex = new Regex(InsDelRegexString);
         }
 
         public void LoadFrom(
@@ -44,9 +47,9 @@ namespace Prigitsk.Core.Nodes.Loading
             //E|D|origin/develop|5";
         }
 
-        public Node[] GetNodesCollection()
+        public IEnumerable<INode> GetNodesCollection()
         {
-            INodeManager nm = new NodeManager();
+            INodeKeeper nm = _nodeKeeperFactory.CreateKeeper();
             string[] lines = _result.Split('\n');
             for (int index = 0; index < lines.Length;)
             {
@@ -94,7 +97,7 @@ namespace Prigitsk.Core.Nodes.Loading
                 }
             }
 
-            return nm.EnumerateNodes().ToArray();
+            return nm.EnumerateNodes();
         }
 
         private void ExtractValuesFromLine(
@@ -114,7 +117,7 @@ namespace Prigitsk.Core.Nodes.Loading
             time = long.Parse(cells[3]);
             if (lineStat != null)
             {
-                Match m = InsDelRegex.Match(lineStat);
+                Match m = _insDelRegex.Match(lineStat);
                 string insString = m.Groups["ins"].Value;
                 string delString = m.Groups["del"].Value;
                 int.TryParse(insString, out insertions);

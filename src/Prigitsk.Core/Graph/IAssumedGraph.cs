@@ -6,12 +6,12 @@ namespace Prigitsk.Core.Nodes
 {
     public interface IAssumedGraph
     {
-        bool AnyPointersAreSourcedFrom(Node currentNode);
-        IEnumerable<Node> EnumerateAllContainedNodes();
+        bool AnyPointersAreSourcedFrom(INode currentNode);
+        IEnumerable<INode> EnumerateAllContainedNodes();
 
-        IEnumerable<Node> EnumerateAllLeftOvers();
+        IEnumerable<INode> EnumerateAllLeftOvers();
 
-        IEnumerable<Node> EnumerateLeftOversWithoutBranchesAndTags();
+        IEnumerable<INode> EnumerateLeftOversWithoutBranchesAndTags();
 
         Tag[] GetAllTags();
 
@@ -19,26 +19,26 @@ namespace Prigitsk.Core.Nodes
 
         DateTime GetFirstNodeDate(OriginBranch branch);
 
-        Node[] GetNodesConsecutive(OriginBranch branch);
+        INode[] GetNodesConsecutive(OriginBranch branch);
 
         OriginBranch[] GetOrphanedBranches();
 
-        void RemoveNodeFromBranch(OriginBranch branch, Node node);
-        void RemoveNodeFromLeftOvers(Node n);
+        void RemoveNodeFromBranch(OriginBranch branch, INode node);
+        void RemoveNodeFromLeftOvers(INode n);
 
-        void SetBranchNodes(OriginBranch branch, IEnumerable<Node> consecutiveNodes);
+        void SetBranchNodes(OriginBranch branch, IEnumerable<INode> consecutiveNodes);
 
         // Leftovers.
 
-        void SetLeftOverNodes(IEnumerable<Node> nodes);
+        void SetLeftOverNodes(IEnumerable<INode> nodes);
 
         void SetTags(IEnumerable<Tag> allTags);
 
         // Branches.
 
-        IEnumerable<Node> EnumerateNodesUpTheBranch(Node nodeInQuestion);
-        IEnumerable<Node> EnumerateNodesDownTheBranch(Node nodeInQuestion);
-        OriginBranch GetBranch(Node node);
-        int GetIndexOnBranch(Node child);
+        IEnumerable<INode> EnumerateNodesUpTheBranch(INode nodeInQuestion);
+        IEnumerable<INode> EnumerateNodesDownTheBranch(INode nodeInQuestion);
+        OriginBranch GetBranch(INode node);
+        int GetIndexOnBranch(INode child);
     }
 }

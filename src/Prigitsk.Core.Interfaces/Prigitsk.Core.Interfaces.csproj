@@ -5,4 +5,9 @@
     <RootNamespace>Prigitsk.Core</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Graph\Making\" />
+    <Folder Include="Graph\Strategy\" />
+  </ItemGroup>
+
 </Project>

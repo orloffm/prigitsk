@@ -5,6 +5,6 @@ namespace Prigitsk.Core.Graph.Making
 {
     public interface IBranchAssumer
     {
-        IAssumedGraph AssumeTheBranchGraph(IEnumerable<Node> allNodes);
+        IAssumedGraph AssumeTheBranchGraph(IEnumerable<INode> allNodes);
     }
 }

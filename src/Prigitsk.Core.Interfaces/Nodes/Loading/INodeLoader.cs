@@ -1,8 +1,10 @@
-﻿namespace Prigitsk.Core.Nodes.Loading
+﻿using System.Collections.Generic;
+
+namespace Prigitsk.Core.Nodes.Loading
 {
     public interface INodeLoader
     {
-        Node[] GetNodesCollection();
+        IEnumerable<INode> GetNodesCollection();
 
         void LoadFrom(string gitSubDirectory, ExtractionOptions extractOptions);
     }

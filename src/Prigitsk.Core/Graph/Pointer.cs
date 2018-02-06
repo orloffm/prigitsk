@@ -4,13 +4,13 @@ namespace Prigitsk.Core.Graph
 {
     public abstract class Pointer
     {
-        protected Pointer(string label, Node source)
+        protected Pointer(string label, INode source)
         {
             Label = label;
             Source = source;
         }
 
-        public Node Source { get; }
+        public INode Source { get; }
         public string Label { get; }
 
         public static bool AreEqual(Pointer a, Pointer b)

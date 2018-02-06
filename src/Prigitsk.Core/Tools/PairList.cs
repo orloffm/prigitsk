@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Core.Tools
 {
-    public class PairList<T, U>
+    public class PairList<T, TU>
     {
-        private readonly Dictionary<T, HashSet<U>> _dic;
+        private readonly Dictionary<T, HashSet<TU>> _dic;
 
         public PairList()
         {
-            _dic = new Dictionary<T, HashSet<U>>();
+            _dic = new Dictionary<T, HashSet<TU>>();
         }
 
         public void Add(
             T key,
-            U value)
+            TU value)
         {
-            HashSet<U> sub;
+            HashSet<TU> sub;
             if (!_dic.TryGetValue(key, out sub))
             {
-                sub = new HashSet<U>();
+                sub = new HashSet<TU>();
                 _dic[key] = sub;
             }
 
@@ -28,9 +28,9 @@ namespace Prigitsk.Core.Tools
 
         public bool Contains(
             T key,
-            U value)
+            TU value)
         {
-            HashSet<U> sub;
+            HashSet<TU> sub;
             if (!_dic.TryGetValue(key, out sub))
             {
                 return false;
@@ -39,12 +39,12 @@ namespace Prigitsk.Core.Tools
             return sub.Contains(value);
         }
 
-        public IEnumerable<Tuple<T, U>> EnumerateItems()
+        public IEnumerable<Tuple<T, TU>> EnumerateItems()
         {
-            foreach (KeyValuePair<T, HashSet<U>> kvp in _dic)
+            foreach (KeyValuePair<T, HashSet<TU>> kvp in _dic)
             {
                 T key = kvp.Key;
-                foreach (U value in kvp.Value)
+                foreach (TU value in kvp.Value)
                 {
                     yield return Tuple.Create(key, value);
                 }

@@ -5,7 +5,7 @@ namespace Prigitsk.Core.Graph.Strategy
 {
     public interface IBranchingStrategy
     {
-        string GetHTMLColorFor(OriginBranch branch);
+        string GetHtmlColorFor(OriginBranch branch);
 
         IEnumerable<OriginBranch> SortByPriority(IEnumerable<OriginBranch> branchesEnumerable);
 

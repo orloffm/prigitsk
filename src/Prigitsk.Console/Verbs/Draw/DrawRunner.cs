@@ -34,7 +34,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string gitSubDirectory = Path.Combine(repositoryPath, ".git");
             IProcessRunner processRunner = new ProcessRunner();
             string gitPath = _appPathProvider.GetProperAppPath(ExternalApp.Git);
-            INodeLoader loader = new NodeLoader(processRunner, gitPath);
+            INodeLoader loader = new NodeLoader(processRunner, new NodeKeeperFactory(new TimeHelper(), new TreeManipulator()), gitPath);
             loader.LoadFrom(gitSubDirectory, extractOptions);
             string writeTo = Path.Combine(repositoryPath, "bin");
             Directory.CreateDirectory(writeTo);
@@ -151,14 +151,14 @@ namespace Prigitsk.Console.Verbs.Draw
             string fileName,
             Func<Pointer, bool> pickStrategy)
         {
-            Node[] allNodes = loader.GetNodesCollection();
+            var allNodes = loader.GetNodesCollection();
             // What branches we have.
             IBranchingStrategy bs = new CommonFlowBranchingStrategy();
             // Try to distribute the nodes among the branches,
             // according to the branching strategy.
-            IBranchAssumer ba = new BranchAssumer(bs, pickStrategy);
+            IBranchAssumer ba = new BranchAssumer(bs, new TreeWalker(),  pickStrategy);
             IAssumedGraph assumedGraph = ba.AssumeTheBranchGraph(allNodes);
-            INodeCleaner cleaner = new NodeCleaner();
+            INodeCleaner cleaner = new NodeCleaner(new TreeManipulator(), new TreeWalker());
             SimplificationOptions options = new SimplificationOptions
             {
                 PreventSimplification = false,

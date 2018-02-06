@@ -2,13 +2,13 @@
 
 namespace Prigitsk.Core.Nodes.Loading
 {
-    public interface INodeManager
+    public interface INodeKeeper
     {
         void AddChildren(
             string parentHash,
             string hash);
 
-        IEnumerable<Node> EnumerateNodes();
+        IEnumerable<INode> EnumerateNodes();
         void SetData(string hash, string caption, long time, int insertions, int deletions);
     }
 }

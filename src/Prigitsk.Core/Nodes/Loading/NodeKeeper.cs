@@ -1,20 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Core.Nodes.Loading
 {
-    public class NodeManager : INodeManager
+    public class NodeKeeper : INodeKeeper
     {
         private readonly Dictionary<string, Node> _nodes;
+        private readonly ITimeHelper _timeHelper;
+        private readonly ITreeManipulator _manipulator;
 
-        public NodeManager()
+        public NodeKeeper(ITimeHelper timeHelper, ITreeManipulator manipulator)
         {
             _nodes = new Dictionary<string, Node>();
+            _timeHelper = timeHelper;
+            _manipulator = manipulator;
         }
 
-        public IEnumerable<Node> EnumerateNodes()
+        public IEnumerable<INode> EnumerateNodes()
         {
-            return _nodes.Values;
+            return _nodes.Values.Cast<INode>();
         }
 
         public void SetData(
@@ -30,25 +36,17 @@ namespace Prigitsk.Core.Nodes.Loading
                 n.SetCaptions(caption);
             }
 
-            n.Time = UnixTimeStampToDateTime(time);
+            n.Time = _timeHelper.UnixTimeStampToDateTime(time);
             n.Insertions = insertions;
             n.Deletions = deletions;
         }
 
         public void AddChildren(string parentHash, string hash)
         {
-            Node child = GetOrCreate(hash);
-            Node parent = GetOrCreate(parentHash);
-            child.AddParent(parent);
+            INode child = GetOrCreate(hash);
+            INode parent = GetOrCreate(parentHash);
+            _manipulator.AddParent(child,parent);
             parent.Children.Add(child);
-        }
-
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
-        {
-            // Unix timestamp is seconds past epoch
-            DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
         }
 
         private Node GetOrCreate(string hash)

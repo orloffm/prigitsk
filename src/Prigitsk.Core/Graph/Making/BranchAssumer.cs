@@ -9,17 +9,19 @@ namespace Prigitsk.Core.Graph.Making
     public class BranchAssumer : IBranchAssumer
     {
         private readonly IBranchingStrategy _bs;
+        private readonly ITreeWalker _treeWalker;
         private readonly Func<Pointer, bool> _pickStrategy;
 
-        public BranchAssumer(IBranchingStrategy bs, Func<Pointer, bool> pickStrategy)
+        public BranchAssumer(IBranchingStrategy bs, ITreeWalker treeWalker, Func<Pointer, bool> pickStrategy)
         {
             _bs = bs;
+            _treeWalker = treeWalker;
             _pickStrategy = pickStrategy;
         }
 
-        public IAssumedGraph AssumeTheBranchGraph(IEnumerable<Node> nodesEnumerable)
+        public IAssumedGraph AssumeTheBranchGraph(IEnumerable<INode> nodesEnumerable)
         {
-            var unprocessedNodes = new HashSet<Node>(nodesEnumerable);
+            var unprocessedNodes = new HashSet<INode>(nodesEnumerable);
 
             // All origin branches and tags that we have.
             Pointer[] allPointers = GetAllOriginBranchesAndTags(unprocessedNodes)
@@ -36,7 +38,7 @@ namespace Prigitsk.Core.Graph.Making
             foreach (OriginBranch b in sortedBranches)
             {
                 var nodesInBranch = new List<Node>(unprocessedNodes.Count / 2);
-                IEnumerable<Node> upTheTree = b.Source.EnumerateFirstParentsUpTheTreeBranchAgnostic(true);
+                IEnumerable<INode> upTheTree =_treeWalker.EnumerateFirstParentsUpTheTreeBranchAgnostic( b.Source, true);
                 foreach (Node node in upTheTree)
                 {
                     if (!unprocessedNodes.Contains(node))
@@ -58,8 +60,9 @@ namespace Prigitsk.Core.Graph.Making
             return ret;
         }
 
-        private IEnumerable<Pointer> GetAllOriginBranchesAndTags(IEnumerable<Node> nodes)
+        private IEnumerable<Pointer> GetAllOriginBranchesAndTags(IEnumerable<INode> nodes)
         {
+            // TODO: continue interfaces extraction
             foreach (Node n in nodes)
             {
                 foreach (GitRef c in n.GitRefs)

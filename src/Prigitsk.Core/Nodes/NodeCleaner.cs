@@ -6,17 +6,26 @@ namespace Prigitsk.Core.Nodes
 {
     public class NodeCleaner : INodeCleaner
     {
+        private readonly ITreeManipulator _manipulator;
+        private readonly ITreeWalker _walker;
+
+        public NodeCleaner(ITreeManipulator manipulator, ITreeWalker walker)
+        {
+            _manipulator = manipulator;
+            _walker = walker;
+        }
+
         public void CleanUpGraph(
             IAssumedGraph graph,
             SimplificationOptions options)
         {
             // Remove nodes that are not used in the graph.
             // They are not needed.
-            Node[] leftOutNodes = graph.EnumerateLeftOversWithoutBranchesAndTags().ToArray();
+            INode[] leftOutNodes = graph.EnumerateLeftOversWithoutBranchesAndTags().ToArray();
             for (int index = 0; index < leftOutNodes.Length; index++)
             {
-                Node n = leftOutNodes[index];
-                n.RemoveItselfFromTheNodeGraph();
+                INode n = leftOutNodes[index];
+                _manipulator.RemoveItselfFromTheNodeGraph(n);
                 graph.RemoveNodeFromLeftOvers(n);
             }
 
@@ -36,14 +45,14 @@ namespace Prigitsk.Core.Nodes
         }
 
         private bool CleanUpChildEdges(
-            Node currentNode,
-            Node nextNode,
-            HashSet<Node> laterNodesInBranch,
+            INode currentNode,
+            INode nextNode,
+            ICollection<INode> laterNodesInBranch,
             IAssumedGraph graph)
         {
             bool removedAnything = false;
-            Node[] allChildren = currentNode.Children.ToArray();
-            foreach (Node child in allChildren)
+            INode[] allChildren = currentNode.Children.ToArray();
+            foreach (INode child in allChildren)
             {
                 if (child == nextNode)
                 {
@@ -64,7 +73,7 @@ namespace Prigitsk.Core.Nodes
                 // Remove edge to a child if there is an edge to a parent of the child:
                 // the change was effectively merged already. This edge is a derivative of
                 // some other simplification.
-                bool parentIsLinked = IsSomeParentLinked(child, currentNode.Children, graph);
+                bool parentIsLinked = IsSomeParentLinked(currentNode, child, currentNode.Children, graph);
                 if (parentIsLinked)
                 {
                     // Remove this child.
@@ -105,13 +114,13 @@ namespace Prigitsk.Core.Nodes
         ///     --- B0 -- ... - Br -- ... ---- Bk --
         /// </summary>
         private bool IsLeftSideOfARhombus(
-            Node parent,
-            Node child,
+            INode parent,
+            INode child,
             IAssumedGraph graph)
         {
             OriginBranch branchB = graph.GetBranch(child);
 
-            Node an, bk;
+            INode an, bk;
             bool foundClosure = TryFindRightSideOfARhombus(graph, parent, branchB, out an, out bk);
             if (!foundClosure)
             {
@@ -119,11 +128,11 @@ namespace Prigitsk.Core.Nodes
                 return false;
             }
 
-            IEnumerable<Node> parentsInBetween = EnumerateNodesBetween(graph, parent, an);
-            Node[] childrenInBetween = EnumerateNodesBetween(graph, child, bk).ToArray();
+            IEnumerable<INode> parentsInBetween = EnumerateNodesBetween(graph, parent, an);
+            INode[] childrenInBetween = EnumerateNodesBetween(graph, child, bk).ToArray();
 
             // Children may have third level of nodes on: themselves, their parents and the last elements.
-            Node[] possibleThirdGeneration =
+            INode[] possibleThirdGeneration =
                 childrenInBetween.Concat(parentsInBetween).Concat(new[] {an, bk}).ToArray();
 
             // Check that these children don't have other children.
@@ -132,13 +141,13 @@ namespace Prigitsk.Core.Nodes
             return noOtherChildren;
         }
 
-        private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<Node> nodesInQuestion, IEnumerable<Node> whitelist)
+        private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<INode> nodesInQuestion, IEnumerable<INode> whitelist)
         {
-            var whitelistSet = new HashSet<Node>(whitelist);
+            var whitelistSet = new HashSet<INode>(whitelist);
 
-            foreach (Node node in nodesInQuestion)
+            foreach (INode node in nodesInQuestion)
             {
-                foreach (Node c in node.Children)
+                foreach (INode c in node.Children)
                 {
                     bool childIsInWhitelist = whitelistSet.Contains(c);
                     if (!childIsInWhitelist)
@@ -151,9 +160,9 @@ namespace Prigitsk.Core.Nodes
             return true;
         }
 
-        private IEnumerable<Node> EnumerateNodesBetween(IAssumedGraph graph, Node parent, Node an)
+        private IEnumerable<INode> EnumerateNodesBetween(IAssumedGraph graph, INode parent, INode an)
         {
-            foreach (Node node in graph.EnumerateNodesDownTheBranch(parent))
+            foreach (INode node in graph.EnumerateNodesDownTheBranch(parent))
             {
                 if (node == an)
                 {
@@ -166,10 +175,10 @@ namespace Prigitsk.Core.Nodes
 
         private bool TryFindRightSideOfARhombus(
             IAssumedGraph graph,
-            Node parent,
+            INode parent,
             OriginBranch branchB,
-            out Node an,
-            out Node bk)
+            out INode an,
+            out INode bk)
         {
             an = null;
             bk = null;
@@ -180,9 +189,9 @@ namespace Prigitsk.Core.Nodes
                 return false;
             }
 
-            foreach (Node am in graph.EnumerateNodesDownTheBranch(parent))
+            foreach (INode am in graph.EnumerateNodesDownTheBranch(parent))
             {
-                Node leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
+                INode leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
                     .OrderBy(graph.GetIndexOnBranch)
                     .FirstOrDefault();
 
@@ -198,10 +207,10 @@ namespace Prigitsk.Core.Nodes
         }
 
         private bool IsDirectRoadToTip(
-            Node node,
+            INode node,
             OriginBranch branch)
         {
-            Node n = node;
+            INode n = node;
             while (true)
             {
                 // Merging.
@@ -228,20 +237,20 @@ namespace Prigitsk.Core.Nodes
         }
 
         private bool IsSomeParentLinked(
-            Node childNodeInQuestion,
-            IEnumerable<Node> allChildren,
+            INode sourceNode,
+            INode childNodeInQuestion,
+            IEnumerable<INode> allChildren,
             IAssumedGraph graph)
         {
             // Is any of these children actually a parent of node in question?
-            var otherChildren = new HashSet<Node>(allChildren);
+            var otherChildren = new HashSet<INode>(allChildren);
             otherChildren.Remove(childNodeInQuestion);
 
-            IEnumerable<Node> parents =
-                graph.EnumerateNodesUpTheBranch(childNodeInQuestion);
+            // The whole parent tree of the particular child node in question. We don't go earlier than the source node.
+            IEnumerable<INode> parents = _walker.EnumerateAllParentsBreadthFirst(childNodeInQuestion, sourceNode.Time);
 
-            bool someParentIsLinked = parents.Any(
-                parent =>
-                    otherChildren.Contains(parent));
+            // Is any of them linked from other children of source node?
+            bool someParentIsLinked = parents.Any(otherChildren.Contains);
 
             return someParentIsLinked;
         }
@@ -255,13 +264,13 @@ namespace Prigitsk.Core.Nodes
             foreach (OriginBranch b in graph.GetCurrentBranches())
             {
                 // All nodes in the branch.
-                Node[] nodesInBranch = graph.GetNodesConsecutive(b);
-                var laterNodesInBranchSet = new HashSet<Node>(nodesInBranch);
+                INode[] nodesInBranch = graph.GetNodesConsecutive(b);
+                var laterNodesInBranchSet = new HashSet<INode>(nodesInBranch);
                 for (int index = 0; index < nodesInBranch.Length; index++)
                 {
-                    Node currentNode = nodesInBranch[index];
+                    INode currentNode = nodesInBranch[index];
                     laterNodesInBranchSet.Remove(currentNode);
-                    Node nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
+                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
 
                     // Remove edges that we got from cleaning up.
                     removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, graph);
@@ -282,8 +291,8 @@ namespace Prigitsk.Core.Nodes
         }
 
         private void RemoveEdge(
-            Node parent,
-            Node child)
+            INode parent,
+            INode child)
         {
             parent.Children.Remove(child);
             child.Parents.Remove(parent);
@@ -291,7 +300,7 @@ namespace Prigitsk.Core.Nodes
 
         private bool RemoveNodeIfItIsOnlyConnecting(
             IAssumedGraph graph,
-            Node currentNode,
+            INode currentNode,
             OriginBranch b,
             bool leaveNodesAfterLastMerge)
         {
@@ -319,7 +328,7 @@ namespace Prigitsk.Core.Nodes
                 }
             }
 
-            currentNode.RemoveItselfFromTheNodeGraph();
+            _manipulator.RemoveItselfFromTheNodeGraph(currentNode);
             graph.RemoveNodeFromBranch(b, currentNode);
             return true;
         }

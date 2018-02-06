@@ -7,7 +7,7 @@ namespace Prigitsk.Core.Graph.Writing
 {
     public class NodeWeightInformer : INodeWeightInformer
     {
-        private readonly double baseWidth = 0.2d;
+        private readonly double _baseWidth = 0.2d;
         private int _maxChange;
         private double _maxWidth;
         private int _minChange;
@@ -40,7 +40,7 @@ namespace Prigitsk.Core.Graph.Writing
             }
         }
 
-        public void Init(IEnumerable<Node> nodes)
+        public void Init(IEnumerable<INode> nodes)
         {
             List<int> changes = nodes.Select(GetChange).ToList();
             if (changes.Count == 0)
@@ -68,12 +68,12 @@ namespace Prigitsk.Core.Graph.Writing
             _maxChange = changes[maxIndex];
         }
 
-        public double GetWidth(Node n)
+        public double GetWidth(INode n)
         {
             int diff = _maxChange - _minChange;
             if (diff == 0)
             {
-                return baseWidth;
+                return _baseWidth;
             }
 
             int change = GetChange(n);
@@ -83,7 +83,7 @@ namespace Prigitsk.Core.Graph.Writing
             return result;
         }
 
-        private int GetChange(Node n)
+        private int GetChange(INode n)
         {
             return n.Deletions + n.Insertions;
         }

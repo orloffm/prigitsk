@@ -6,19 +6,16 @@ using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Core.Nodes
 {
-    public class Node : IEquatable<Node>
+    public class Node : IEquatable<Node>, INode
     {
         public Node(string hash)
         {
-            Parents = new OrderedSet<Node>();
-            Children = new HashSet<Node>();
+            Parents = new OrderedSet<INode>();
+            Children = new HashSet<INode>();
             Hash = hash;
             SetCaptions(null);
         }
 
-        public OrderedSet<Node> Parents { get; }
-        public HashSet<Node> Children { get; }
-        public string Hash { get; }
         public GitRef[] GitRefs { get; private set; }
         public DateTime Time { get; set; }
         public int Insertions { get; set; }
@@ -35,81 +32,13 @@ namespace Prigitsk.Core.Nodes
             return AreEqual(this, other);
         }
 
-        public void AddChild(Node immediateChild)
-        {
-            if (!Children.Contains(immediateChild))
-            {
-                Children.Add(immediateChild);
-            }
-        }
-
-        public void AddParent(Node immediateParent)
-        {
-            if (!Parents.Contains(immediateParent))
-            {
-                Parents.Add(immediateParent);
-            }
-        }
-
-        public IEnumerable<Node> EnumerateFirstParentsUpTheTreeBranchAgnostic(bool includeSelf = false)
-        {
-            if (includeSelf)
-            {
-                yield return this;
-            }
-
-            Node n = Parents.FirstOrDefault();
-            while (n != null)
-            {
-                yield return n;
-                n = n.Parents.FirstOrDefault();
-            }
-        }
-
+        public ICollection<INode> Parents { get; }
+        public ICollection<INode> Children { get; }
+        public string Hash { get; }
+        
         public override int GetHashCode()
         {
             return Hash?.GetHashCode() ?? 0;
-        }
-
-        public void RemoveItselfFromTheNodeGraph()
-        {
-            // Parents.
-            foreach (Node parent in Parents)
-            {
-                // Remove node.
-                parent.Children.Remove(this);
-
-                // Set its children to this parent.
-                foreach (Node immediateChild in Children)
-                {
-                    parent.AddChild(immediateChild);
-                }
-            }
-
-            // Children.
-            foreach (Node child in Children)
-            {
-                // Remove the node from parents.
-                child.Parents.Remove(this);
-
-                // Set its parents to this child.
-                foreach (Node immediateParent in Parents)
-                {
-                    child.AddParent(immediateParent);
-                }
-            }
-
-            Node firstChild = Children.FirstOrDefault();
-            if (firstChild != null)
-            {
-                firstChild.Insertions += Insertions;
-                firstChild.Deletions += Deletions;
-                firstChild.SetAsSomethingWasMergedInto();
-            }
-
-            // Clear references.
-            Parents.Clear();
-            Children.Clear();
         }
 
         public void SetAsSomethingWasMergedInto()

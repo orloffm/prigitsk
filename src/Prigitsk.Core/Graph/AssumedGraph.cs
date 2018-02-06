@@ -7,29 +7,29 @@ namespace Prigitsk.Core.Graph
 {
     public class AssumedGraph : IAssumedGraph
     {
-        private readonly Dictionary<Node, OriginBranch> _branchesByNodes;
-        private readonly Dictionary<OriginBranch, List<Node>> _nodesByBranchConsecutive;
-        private HashSet<Node> _leftOvers;
+        private readonly Dictionary<INode, OriginBranch> _branchesByNodes;
+        private readonly Dictionary<OriginBranch, List<INode>> _nodesByBranchConsecutive;
+        private HashSet<INode> _leftOvers;
         private Tag[] _tags;
 
         public AssumedGraph()
         {
-            _nodesByBranchConsecutive = new Dictionary<OriginBranch, List<Node>>();
-            _branchesByNodes = new Dictionary<Node, OriginBranch>();
+            _nodesByBranchConsecutive = new Dictionary<OriginBranch, List<INode>>();
+            _branchesByNodes = new Dictionary<INode, OriginBranch>();
             _tags = new Tag[0];
         }
 
-        public void RemoveNodeFromLeftOvers(Node n)
+        public void RemoveNodeFromLeftOvers(INode n)
         {
             _leftOvers.Remove(n);
         }
 
-        public IEnumerable<Node> EnumerateAllLeftOvers()
+        public IEnumerable<INode> EnumerateAllLeftOvers()
         {
             return _leftOvers;
         }
 
-        public IEnumerable<Node> EnumerateLeftOversWithoutBranchesAndTags()
+        public IEnumerable<INode> EnumerateLeftOversWithoutBranchesAndTags()
         {
             return EnumerateAllLeftOvers()
                 .Where(
@@ -57,11 +57,11 @@ namespace Prigitsk.Core.Graph
                     });
         }
 
-        public void SetBranchNodes(OriginBranch branch, IEnumerable<Node> consecutiveNodes)
+        public void SetBranchNodes(OriginBranch branch, IEnumerable<INode> consecutiveNodes)
         {
-            var list = new List<Node>(consecutiveNodes);
+            var list = new List<INode>(consecutiveNodes);
             _nodesByBranchConsecutive.Add(branch, list);
-            foreach (Node item in list)
+            foreach (INode item in list)
             {
                 _branchesByNodes.Add(item, branch);
             }
@@ -72,14 +72,14 @@ namespace Prigitsk.Core.Graph
             _tags = allTags.ToArray();
         }
 
-        public OriginBranch GetBranch(Node node)
+        public OriginBranch GetBranch(INode node)
         {
             OriginBranch branch;
             _branchesByNodes.TryGetValue(node, out branch);
             return branch;
         }
 
-        public int GetIndexOnBranch(Node child)
+        public int GetIndexOnBranch(INode child)
         {
             OriginBranch ba = GetBranch(child);
             if (ba == null)
@@ -87,49 +87,49 @@ namespace Prigitsk.Core.Graph
                 return -1;
             }
 
-            List<Node> nodesList = _nodesByBranchConsecutive[ba];
+            List<INode> nodesList = _nodesByBranchConsecutive[ba];
             int index = nodesList.IndexOf(child);
             return index;
         }
 
-        public IEnumerable<Node> EnumerateNodesUpTheBranch(Node nodeInQuestion)
+        public IEnumerable<INode> EnumerateNodesUpTheBranch(INode nodeInQuestion)
         {
             return EnumerateNodesAround(nodeInQuestion, true);
         }
 
-        public IEnumerable<Node> EnumerateNodesDownTheBranch(Node nodeInQuestion)
+        public IEnumerable<INode> EnumerateNodesDownTheBranch(INode nodeInQuestion)
         {
             return EnumerateNodesAround(nodeInQuestion, false);
         }
 
-        public IEnumerable<Node> EnumerateAllContainedNodes()
+        public IEnumerable<INode> EnumerateAllContainedNodes()
         {
-            foreach (Node n in _branchesByNodes.Keys)
+            foreach (INode n in _branchesByNodes.Keys)
             {
                 yield return n;
             }
 
-            foreach (Node n in EnumerateAllLeftOvers())
+            foreach (INode n in EnumerateAllLeftOvers())
             {
                 yield return n;
             }
         }
 
-        public void RemoveNodeFromBranch(OriginBranch branch, Node node)
+        public void RemoveNodeFromBranch(OriginBranch branch, INode node)
         {
             _nodesByBranchConsecutive[branch].Remove(node);
             _branchesByNodes.Remove(node);
         }
 
-        public bool AnyPointersAreSourcedFrom(Node currentNode)
+        public bool AnyPointersAreSourcedFrom(INode currentNode)
         {
             return _tags.Any(t => t.Source == currentNode)
                    || _nodesByBranchConsecutive.Keys.Any(b => b.Source == currentNode);
         }
 
-        public void SetLeftOverNodes(IEnumerable<Node> nodes)
+        public void SetLeftOverNodes(IEnumerable<INode> nodes)
         {
-            _leftOvers = new HashSet<Node>(nodes ?? new Node[0]);
+            _leftOvers = new HashSet<INode>(nodes ?? new INode[0]);
         }
 
         public OriginBranch[] GetCurrentBranches()
@@ -149,7 +149,7 @@ namespace Prigitsk.Core.Graph
             return _tags;
         }
 
-        public Node[] GetNodesConsecutive(OriginBranch branch)
+        public INode[] GetNodesConsecutive(OriginBranch branch)
         {
             return _nodesByBranchConsecutive[branch].ToArray();
         }
@@ -159,7 +159,7 @@ namespace Prigitsk.Core.Graph
             return GetNodesConsecutive(branch).First().Time;
         }
 
-        private IEnumerable<Node> EnumerateNodesAround(Node nodeInQuestion, bool up)
+        private IEnumerable<INode> EnumerateNodesAround(INode nodeInQuestion, bool up)
         {
             // If there it's not on a branch, we don't return anything.
             OriginBranch branch = GetBranch(nodeInQuestion);
@@ -168,7 +168,7 @@ namespace Prigitsk.Core.Graph
                 yield break;
             }
 
-            List<Node> nodesList = _nodesByBranchConsecutive[branch];
+            List<INode> nodesList = _nodesByBranchConsecutive[branch];
             int index = nodesList.IndexOf(nodeInQuestion);
             int step = up ? -1 : +1;
             for (int i = index + step; i >= 0 && i < nodesList.Count; i += step)

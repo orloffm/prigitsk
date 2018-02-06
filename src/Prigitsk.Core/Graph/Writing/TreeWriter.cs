@@ -11,10 +11,10 @@ namespace Prigitsk.Core.Graph.Writing
 {
     public class TreeWriter : ITreeWriter
     {
-        private const string branchNodesFormat
+        private const string BranchNodesFormat
             = @"node [group={0}, fillcolor=""{1}"", color=""{2}""];";
 
-        private const string branchEdgesFormat
+        private const string BranchEdgesFormat
             = @"edge[color = ""{0}"", penwidth={1}];";
 
         private readonly string _repositoryPath;
@@ -42,10 +42,10 @@ namespace Prigitsk.Core.Graph.Writing
             OriginBranch[] orphanedBranches = graph.GetOrphanedBranches();
             WriteTagsAndOrphanedBranches(sb, tags, orphanedBranches);
             // Now the graph itself.
-            var otherLinks = new PairList<Node, Node>();
+            var otherLinks = new PairList<INode, INode>();
             WriteNodes(graph, branchingStrategy, sb, currentBranches, otherLinks);
             // Write all other edges
-            WriteOtherEdges(otherLinks, graph, sb);
+            WriteOtherEdges(otherLinks, sb);
             // Tags and orphaned branches
             WriteTagsAndOrphanedBranchesConnections(sb, tags, orphanedBranches);
             WriteFooter(sb);
@@ -61,12 +61,12 @@ namespace Prigitsk.Core.Graph.Writing
             return @"""" + pointerLabel + @"""";
         }
 
-        private string MakeNodeHandle(Node node)
+        private string MakeNodeHandle(INode node)
         {
             return @"""" + node.Hash + @"""";
         }
 
-        private void WriteInBranchEdge(StringBuilder sb, Node parentNode, Node childNote)
+        private void WriteInBranchEdge(StringBuilder sb, INode parentNode, INode childNote)
         {
             const string edgeFormatSimple = @"{0} -> {1}; ";
             const string edgeFormatDotted = @"{0} -> {1} [style=dashed];";
@@ -124,7 +124,7 @@ rank = sink;
     ");
         }
 
-        private void WriteNode(StringBuilder sb, Node n)
+        private void WriteNode(StringBuilder sb, INode n)
         {
             double width = _weightInformer.GetWidth(n);
             string size = width.ToString("##.##", _ukCulture);
@@ -137,7 +137,7 @@ rank = sink;
             IBranchingStrategy branchingStrategy,
             StringBuilder sb,
             OriginBranch[] currentBranches,
-            PairList<Node, Node> otherLinks)
+            PairList<INode, INode> otherLinks)
         {
             // Initialize weights.
             _weightInformer.Init(graph.EnumerateAllContainedNodes());
@@ -158,22 +158,23 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
 
             OriginBranch[] currentBranchesSorted =
                 branchingStrategy.SortForWriting(currentBranches, firstNodeDates).ToArray();
+
             foreach (OriginBranch b in currentBranchesSorted)
             {
                 // Header.
                 // 0 - branch short name
                 // 1 - color
-                string htmlString = branchingStrategy.GetHTMLColorFor(b);
-                sb.AppendLine(string.Format(branchNodesFormat, MakeHandle(b), htmlString, htmlString));
-                sb.AppendLine(string.Format(branchEdgesFormat, htmlString, 2));
+                string htmlString = branchingStrategy.GetHtmlColorFor(b);
+                sb.AppendLine(string.Format(BranchNodesFormat, MakeHandle(b), htmlString, htmlString));
+                sb.AppendLine(string.Format(BranchEdgesFormat, htmlString, 2));
                 sb.AppendLine(branchNodesStart);
                 // All nodes in the branch.
-                Node[] nodesInBranch = graph.GetNodesConsecutive(b);
-                var edgesInBranch = new PairList<Node, Node>();
+                INode[] nodesInBranch = graph.GetNodesConsecutive(b);
+                var edgesInBranch = new PairList<INode, INode>();
                 for (int index = 0; index < nodesInBranch.Length; index++)
                 {
-                    Node currentNode = nodesInBranch[index];
-                    Node nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
+                    INode currentNode = nodesInBranch[index];
+                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
                     WriteNode(sb, currentNode);
                     if (nextNode != null)
                     {
@@ -187,7 +188,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                     }
                 }
 
-                foreach (Tuple<Node, Node> tuple in edgesInBranch.EnumerateItems())
+                foreach (Tuple<INode, INode> tuple in edgesInBranch.EnumerateItems())
                 {
                     WriteInBranchEdge(sb, tuple.Item1, tuple.Item2);
                 }
@@ -202,11 +203,11 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 sb.AppendLine();
             }
 
-            Node[] allLeftOvers = graph.EnumerateAllLeftOvers().ToArray();
+            INode[] allLeftOvers = graph.EnumerateAllLeftOvers().ToArray();
             if (allLeftOvers.Length > 0)
             {
                 // Left-overs, without branches.
-                sb.AppendLine(string.Format(branchNodesFormat, @"""""", "white", "black"));
+                sb.AppendLine(string.Format(BranchNodesFormat, @"""""", "white", "black"));
                 foreach (Node currentNode in allLeftOvers)
                 {
                     WriteNode(sb, currentNode);
@@ -220,16 +221,15 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
         }
 
         private void WriteOtherEdges(
-            PairList<Node, Node> otherLinks,
-            IAssumedGraph graph,
+            PairList<INode, INode> otherLinks,
             StringBuilder sb)
         {
             sb.AppendLine("// all other edges");
-            sb.AppendLine(string.Format(branchEdgesFormat, "black", 1));
-            foreach (Tuple<Node, Node> pair in otherLinks.EnumerateItems())
+            sb.AppendLine(string.Format(BranchEdgesFormat, "black", 1));
+            foreach (Tuple<INode, INode> pair in otherLinks.EnumerateItems())
             {
-                Node nodeA = pair.Item1;
-                Node nodeB = pair.Item2;
+                INode nodeA = pair.Item1;
+                INode nodeB = pair.Item2;
                 //var branchA = graph.GetBranch(nodeA);
                 //var branchB = graph.GetBranch(nodeB);
                 string text;

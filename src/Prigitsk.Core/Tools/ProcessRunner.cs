@@ -8,8 +8,8 @@ namespace Prigitsk.Core.Tools
             string command,
             string argument)
         {
-            string ExecuteResult = string.Empty;
-            Process ExecuteProcess = new Process
+            string executeResult = string.Empty;
+            Process executeProcess = new Process
             {
                 StartInfo =
                 {
@@ -21,12 +21,12 @@ namespace Prigitsk.Core.Tools
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
-            ExecuteProcess.Start();
-            ExecuteResult = ExecuteProcess.StandardOutput.ReadToEnd();
-            ExecuteProcess.WaitForExit();
-            if (ExecuteProcess.ExitCode == 0)
+            executeProcess.Start();
+            executeResult = executeProcess.StandardOutput.ReadToEnd();
+            executeProcess.WaitForExit();
+            if (executeProcess.ExitCode == 0)
             {
-                return ExecuteResult;
+                return executeResult;
             }
 
             return string.Empty;
