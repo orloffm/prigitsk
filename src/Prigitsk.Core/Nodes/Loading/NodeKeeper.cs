@@ -45,7 +45,7 @@ namespace Prigitsk.Core.Nodes.Loading
         {
             INode child = GetOrCreate(hash);
             INode parent = GetOrCreate(parentHash);
-            _manipulator.AddParent(child,parent);
+            _manipulator.AddParent(child, parent);
             parent.Children.Add(child);
         }
 
