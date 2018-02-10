@@ -169,6 +169,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj">
+      <Project>{B5E97E64-CBA2-43D0-9476-E28831A5D476}</Project>
+      <Name>Prigitsk.Core.Git.LibGit2Sharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj">
       <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>
       <Name>Prigitsk.Core.Interfaces</Name>

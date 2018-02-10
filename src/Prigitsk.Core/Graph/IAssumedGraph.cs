@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Prigitsk.Core.Graph;
+using Prigitsk.Core.Nodes;
 
-namespace Prigitsk.Core.Nodes
+namespace Prigitsk.Core.Graph
 {
     public interface IAssumedGraph
     {

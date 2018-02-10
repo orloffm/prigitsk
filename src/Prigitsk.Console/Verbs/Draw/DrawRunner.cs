@@ -16,36 +16,33 @@ namespace Prigitsk.Console.Verbs.Draw
 {
     public class DrawRunner : VerbRunnerBase<IDrawRunnerOptions>, IDrawRunner
     {
+        private readonly IRepositoryDataLoader _loader;
         private readonly IExternalAppPathProvider _appPathProvider;
 
-        public DrawRunner(IDrawRunnerOptions options, IExternalAppPathProvider appPathProvider, ILogger log)
+        public DrawRunner(IDrawRunnerOptions options, IRepositoryDataLoader loader, IExternalAppPathProvider appPathProvider, ILogger log)
             : base(options, log)
         {
+            _loader = loader;
             _appPathProvider = appPathProvider;
         }
 
         protected override void RunInternal()
         {
-            ExtractionOptions extractOptions = new ExtractionOptions
-            {
-                ExtractStats = false
-            };
             string repositoryPath = FindRepositoryPath();
             string gitSubDirectory = Path.Combine(repositoryPath, ".git");
             IProcessRunner processRunner = new ProcessRunner();
-            string gitPath = _appPathProvider.GetProperAppPath(ExternalApp.Git);
-            INodeLoader loader = new NodeLoader(processRunner, new NodeKeeperFactory(new TimeHelper(), new TreeManipulator()), gitPath);
-            loader.LoadFrom(gitSubDirectory, extractOptions);
+          var repositoryData =_loader.LoadFrom(gitSubDirectory);
+
             string writeTo = Path.Combine(repositoryPath, "bin");
             Directory.CreateDirectory(writeTo);
-            WriteToFileAndMakeSvg(loader, writeTo, "full.dot", PickAll);
+            WriteToFileAndMakeSvg(repositoryData, writeTo, "full.dot", PickAll);
             WriteToFileAndMakeSvg(
-                loader,
+                repositoryData,
                 writeTo,
                 "no-tags.dot",
                 PickNoTags);
             WriteToFileAndMakeSvg(
-                loader,
+                repositoryData,
                 writeTo,
                 "simple.dot",
                 PickSimplified);
@@ -120,7 +117,7 @@ namespace Prigitsk.Console.Verbs.Draw
         }
 
         private void WriteToFileAndMakeSvg(
-            INodeLoader loader,
+            IRepositoryData loader,
             string repositoryPath,
             string fileName,
             Func<Pointer, bool> pickStrategy)
@@ -146,18 +143,17 @@ namespace Prigitsk.Console.Verbs.Draw
         }
 
         private void WriteToDotFile(
-            INodeLoader loader,
+            IRepositoryData repositoryData,
             string repositoryPath,
             string fileName,
             Func<Pointer, bool> pickStrategy)
         {
-            var allNodes = loader.GetNodesCollection();
             // What branches we have.
             IBranchingStrategy bs = new CommonFlowBranchingStrategy();
             // Try to distribute the nodes among the branches,
             // according to the branching strategy.
             IBranchAssumer ba = new BranchAssumer(bs, new TreeWalker(),  pickStrategy);
-            IAssumedGraph assumedGraph = ba.AssumeTheBranchGraph(allNodes);
+            IAssumedGraph assumedGraph = ba.AssumeTheBranchGraph(repositoryData);
             INodeCleaner cleaner = new NodeCleaner(new TreeManipulator(), new TreeWalker());
             SimplificationOptions options = new SimplificationOptions
             {

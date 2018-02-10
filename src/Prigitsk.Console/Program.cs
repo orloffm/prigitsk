@@ -11,6 +11,7 @@ using Prigitsk.Console.Verbs;
 using Prigitsk.Console.Verbs.Configure;
 using Prigitsk.Console.Verbs.Draw;
 using Prigitsk.Console.Verbs.Fetch;
+using Prigitsk.Core.Git.LibGit2Sharp;
 using Prigitsk.Core.Nodes.Loading;
 
 namespace Prigitsk.Console
@@ -54,7 +55,8 @@ namespace Prigitsk.Console
                 .InstancePerLifetimeScope();
 
             // core assembly
-            builder.RegisterAssemblyTypes(typeof(NodeLoader).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(BranchWrapped).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces();
 
             IContainer container = builder.Build();
             return container;

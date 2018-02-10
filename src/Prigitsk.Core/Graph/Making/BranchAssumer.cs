@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Graph.Strategy;
 using Prigitsk.Core.Nodes;
+using Prigitsk.Core.Nodes.Loading;
 
 namespace Prigitsk.Core.Graph.Making
 {
@@ -19,9 +20,10 @@ namespace Prigitsk.Core.Graph.Making
             _pickStrategy = pickStrategy;
         }
 
-        public IAssumedGraph AssumeTheBranchGraph(IEnumerable<INode> nodesEnumerable)
+        public IAssumedGraph AssumeTheBranchGraph(IRepositoryData repositoryData)
         {
-            var unprocessedNodes = new HashSet<INode>(nodesEnumerable);
+            // TODO: use repository data properly
+            var unprocessedNodes = new HashSet<INode>();
 
             // All origin branches and tags that we have.
             Pointer[] allPointers = GetAllOriginBranchesAndTags(unprocessedNodes)
