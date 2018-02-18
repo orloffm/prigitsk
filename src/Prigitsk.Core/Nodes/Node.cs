@@ -17,6 +17,12 @@ namespace Prigitsk.Core.Nodes
         }
 
         public GitRef[] GitRefs { get; private set; }
+
+        public bool Equals(Node other)
+        {
+            return AreEqual(this, other);
+        }
+
         public DateTime Time { get; set; }
         public int Insertions { get; set; }
         public int Deletions { get; set; }
@@ -27,23 +33,18 @@ namespace Prigitsk.Core.Nodes
             get { return GitRefs.Any(c => !c.IsLocalBranch); }
         }
 
-        public bool Equals(Node other)
-        {
-            return AreEqual(this, other);
-        }
-
         public ICollection<INode> Parents { get; }
         public ICollection<INode> Children { get; }
         public string Hash { get; }
-        
-        public override int GetHashCode()
-        {
-            return Hash?.GetHashCode() ?? 0;
-        }
 
         public void SetAsSomethingWasMergedInto()
         {
             SomethingWasMergedInto = true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Hash?.GetHashCode() ?? 0;
         }
 
         public void SetCaptions(string source)

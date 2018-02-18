@@ -5,7 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Git\**" />
+    <EmbeddedResource Remove="Git\**" />
+    <None Remove="Git\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibGit2Sharp" Version="0.25.0-preview-0073" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
+    <ProjectReference Include="..\Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj" />
     <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj" />
   </ItemGroup>
 

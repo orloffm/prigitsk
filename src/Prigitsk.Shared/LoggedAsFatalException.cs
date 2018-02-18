@@ -3,7 +3,7 @@
 namespace Prigitsk
 {
     /// <summary>
-    /// An exception that indicates that the error was explicitly logged as a fatal one before being thrown.
+    ///     An exception that indicates that the error was explicitly logged as a fatal one before being thrown.
     /// </summary>
     public class LoggedAsFatalException : Exception
     {

@@ -48,7 +48,7 @@ namespace Prigitsk.Core.Nodes
                 }
             }
 
-            var firstChild = n.Children.FirstOrDefault();
+            INode firstChild = n.Children.FirstOrDefault();
             if (firstChild != null)
             {
                 firstChild.Insertions += n.Insertions;
@@ -57,8 +57,8 @@ namespace Prigitsk.Core.Nodes
             }
 
             // Clear references.
-           n.Parents.Clear();
-           n.Children.Clear();
+            n.Parents.Clear();
+            n.Children.Clear();
         }
     }
 }

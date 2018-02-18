@@ -24,17 +24,14 @@ namespace Prigitsk.Console.General.Programs
         {
             Titles = new Dictionary<ExternalApp, string>
             {
-                {ExternalApp.Git, "Git"},
                 {ExternalApp.GraphViz, "GraphViz"}
             };
             ExeNames = new Dictionary<ExternalApp, string>
             {
-                {ExternalApp.Git, "git.exe"},
                 {ExternalApp.GraphViz, "dot.exe"}
             };
             SettingsProps = new Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>>
             {
-                {ExternalApp.Git, w => w.GitPath},
                 {ExternalApp.GraphViz, w => w.GraphVizPath}
             };
         }

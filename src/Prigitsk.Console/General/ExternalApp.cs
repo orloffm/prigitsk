@@ -2,7 +2,6 @@
 {
     public enum ExternalApp
     {
-        Git,
         GraphViz
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core", "Prigitsk.Core\Prigitsk.Core.csproj", "{B6A51AB9-2B61-49C7-B3D8-4AFEDE30220C}"
 EndProject
@@ -21,9 +21,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{CCEA980B-922
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Console.Tests", "Prigitsk.Console.Tests\Prigitsk.Console.Tests.csproj", "{A0C81004-20D6-4337-959B-1084D4FDDBF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.WebApi.Tests", "Prigitsk.WebApi.Tests\Prigitsk.WebApi.Tests.csproj", "{6C645DBC-9803-421C-8096-A1C4E7684304}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.WebApi.Tests", "Prigitsk.WebApi.Tests\Prigitsk.WebApi.Tests.csproj", "{6C645DBC-9803-421C-8096-A1C4E7684304}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Core.Interfaces", "Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj", "{1AEF4D1D-70EB-48CC-8B60-8592C71D5615}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Interfaces", "Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj", "{1AEF4D1D-70EB-48CC-8B60-8592C71D5615}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Git.LibGit2Sharp", "Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj", "{B5E97E64-CBA2-43D0-9476-E28831A5D476}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{1AEF4D1D-70EB-48CC-8B60-8592C71D5615}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AEF4D1D-70EB-48CC-8B60-8592C71D5615}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AEF4D1D-70EB-48CC-8B60-8592C71D5615}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{A0C81004-20D6-4337-959B-1084D4FDDBF0} = {4424EDE0-C65E-4730-9AA6-0B886F68F82E}
 		{6C645DBC-9803-421C-8096-A1C4E7684304} = {4424EDE0-C65E-4730-9AA6-0B886F68F82E}
 		{1AEF4D1D-70EB-48CC-8B60-8592C71D5615} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
+		{B5E97E64-CBA2-43D0-9476-E28831A5D476} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0BF1ADA-5CF8-498C-9A86-70CDB8394AD6}

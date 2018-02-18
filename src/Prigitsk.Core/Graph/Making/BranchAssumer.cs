@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Graph.Strategy;
 using Prigitsk.Core.Nodes;
+using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Core.Graph.Making
 {
     public class BranchAssumer : IBranchAssumer
     {
         private readonly IBranchingStrategy _bs;
-        private readonly ITreeWalker _treeWalker;
         private readonly Func<Pointer, bool> _pickStrategy;
+        private readonly ITreeWalker _treeWalker;
 
         public BranchAssumer(IBranchingStrategy bs, ITreeWalker treeWalker, Func<Pointer, bool> pickStrategy)
         {
@@ -19,9 +20,10 @@ namespace Prigitsk.Core.Graph.Making
             _pickStrategy = pickStrategy;
         }
 
-        public IAssumedGraph AssumeTheBranchGraph(IEnumerable<INode> nodesEnumerable)
+        public IAssumedGraph AssumeTheBranchGraph(IRepositoryData repositoryData)
         {
-            var unprocessedNodes = new HashSet<INode>(nodesEnumerable);
+            // TODO: use repository data properly
+            var unprocessedNodes = new HashSet<INode>();
 
             // All origin branches and tags that we have.
             Pointer[] allPointers = GetAllOriginBranchesAndTags(unprocessedNodes)
@@ -38,7 +40,7 @@ namespace Prigitsk.Core.Graph.Making
             foreach (OriginBranch b in sortedBranches)
             {
                 var nodesInBranch = new List<Node>(unprocessedNodes.Count / 2);
-                IEnumerable<INode> upTheTree =_treeWalker.EnumerateFirstParentsUpTheTreeBranchAgnostic( b.Source, true);
+                IEnumerable<INode> upTheTree = _treeWalker.EnumerateFirstParentsUpTheTreeBranchAgnostic(b.Source, true);
                 foreach (Node node in upTheTree)
                 {
                     if (!unprocessedNodes.Contains(node))
