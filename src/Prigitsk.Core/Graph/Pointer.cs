@@ -1,4 +1,5 @@
-﻿using Prigitsk.Core.Nodes;
+﻿using System;
+using Prigitsk.Core.Nodes;
 
 namespace Prigitsk.Core.Graph
 {

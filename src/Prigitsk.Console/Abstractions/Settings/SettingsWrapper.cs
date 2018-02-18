@@ -14,12 +14,6 @@ namespace Prigitsk.Console.Abstractions.Settings
             _log = log;
         }
 
-        public string GitPath
-        {
-            get => _appSettings.GitPath;
-            set => _appSettings.GitPath = value;
-        }
-
         public string GraphVizPath
         {
             get => _appSettings.GraphVizPath;
