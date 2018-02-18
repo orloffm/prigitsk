@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Core.Nodes.Loading
+﻿namespace Prigitsk.Core.RepoData
 {
     /// <summary>
     ///     Loads offline data from a Git repository.

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Prigitsk.Core.Git;
-using Prigitsk.Core.Nodes.Loading;
 
 namespace Prigitsk.Core.RepoData
 {

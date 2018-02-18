@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using Prigitsk.Core.Nodes.Loading;
+using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.RepoData
 {
     public sealed class RepositoryDataBuilder : IRepositoryDataBuilder
     {
-        private readonly Dictionary<string, Commit> _branches;
-        private readonly Dictionary<string, Commit> _commits;
+        private readonly List<Branch> _branches;
+        private readonly List<Commit> _commits;
         private readonly ILogger _logger;
-        private readonly Dictionary<string, string> _remotes;
-        private readonly Dictionary<string, Commit> _tags;
+        private readonly List<Remote> _remotes;
+        private readonly List<Tag> _tags;
 
         public RepositoryDataBuilder(ILogger logger)
         {
             _logger = logger;
 
-            _commits = new Dictionary<string, Commit>();
-            _remotes = new Dictionary<string, string>();
-            _branches = new Dictionary<string, Commit>();
-            _tags = new Dictionary<string, Commit>();
+            _commits = new List<Commit>();
+            _remotes = new List<Remote>();
+            _branches = new List<Branch>();
+            _tags = new List<Tag>();
         }
 
         public IRepositoryData Build()
@@ -31,45 +31,31 @@ namespace Prigitsk.Core.RepoData
 
         public void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen)
         {
-            Commit commit = GetOrCreateCommit(sha);
-            commit.CommittedWhen = committerWhen;
-            foreach (Commit parentCommit in parentShas.Select(GetOrCreateCommit))
-            {
-                commit.Parents.Add(parentCommit);
-            }
+            IHash hash = Hash.Create(sha);
+            IHash[] parentHashes = parentShas.Select(Hash.Create).ToArray();
+
+            Commit commit = new Commit(hash, parentHashes, committerWhen);
+            _commits.Add(commit);
         }
 
-        public void AddRemote(string remoteName, string rUrl)
+        public void AddRemote(string remoteName, string remoteUrl)
         {
-            _remotes.Add(remoteName, rUrl);
+            Remote r = new Remote(remoteName, remoteUrl);
+            _remotes.Add(r);
         }
 
         public void AddRemoteBranch(string branchName, string tipSha)
         {
-            _branches.Add(branchName, GetOrCreateCommit(tipSha));
+            IHash tip = Hash.Create(tipSha);
+            Branch b = new Branch(branchName, tip);
+            _branches.Add(b);
         }
 
         public void AddTag(string tagName, string tipSha)
         {
-            _branches.Add(tagName, GetOrCreateCommit(tipSha));
-        }
-
-        private Commit GetOrCreateCommit(string sha)
-        {
-            string cut = CutSha(sha);
-            Commit ret;
-            if (!_commits.TryGetValue(cut, out ret))
-            {
-                ret = new Commit(cut);
-                _commits.Add(cut, ret);
-            }
-
-            return ret;
-        }
-
-        private string CutSha(string sha)
-        {
-            return sha.Substring(0, 7);
+            IHash tip = Hash.Create(tipSha);
+            Tag t = new Tag(tagName, tip);
+            _tags.Add(t);
         }
     }
 }

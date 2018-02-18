@@ -1,4 +1,4 @@
-﻿using Prigitsk.Core.Nodes.Loading;
+﻿using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Core.Graph.Making
 {

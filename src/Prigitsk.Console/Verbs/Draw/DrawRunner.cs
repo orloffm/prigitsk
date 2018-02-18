@@ -3,23 +3,25 @@ using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.General.Programs;
-using Prigitsk.Core;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.Graph.Making;
 using Prigitsk.Core.Graph.Strategy;
 using Prigitsk.Core.Graph.Writing;
 using Prigitsk.Core.Nodes;
-using Prigitsk.Core.Nodes.Loading;
-using Prigitsk.Core.Tools;
+using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
     public class DrawRunner : VerbRunnerBase<IDrawRunnerOptions>, IDrawRunner
     {
-        private readonly IRepositoryDataLoader _loader;
         private readonly IExternalAppPathProvider _appPathProvider;
+        private readonly IRepositoryDataLoader _loader;
 
-        public DrawRunner(IDrawRunnerOptions options, IRepositoryDataLoader loader, IExternalAppPathProvider appPathProvider, ILogger log)
+        public DrawRunner(
+            IDrawRunnerOptions options,
+            IRepositoryDataLoader loader,
+            IExternalAppPathProvider appPathProvider,
+            ILogger log)
             : base(options, log)
         {
             _loader = loader;
@@ -31,7 +33,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string repositoryPath = FindRepositoryPath();
             string gitSubDirectory = Path.Combine(repositoryPath, ".git");
             //IProcessRunner processRunner = new ProcessRunner();
-          var repositoryData =_loader.LoadFrom(gitSubDirectory);
+            IRepositoryData repositoryData = _loader.LoadFrom(gitSubDirectory);
 
             string writeTo = Path.Combine(repositoryPath, "bin");
             Directory.CreateDirectory(writeTo);
@@ -122,7 +124,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string fileName,
             Func<Pointer, bool> pickStrategy)
         {
-            WriteToDotFile(repositoryData,directoryToWriteTo,fileName,pickStrategy);
+            WriteToDotFile(repositoryData, directoryToWriteTo, fileName, pickStrategy);
 
             ConvertTo(directoryToWriteTo, fileName, "svg");
             ConvertTo(directoryToWriteTo, fileName, "pdf");
@@ -149,7 +151,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IBranchingStrategy bs = new CommonFlowBranchingStrategy();
             // Try to distribute the nodes among the branches,
             // according to the branching strategy.
-            IBranchAssumer ba = new BranchAssumer(bs, new TreeWalker(),  pickStrategy);
+            IBranchAssumer ba = new BranchAssumer(bs, new TreeWalker(), pickStrategy);
             IAssumedGraph assumedGraph = ba.AssumeTheBranchGraph(repositoryData);
             INodeCleaner cleaner = new NodeCleaner(new TreeManipulator(), new TreeWalker());
             SimplificationOptions options = new SimplificationOptions

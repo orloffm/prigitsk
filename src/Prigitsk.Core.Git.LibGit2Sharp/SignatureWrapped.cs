@@ -8,7 +8,7 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
     {
         private readonly Signature _signature;
 
-        public SignatureWrapped(Signature signature)
+        private SignatureWrapped(Signature signature)
         {
             _signature = signature;
         }
@@ -16,5 +16,10 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
         public string Name => _signature.Name;
         public string Email => _signature.Email;
         public DateTimeOffset When => _signature.When;
+
+        public static ISignature Create(Signature signature)
+        {
+            return new SignatureWrapped(signature);
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Prigitsk.Core.Nodes.Loading
+namespace Prigitsk.Core.RepoData
 {
     /// <summary>
     ///     Collects data about repository and provides an immutable result.
@@ -13,7 +13,7 @@ namespace Prigitsk.Core.Nodes.Loading
         IRepositoryData Build();
 
         void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen);
-        void AddRemote(string remoteName, string rUrl);
+        void AddRemote(string remoteName, string remoteUrl);
         void AddRemoteBranch(string branchName, string tipSha);
         void AddTag(string tagName, string tipSha);
     }

@@ -1,25 +1,26 @@
 ﻿using System.Collections.Generic;
-using Prigitsk.Core.Nodes.Loading;
+using System.Linq;
+using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.RepoData
 {
     public class RepositoryData : IRepositoryData
     {
-        private Dictionary<string, Commit> _branches;
-        private Dictionary<string, Commit> _commits;
-        private Dictionary<string, string> _remotes;
-        private Dictionary<string, Commit> _tags;
-
         public RepositoryData(
-            Dictionary<string, Commit> commits,
-            Dictionary<string, string> remotes,
-            Dictionary<string, Commit> branches,
-            Dictionary<string, Commit> tags)
+            IEnumerable<ICommit> commits,
+            IEnumerable<IRemote> remotes,
+            IEnumerable<IBranch> branches,
+            IEnumerable<ITag> tags)
         {
-            _commits = commits;
-            _remotes = remotes;
-            _branches = branches;
-            _tags = tags;
+            Commits = commits.ToArray();
+            Remotes = remotes.ToArray();
+            Branches = branches.ToArray();
+            Tags = tags.ToArray();
         }
+
+        public ICommit[] Commits { get; }
+        public IRemote[] Remotes { get; }
+        public IBranch[] Branches { get; }
+        public ITag[] Tags { get; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Core.Nodes.Loading
+﻿namespace Prigitsk.Core.RepoData
 {
     /// <summary>
     ///     Creates an object that collects data about repository and provides an immutable result.

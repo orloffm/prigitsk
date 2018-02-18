@@ -12,7 +12,6 @@ using Prigitsk.Console.Verbs.Configure;
 using Prigitsk.Console.Verbs.Draw;
 using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Git.LibGit2Sharp;
-using Prigitsk.Core.Nodes.Loading;
 using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Console

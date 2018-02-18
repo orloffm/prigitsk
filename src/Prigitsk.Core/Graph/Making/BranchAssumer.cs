@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Graph.Strategy;
 using Prigitsk.Core.Nodes;
-using Prigitsk.Core.Nodes.Loading;
+using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Core.Graph.Making
 {
