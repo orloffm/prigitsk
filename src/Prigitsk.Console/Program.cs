@@ -34,6 +34,11 @@ namespace Prigitsk.Console
         private static IContainer PrepareContainer()
         {
             ContainerBuilder builder = new ContainerBuilder();
+
+            // core assembly
+            builder.RegisterAssemblyTypes(typeof(BranchWrapped).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces();
+
             // external
             builder.RegisterModule<NLoggerModule>();
             builder.RegisterType<FileSystem>().As<IFileSystem>();
@@ -53,10 +58,6 @@ namespace Prigitsk.Console
                 .InstancePerLifetimeScope();
             builder.RegisterType<FetchVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Fetch)
                 .InstancePerLifetimeScope();
-
-            // core assembly
-            builder.RegisterAssemblyTypes(typeof(BranchWrapped).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces();
 
             IContainer container = builder.Build();
             return container;
