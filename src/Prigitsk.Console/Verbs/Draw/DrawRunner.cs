@@ -31,9 +31,8 @@ namespace Prigitsk.Console.Verbs.Draw
         protected override void RunInternal()
         {
             string repositoryPath = FindRepositoryPath();
-            string gitSubDirectory = Path.Combine(repositoryPath, ".git");
             //IProcessRunner processRunner = new ProcessRunner();
-            IRepositoryData repositoryData = _loader.LoadFrom(gitSubDirectory);
+            IRepositoryData repositoryData = _loader.LoadFrom(repositoryPath);
 
             string writeTo = Path.Combine(repositoryPath, "bin");
             Directory.CreateDirectory(writeTo);
