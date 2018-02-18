@@ -6,7 +6,7 @@ namespace Prigitsk.Core.Git
     {
         string Name { get; }
 
-        string Email{ get; }
+        string Email { get; }
 
         DateTimeOffset When { get; }
     }

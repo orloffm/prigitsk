@@ -21,7 +21,7 @@ namespace Prigitsk.Core.Tools
 
         public int Count => _dictionary.Count;
 
-        public  bool IsReadOnly => false;
+        public bool IsReadOnly => false;
 
         void ICollection<T>.Add(T item)
         {

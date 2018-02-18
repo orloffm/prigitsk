@@ -30,7 +30,7 @@ namespace Prigitsk.Console.Verbs.Draw
         {
             string repositoryPath = FindRepositoryPath();
             string gitSubDirectory = Path.Combine(repositoryPath, ".git");
-            IProcessRunner processRunner = new ProcessRunner();
+            //IProcessRunner processRunner = new ProcessRunner();
           var repositoryData =_loader.LoadFrom(gitSubDirectory);
 
             string writeTo = Path.Combine(repositoryPath, "bin");
@@ -117,18 +117,15 @@ namespace Prigitsk.Console.Verbs.Draw
         }
 
         private void WriteToFileAndMakeSvg(
-            IRepositoryData loader,
-            string repositoryPath,
+            IRepositoryData repositoryData,
+            string directoryToWriteTo,
             string fileName,
             Func<Pointer, bool> pickStrategy)
         {
-            WriteToDotFile(
-                loader,
-                repositoryPath,
-                fileName,
-                pickStrategy);
-            ConvertTo(repositoryPath, fileName, "svg");
-            ConvertTo(repositoryPath, fileName, "pdf");
+            WriteToDotFile(repositoryData,directoryToWriteTo,fileName,pickStrategy);
+
+            ConvertTo(directoryToWriteTo, fileName, "svg");
+            ConvertTo(directoryToWriteTo, fileName, "pdf");
         }
 
         private void ConvertTo(string repositoryPath, string fileName, string format)

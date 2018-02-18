@@ -26,18 +26,6 @@ namespace Prigitsk.Console.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string GitPath {
-            get {
-                return ((string)(this["GitPath"]));
-            }
-            set {
-                this["GitPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string GraphVizPath {
             get {
                 return ((string)(this["GraphVizPath"]));

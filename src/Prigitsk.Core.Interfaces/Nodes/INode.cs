@@ -16,8 +16,10 @@ namespace Prigitsk.Core.Nodes
 
         // TODO: refactor out
         int Insertions { get; set; }
+
         // TODO: refactor out
         int Deletions { get; set; }
+
         // TODO: refactor out
         void SetAsSomethingWasMergedInto();
     }

@@ -1,16 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Prigitsk.Core.Git;
-using Prigitsk.Core.Git.LibGit2Sharp;
+using Prigitsk.Core.Nodes.Loading;
 
-namespace Prigitsk.Core.Nodes.Loading
+namespace Prigitsk.Core.RepoData
 {
     public class RepositoryDataLoader : IRepositoryDataLoader
     {
-        private readonly IRepositoryFactory _repositoryFactory;
         private readonly IRepositoryDataBuilderFactory _dataBuilderFactory;
+        private readonly IRepositoryFactory _repositoryFactory;
 
-        public RepositoryDataLoader(IRepositoryFactory repositoryFactory, IRepositoryDataBuilderFactory dataBuilderFactory)
+        public RepositoryDataLoader(
+            IRepositoryFactory repositoryFactory,
+            IRepositoryDataBuilderFactory dataBuilderFactory)
         {
             _repositoryFactory = repositoryFactory;
             _dataBuilderFactory = dataBuilderFactory;
@@ -25,14 +26,14 @@ namespace Prigitsk.Core.Nodes.Loading
                 PopulateBuilder(builder, repository);
             }
 
-            var data = builder.Build();
+            IRepositoryData data = builder.Build();
             return data;
         }
 
         private void PopulateBuilder(IRepositoryDataBuilder builder, IRepository repo)
         {
             // Commits
-            foreach (var c in repo.Commits)
+            foreach (ICommit c in repo.Commits)
             {
                 string[] parentShas = c.Parents.Select(p => p.Sha).ToArray();
 
@@ -40,28 +41,27 @@ namespace Prigitsk.Core.Nodes.Loading
             }
 
             // Remotes
-            foreach (var r in repo.Remotes)
+            foreach (IRemote r in repo.Remotes)
             {
                 builder.AddRemote(r.Name, r.Url);
             }
 
             // Branches
-            foreach (var b in repo.Branches)
+            foreach (IBranch b in repo.Branches)
             {
                 if (!b.IsRemote)
                 {
                     continue;
                 }
 
-                builder.AddBranch(b.FriendlyName, b.Tip.Sha);
+                builder.AddRemoteBranch(b.FriendlyName, b.Tip.Sha);
             }
 
             // Tags
-            foreach (var t in repo.TagsOnCommits)
+            foreach (ITag t in repo.TagsOnCommits)
             {
                 builder.AddTag(t.FriendlyName, t.Tip.Sha);
             }
-
         }
     }
 }

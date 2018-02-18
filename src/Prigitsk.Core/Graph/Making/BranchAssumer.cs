@@ -10,8 +10,8 @@ namespace Prigitsk.Core.Graph.Making
     public class BranchAssumer : IBranchAssumer
     {
         private readonly IBranchingStrategy _bs;
-        private readonly ITreeWalker _treeWalker;
         private readonly Func<Pointer, bool> _pickStrategy;
+        private readonly ITreeWalker _treeWalker;
 
         public BranchAssumer(IBranchingStrategy bs, ITreeWalker treeWalker, Func<Pointer, bool> pickStrategy)
         {
@@ -40,7 +40,7 @@ namespace Prigitsk.Core.Graph.Making
             foreach (OriginBranch b in sortedBranches)
             {
                 var nodesInBranch = new List<Node>(unprocessedNodes.Count / 2);
-                IEnumerable<INode> upTheTree =_treeWalker.EnumerateFirstParentsUpTheTreeBranchAgnostic( b.Source, true);
+                IEnumerable<INode> upTheTree = _treeWalker.EnumerateFirstParentsUpTheTreeBranchAgnostic(b.Source, true);
                 foreach (Node node in upTheTree)
                 {
                     if (!unprocessedNodes.Contains(node))

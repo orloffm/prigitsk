@@ -1,6 +1,7 @@
 ﻿using System;
+using Prigitsk.Core.Nodes.Loading;
 
-namespace Prigitsk.Core.Nodes.Loading
+namespace Prigitsk.Core.RepoData
 {
     public sealed class RepositoryDataBuilderFactory : IRepositoryDataBuilderFactory
     {
