@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.RepoData
@@ -12,15 +11,15 @@ namespace Prigitsk.Core.RepoData
             IEnumerable<IBranch> branches,
             IEnumerable<ITag> tags)
         {
-            Commits = commits.ToArray();
-            Remotes = remotes.ToArray();
-            Branches = branches.ToArray();
-            Tags = tags.ToArray();
+            Commits = new CommitsData(commits);
+            Remotes = new RemotesData(remotes);
+            Branches = new BranchesData(branches);
+            Tags = new TagsData(tags);
         }
 
-        public ICommit[] Commits { get; }
-        public IRemote[] Remotes { get; }
-        public IBranch[] Branches { get; }
-        public ITag[] Tags { get; }
+        public ICommitsData Commits { get; }
+        public IRemotesData Remotes { get; }
+        public IBranchesData Branches { get; }
+        public ITagsData Tags { get; }
     }
 }

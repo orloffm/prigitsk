@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Core.Tools
 {
-    public class OrderedSet<T> : ICollection<T>
+    public class OrderedSet<T> : IOrderedCollection<T>
     {
         private readonly IDictionary<T, LinkedListNode<T>> _dictionary;
         private readonly LinkedList<T> _linkedList;
@@ -66,6 +66,10 @@ namespace Prigitsk.Core.Tools
         {
             _linkedList.CopyTo(array, arrayIndex);
         }
+
+        public T First => _linkedList.First.Value;
+
+        public T Last => _linkedList.Last.Value;
 
         public bool Add(T item)
         {

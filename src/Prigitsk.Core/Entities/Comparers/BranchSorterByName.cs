@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Prigitsk.Core.Graph.Strategy
+namespace Prigitsk.Core.Entities.Comparers
 {
-    [Obsolete]
-    public class BranchSorterByName : IComparer<OriginBranch>
+    public class BranchSorterByName : IComparer<IBranch>
     {
-        public int Compare(OriginBranch x, OriginBranch y)
+        public int Compare(IBranch x, IBranch y)
         {
             return string.Compare(x.Label, y.Label, StringComparison.OrdinalIgnoreCase);
         }

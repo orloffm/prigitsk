@@ -7,6 +7,7 @@ using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Core.Graph.Making
 {
+    [Obsolete]
     public class BranchAssumer : IBranchAssumer
     {
         private readonly IBranchingStrategy _bs;

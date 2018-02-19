@@ -6,6 +6,7 @@ using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public class Node : IEquatable<Node>, INode
     {
         public Node(string hash)

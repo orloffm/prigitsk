@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Core.Graph.Strategy
 {
+    [Obsolete]
     public class BranchSorterByDate : IComparer<OriginBranch>
     {
         private readonly Dictionary<OriginBranch, DateTime> _startDates;

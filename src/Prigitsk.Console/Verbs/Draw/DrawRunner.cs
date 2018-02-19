@@ -30,13 +30,13 @@ namespace Prigitsk.Console.Verbs.Draw
 
         protected override void RunInternal()
         {
-            string repositoryPath = FindRepositoryPath();
+            string repositoryPath = Options.Repository;
             //IProcessRunner processRunner = new ProcessRunner();
             IRepositoryData repositoryData = _loader.LoadFrom(repositoryPath);
 
-            string writeTo = Path.Combine(repositoryPath, "bin");
-            Directory.CreateDirectory(writeTo);
-            WriteToFileAndMakeSvg(repositoryData, writeTo, "full.dot", PickAll);
+            string targetPath = Options.Target ?? Options.Repository;
+            Directory.CreateDirectory(targetPath);
+            WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);
             //WriteToFileAndMakeSvg(
             //    repositoryData,
             //    writeTo,
@@ -89,26 +89,7 @@ namespace Prigitsk.Console.Verbs.Draw
 
             return false;
         }
-
-        private string FindRepositoryPath()
-        {
-            DirectoryInfo di = new DirectoryInfo(Directory.GetCurrentDirectory());
-            while (true)
-            {
-                if (di == null)
-                {
-                    throw new IOException();
-                }
-
-                if (di.GetDirectories(".git", SearchOption.TopDirectoryOnly).Length == 1)
-                {
-                    return di.FullName;
-                }
-
-                di = di.Parent;
-            }
-        }
-
+        
         private void WriteToFileAndMakeSvg(
             IRepositoryData repositoryData,
             string directoryToWriteTo,

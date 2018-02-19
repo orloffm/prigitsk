@@ -1,7 +1,9 @@
-﻿namespace Prigitsk.Core.Entities
+﻿using System.Diagnostics;
+
+namespace Prigitsk.Core.Entities
 {
-    public class Remote
-        : IRemote
+    [DebuggerDisplay("{RemoteName} => {Url}")]
+    public class Remote : IRemote
     {
         public Remote(string remoteName, string url)
         {

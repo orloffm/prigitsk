@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Prigitsk.Core.Entities;
+using Prigitsk.Core.Entities.Comparers;
 
-namespace Prigitsk.Core.Graph.Strategy
+namespace Prigitsk.Core.Strategy
 {
-    [Obsolete]
     public sealed class CommonFlowBranchingStrategy : IBranchingStrategy
     {
         private static readonly string[] RegexStrings =
@@ -19,17 +20,17 @@ namespace Prigitsk.Core.Graph.Strategy
             "^hotfix"
         };
 
-        public IEnumerable<OriginBranch> SortByPriority(IEnumerable<OriginBranch> branchesEnumerable)
+        public IEnumerable<IBranch> SortByPriorityDescending(IEnumerable<IBranch> branchesEnumerable)
         {
-            var branchesLeftToBeSorted = new List<OriginBranch>(branchesEnumerable);
+            var branchesLeftToBeSorted = new List<IBranch>(branchesEnumerable);
             BranchSorterByName branchSorterByName = new BranchSorterByName();
             foreach (string regexString in RegexStrings)
             {
                 Regex r = new Regex(regexString, RegexOptions.IgnoreCase);
-                var applicableTo = new List<OriginBranch>(branchesLeftToBeSorted.Count / 2);
+                var applicableTo = new List<IBranch>(branchesLeftToBeSorted.Count / 2);
                 for (int i = branchesLeftToBeSorted.Count - 1; i >= 0; i--)
                 {
-                    OriginBranch b = branchesLeftToBeSorted[i];
+                    IBranch b = branchesLeftToBeSorted[i];
                     if (!r.IsMatch(b.Label))
                     {
                         continue;
@@ -40,7 +41,7 @@ namespace Prigitsk.Core.Graph.Strategy
                 }
 
                 applicableTo.Sort(branchSorterByName);
-                foreach (OriginBranch b in applicableTo)
+                foreach (IBranch b in applicableTo)
                 {
                     yield return b;
                 }
@@ -48,19 +49,19 @@ namespace Prigitsk.Core.Graph.Strategy
 
             // Leftovers.
             branchesLeftToBeSorted.Sort(branchSorterByName);
-            foreach (OriginBranch b in branchesLeftToBeSorted)
+            foreach (IBranch b in branchesLeftToBeSorted)
             {
                 yield return b;
             }
         }
 
-        public IEnumerable<OriginBranch> SortForWriting(
-            IEnumerable<OriginBranch> branchesEnumerable,
-            Dictionary<OriginBranch, DateTime> firstNodeDates)
+        public IEnumerable<IBranch> SortForWritingDescending(
+            IEnumerable<IBranch> branchesEnumerable,
+            IDictionary<IBranch, DateTimeOffset> firstNodeDates)
         {
-            var branches = new List<OriginBranch>(branchesEnumerable);
-            var ret = new List<OriginBranch>();
-            IComparer<OriginBranch> byDateComparer = new BranchSorterByDate(firstNodeDates);
+            var branches = new List<IBranch>(branchesEnumerable);
+            var ret = new List<IBranch>();
+            IComparer<IBranch> byDateComparer = new BranchSorterByDate(firstNodeDates);
             // master, hotfixes sorted, releases sorted, develop, others sorted.
             // Sort is by first node's date.
             AddEqual("master", branches, ret);
@@ -72,7 +73,7 @@ namespace Prigitsk.Core.Graph.Strategy
             return ret;
         }
 
-        public string GetHtmlColorFor(OriginBranch branch)
+        public string GetHtmlColorFor(IBranch branch)
         {
             string label = branch.Label.ToLower();
             if (label == "master")
@@ -100,10 +101,10 @@ namespace Prigitsk.Core.Graph.Strategy
 
         private void AddEqual(
             string value,
-            ICollection<OriginBranch> source,
-            ICollection<OriginBranch> target)
+            ICollection<IBranch> source,
+            ICollection<IBranch> target)
         {
-            OriginBranch match = source.FirstOrDefault(z => z.Label == value);
+            IBranch match = source.FirstOrDefault(z => z.Label == value);
             if (match != null)
             {
                 target.Add(match);
@@ -113,9 +114,9 @@ namespace Prigitsk.Core.Graph.Strategy
 
         private void AddStartingWith(
             string startString,
-            ICollection<OriginBranch> source,
-            ICollection<OriginBranch> target,
-            IComparer<OriginBranch> sorter)
+            ICollection<IBranch> source,
+            ICollection<IBranch> target,
+            IComparer<IBranch> sorter)
         {
             startString = startString.ToLower();
             AddWith(s => s.StartsWith(startString), source, target, sorter);
@@ -123,9 +124,9 @@ namespace Prigitsk.Core.Graph.Strategy
 
         private void AddEndingWith(
             string endString,
-            ICollection<OriginBranch> source,
-            ICollection<OriginBranch> target,
-            IComparer<OriginBranch> sorter)
+            ICollection<IBranch> source,
+            ICollection<IBranch> target,
+            IComparer<IBranch> sorter)
         {
             endString = endString.ToLower();
             AddWith(s => s.EndsWith(endString), source, target, sorter);
@@ -133,13 +134,13 @@ namespace Prigitsk.Core.Graph.Strategy
 
         private void AddWith(
             Func<string, bool> predicate,
-            ICollection<OriginBranch> source,
-            ICollection<OriginBranch> target,
-            IComparer<OriginBranch> sorter)
+            ICollection<IBranch> source,
+            ICollection<IBranch> target,
+            IComparer<IBranch> sorter)
         {
-            List<OriginBranch> matching = source.Where(z => predicate(z.Label.ToLower())).ToList();
+            List<IBranch> matching = source.Where(z => predicate(z.Label.ToLower())).ToList();
             matching.Sort(sorter);
-            foreach (OriginBranch b in matching)
+            foreach (IBranch b in matching)
             {
                 target.Add(b);
                 source.Remove(b);

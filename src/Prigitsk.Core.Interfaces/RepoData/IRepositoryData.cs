@@ -1,15 +1,13 @@
-﻿using Prigitsk.Core.Entities;
-
-namespace Prigitsk.Core.RepoData
+﻿namespace Prigitsk.Core.RepoData
 {
     /// <summary>
     ///     Offline information about Git repository required for application.
     /// </summary>
     public interface IRepositoryData
     {
-        ICommit[] Commits { get; }
-        IRemote[] Remotes { get; }
-        IBranch[] Branches { get; }
-        ITag[] Tags { get; }
+        ICommitsData Commits { get; }
+        IRemotesData Remotes { get; }
+        IBranchesData Branches { get; }
+        ITagsData Tags { get; }
     }
 }

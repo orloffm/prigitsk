@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public interface INode
     {
         ICollection<INode> Parents { get; }

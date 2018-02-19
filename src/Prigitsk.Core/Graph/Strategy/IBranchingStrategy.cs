@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Core.Graph.Strategy
 {
+    [Obsolete]
     public interface IBranchingStrategy
     {
         string GetHtmlColorFor(OriginBranch branch);
