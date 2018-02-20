@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Tools;
 using Prigitsk.Core.Tree;
 
@@ -16,7 +15,7 @@ namespace Prigitsk.Core.Rendering
 
         public void Render(ITree tree, ITextWriter textWriter, ITreeRenderingOptions options)
         {
-          textWriter.WriteLine("That's all folks!");
+            textWriter.WriteLine("That's all folks!");
         }
     }
 }

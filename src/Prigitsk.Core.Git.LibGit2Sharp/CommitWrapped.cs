@@ -13,11 +13,15 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             _commit = commit;
         }
 
-        public string Sha => _commit.Sha;
-        public IEnumerable<ICommit> Parents => _commit.Parents.Select(Create);
         public ISignature Author => SignatureWrapped.Create(_commit.Author);
+
         public ISignature Committer => SignatureWrapped.Create(_commit.Committer);
+
         public string Message => _commit.Message;
+
+        public IEnumerable<ICommit> Parents => _commit.Parents.Select(Create);
+
+        public string Sha => _commit.Sha;
 
         public static ICommit Create(Commit commit)
         {

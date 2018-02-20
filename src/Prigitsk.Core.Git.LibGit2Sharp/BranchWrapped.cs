@@ -12,6 +12,7 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
         }
 
         public bool IsRemote => _branch.IsRemote;
+
         public override ICommit Tip => CommitWrapped.Create(_branch.Tip);
 
         public static IBranch Create(Branch arg)

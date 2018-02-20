@@ -6,10 +6,10 @@
         /// <inheritdoc />
         public bool AggressivelyRemoveFirstBranchNodes { get; set; }
 
-        public static SimplificationOptions None => new SimplificationOptions();
-
         /// <inheritdoc />
         public bool LeaveNodesAfterLastMerge { get; set; }
+
+        public static SimplificationOptions None => new SimplificationOptions();
 
         /// <inheritdoc />
         public bool PreventSimplification { get; set; }

@@ -12,6 +12,7 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
         }
 
         public string Name => _remote.Name;
+
         public string Url => _remote.Url;
 
         public static IRemote Create(Remote remote)

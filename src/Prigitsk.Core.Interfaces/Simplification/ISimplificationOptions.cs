@@ -5,7 +5,7 @@
         /// <summary>
         ///     Do remove first node in the branch.
         /// </summary>
-        bool AggressivelyRemoveFirstBranchNodes { get;  }
+        bool AggressivelyRemoveFirstBranchNodes { get; }
 
         /// <summary>
         ///     Leave nodes after last merge, at the end of the branch.

@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.TextWriter;
 using Prigitsk.Console.General.Programs;
@@ -16,13 +14,13 @@ namespace Prigitsk.Console.Verbs.Draw
     public class DrawRunner : VerbRunnerBase<IDrawRunnerOptions>, IDrawRunner
     {
         private readonly IExternalAppPathProvider _appPathProvider;
-        private readonly IBranchingStrategyProvider _strategyProvider;
-        private readonly IRepositoryDataLoader _loader;
-        private readonly ITreeBuilder _treeBuilder;
-        private readonly ISimplifier _simplifier;
         private readonly IFileSystem _fileSystem;
-        private readonly ITreeRenderer _treeRenderer;
         private readonly IFileTextWriterFactory _fileWriterFactory;
+        private readonly IRepositoryDataLoader _loader;
+        private readonly ISimplifier _simplifier;
+        private readonly IBranchingStrategyProvider _strategyProvider;
+        private readonly ITreeBuilder _treeBuilder;
+        private readonly ITreeRenderer _treeRenderer;
 
         public DrawRunner(
             IDrawRunnerOptions options,
@@ -45,6 +43,16 @@ namespace Prigitsk.Console.Verbs.Draw
             _fileWriterFactory = fileWriterFactory;
             _appPathProvider = appPathProvider;
             _strategyProvider = strategyProvider;
+        }
+
+        private string PrepareTargetPath()
+        {
+            string targetDirectory = Options.Target ?? Options.Repository;
+
+            _fileSystem.Directory.CreateDirectory(targetDirectory);
+
+            string targetPath = _fileSystem.Path.Combine(targetDirectory, Options.Output);
+            return targetPath;
         }
 
         //internal bool PickAll(Pointer b)
@@ -118,16 +126,6 @@ namespace Prigitsk.Console.Verbs.Draw
             //    writeTo,
             //    "simple.dot",
             //    PickSimplified);
-        }
-
-        private string PrepareTargetPath()
-        {
-            string targetDirectory = Options.Target ?? Options.Repository;
-
-            _fileSystem.Directory.CreateDirectory(targetDirectory);
-            
-            string targetPath = _fileSystem.Path.Combine(targetDirectory, Options.Output);
-            return targetPath;
         }
 
         //private void WriteToDotFile(

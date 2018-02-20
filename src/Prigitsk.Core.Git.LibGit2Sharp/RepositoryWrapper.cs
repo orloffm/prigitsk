@@ -14,12 +14,13 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             _repository = repository;
         }
 
-        public void Dispose()
+        public IEnumerable<IBranch> Branches
         {
-            if (!_disposed)
+            get
             {
-                _repository.Dispose();
-                _disposed = true;
+                AssertNotDisposed();
+
+                return _repository.Branches.Select(BranchWrapped.Create);
             }
         }
 
@@ -33,13 +34,13 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             }
         }
 
-        public IEnumerable<IBranch> Branches
+        public IEnumerable<IRemote> Remotes
         {
             get
             {
                 AssertNotDisposed();
 
-                return _repository.Branches.Select(BranchWrapped.Create);
+                return _repository.Network.Remotes.Select(RemoteWrapped.Create);
             }
         }
 
@@ -53,20 +54,19 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             }
         }
 
-        public IEnumerable<IRemote> Remotes
-        {
-            get
-            {
-                AssertNotDisposed();
-
-                return _repository.Network.Remotes.Select(RemoteWrapped.Create);
-            }
-        }
-
         private void AssertNotDisposed()
         {
             if (_disposed)
             {
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                _repository.Dispose();
+                _disposed = true;
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿namespace Prigitsk.Core.Strategy
 {
     /// <summary>
-    /// Provides the branching strategy.
+    ///     Provides the branching strategy.
     /// </summary>
     public interface IBranchingStrategyProvider
     {

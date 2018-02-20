@@ -20,14 +20,13 @@ namespace Prigitsk
         }
 
         /// <summary>
-        ///     Called when the module loads. As <see cref="CreateLogger" />
-        ///     returns an <see cref="ILogger" />, we are able to register
-        ///     this function as a creator if loggers.
+        ///     Attaches a callback to the process of preparing for resolving items.
         /// </summary>
-        /// <param name="builder"></param>
-        protected override void Load(ContainerBuilder builder)
+        protected override void AttachToComponentRegistration(
+            IComponentRegistry componentRegistry,
+            IComponentRegistration registration)
         {
-            builder.Register(CreateLogger).AsImplementedInterfaces();
+            registration.Preparing += Registration_Preparing;
         }
 
         /// <summary>
@@ -46,14 +45,26 @@ namespace Prigitsk
             return logger;
         }
 
-        /// <summary>
-        ///     Attaches a callback to the process of preparing for resolving items.
-        /// </summary>
-        protected override void AttachToComponentRegistration(
-            IComponentRegistry componentRegistry,
-            IComponentRegistration registration)
+        private bool IsLoggerArgumentPresent(ParameterInfo p, IComponentContext c)
         {
-            registration.Preparing += Registration_Preparing;
+            return p.ParameterType == typeof(ILogger);
+        }
+
+        /// <summary>
+        ///     Called when the module loads. As <see cref="CreateLogger" />
+        ///     returns an <see cref="ILogger" />, we are able to register
+        ///     this function as a creator if loggers.
+        /// </summary>
+        /// <param name="builder"></param>
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.Register(CreateLogger).AsImplementedInterfaces();
+        }
+
+        private object LoggerCreator(IComponentContext c, Type forType)
+        {
+            object resolved = c.Resolve<ILogger>(TypedParameter.From(forType));
+            return resolved;
         }
 
         /// <summary>
@@ -71,17 +82,6 @@ namespace Prigitsk
                 (p, c) => LoggerCreator(c, forType));
 
             args.Parameters = args.Parameters.Union(new[] {logParameter});
-        }
-
-        private object LoggerCreator(IComponentContext c, Type forType)
-        {
-            object resolved = c.Resolve<ILogger>(TypedParameter.From(forType));
-            return resolved;
-        }
-
-        private bool IsLoggerArgumentPresent(ParameterInfo p, IComponentContext c)
-        {
-            return p.ParameterType == typeof(ILogger);
         }
     }
 }

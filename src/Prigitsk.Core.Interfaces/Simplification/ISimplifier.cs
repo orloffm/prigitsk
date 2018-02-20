@@ -5,7 +5,7 @@ namespace Prigitsk.Core.Simplification
     public interface ISimplifier
     {
         /// <summary>
-        /// Simplifies the tree.
+        ///     Simplifies the tree.
         /// </summary>
         void Simplify(ITree tree, ISimplificationOptions options);
     }

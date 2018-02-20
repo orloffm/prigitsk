@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace Prigitsk.WebApi.Tests
@@ -8,7 +7,6 @@ namespace Prigitsk.WebApi.Tests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

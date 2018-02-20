@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Prigitsk.Core.Tree;
+﻿using Prigitsk.Core.Tree;
 
 namespace Prigitsk.Core.Simplification
 {
@@ -9,7 +6,6 @@ namespace Prigitsk.Core.Simplification
     {
         public void Simplify(ITree tree, ISimplificationOptions options)
         {
-            
         }
     }
 }

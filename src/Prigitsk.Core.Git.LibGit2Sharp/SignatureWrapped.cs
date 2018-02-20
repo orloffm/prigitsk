@@ -13,8 +13,10 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             _signature = signature;
         }
 
-        public string Name => _signature.Name;
         public string Email => _signature.Email;
+
+        public string Name => _signature.Name;
+
         public DateTimeOffset When => _signature.When;
 
         public static ISignature Create(Signature signature)

@@ -17,21 +17,20 @@ namespace Prigitsk.Core.Tests.Nodes
              *      c
              */
 
-            var a = Mock.Of<INode>();
-            var b = Mock.Of<INode>(n => n.Parents == new[] {a});
-            var c = Mock.Of<INode>(n => n.Parents == new[] {a});
-            var d = Mock.Of<INode>(n => n.Parents == new[] {b, c});
+            INode a = Mock.Of<INode>();
+            INode b = Mock.Of<INode>(n => n.Parents == new[] {a});
+            INode c = Mock.Of<INode>(n => n.Parents == new[] {a});
+            INode d = Mock.Of<INode>(n => n.Parents == new[] {b, c});
 
             ITreeWalker tw = new TreeWalker();
 
-            INode[] allNodes = tw.EnumerateAllParentsBreadthFirst(d, minimum: null).ToArray();
-            Assert.Equal(new []{b, c, a}, allNodes);
+            INode[] allNodes = tw.EnumerateAllParentsBreadthFirst(d, null).ToArray();
+            Assert.Equal(new[] {b, c, a}, allNodes);
         }
 
         [Fact]
         public void GivenTreeAndMinimumDate_ThenDoesNotGoBeyondIt()
         {
-
         }
     }
 }

@@ -11,7 +11,8 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             _gitRef = gitref;
         }
 
-        public abstract ICommit Tip { get; }
         public string FriendlyName => _gitRef.FriendlyName;
+
+        public abstract ICommit Tip { get; }
     }
 }
