@@ -20,14 +20,10 @@ namespace Prigitsk.Core.Graph.Writing
 
         private readonly string _repositoryPath;
         private readonly CultureInfo _ukCulture;
-        private readonly INodeWeightInformer _weightInformer;
 
         public TreeWriter(string repositoryPath)
         {
             _repositoryPath = repositoryPath;
-            _weightInformer = new NodeWeightInformer();
-            _weightInformer.MinWidth = 0.2d;
-            _weightInformer.MaxWidth = 0.5d;
             _ukCulture = new CultureInfo("en-gb");
         }
 
@@ -35,21 +31,29 @@ namespace Prigitsk.Core.Graph.Writing
         {
             StringBuilder sb = new StringBuilder();
             WriteHeader(sb);
+
             // The graph nodes with current branch names,
             OriginBranch[] currentBranches = graph.GetCurrentBranches();
             WriteCurrentBranchesLabels(sb, currentBranches);
+            
             // Tags and orphaned branches names,
             Tag[] tags = graph.GetAllTags();
+
             OriginBranch[] orphanedBranches = graph.GetOrphanedBranches();
+
             WriteTagsAndOrphanedBranches(sb, tags, orphanedBranches);
+
             // Now the graph itself.
             var otherLinks = new PairList<INode, INode>();
             WriteNodes(graph, branchingStrategy, sb, currentBranches, otherLinks);
+
             // Render all other edges
             WriteOtherEdges(otherLinks, sb);
+
             // Tags and orphaned branches
             WriteTagsAndOrphanedBranchesConnections(sb, tags, orphanedBranches);
             WriteFooter(sb);
+
             string result = sb.ToString();
             return result;
         }
@@ -127,7 +131,7 @@ rank = sink;
 
         private void WriteNode(StringBuilder sb, INode n)
         {
-            double width = _weightInformer.GetWidth(n);
+            double width = 0.2d;
             string size = width.ToString("##.##", _ukCulture);
             const string nodeFormat = @"{0} [width={1}, height={1}, URL=""{3}/commit/{2}""];";
             sb.AppendLine(string.Format(nodeFormat, MakeNodeHandle(n), size, n.Hash, _repositoryPath));
@@ -140,8 +144,6 @@ rank = sink;
             OriginBranch[] currentBranches,
             PairList<INode, INode> otherLinks)
         {
-            // Initialize weights.
-            _weightInformer.Init(graph.EnumerateAllContainedNodes());
             sb.AppendLine(
                 @"// graph
 node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]

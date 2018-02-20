@@ -17,7 +17,7 @@ namespace Prigitsk.Core.RepoData
 
         public IEnumerator<T> GetEnumerator()
         {
-            return (IEnumerator<T>) Data.GetEnumerator();
+            return Data.AsEnumerable().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

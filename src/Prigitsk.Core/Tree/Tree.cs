@@ -6,15 +6,22 @@ namespace Prigitsk.Core.Tree
 {
     public class Tree : ITree
     {
-        private readonly Dictionary<IBranch, OrderedSet<Node>> _branches;
-        private readonly Dictionary<IHash, Node> _nodes;
-        private readonly HashSet<ITag> _tags;
+        private readonly IDictionary<IBranch, OrderedSet<Node>> _branches;
+        private readonly IDictionary<INode, IBranch> _containedInBranch;
+        private readonly IMultipleDictionary<INode, ITag> _pointingTags;
+        private readonly IMultipleDictionary<INode, IBranch> _pointingBranches;
+        private readonly IDictionary<IHash, Node> _nodes;
+        private readonly ISet<ITag> _tags;
 
         public Tree()
         {
             _nodes = new Dictionary<IHash, Node>();
             _branches = new Dictionary<IBranch, OrderedSet<Node>>();
             _tags = new HashSet<ITag>();
+
+            _containedInBranch = new Dictionary<INode, IBranch>();
+            _pointingTags = new MultipleDictionary<INode, ITag>();
+            _pointingBranches = new MultipleDictionary<INode, IBranch>();
         }
 
         public void AddBranchCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
