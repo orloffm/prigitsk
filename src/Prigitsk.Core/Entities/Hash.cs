@@ -13,27 +13,7 @@ namespace Prigitsk.Core.Entities
             Value = hash;
         }
 
-        public string ToShortString()
-        {
-            return Value.Length <= DefaultCharsLength ? Value : Value.Substring(0, DefaultCharsLength);
-        }
-
-        public bool Equals(Hash other)
-        {
-            return AreEqual(this, other);
-        }
-
         public string Value { get; }
-
-        public bool Equals(IHash other)
-        {
-            return AreEqual(this, other);
-        }
-
-        public override string ToString()
-        {
-            return Value;
-        }
 
         public static bool AreEqual(IHash a, IHash b)
         {
@@ -50,6 +30,21 @@ namespace Prigitsk.Core.Entities
             return string.Equals(a.Value, b.Value, StringComparison.OrdinalIgnoreCase);
         }
 
+        public static IHash Create(string s)
+        {
+            return new Hash(s);
+        }
+
+        public bool Equals(Hash other)
+        {
+            return AreEqual(this, other);
+        }
+
+        public bool Equals(IHash other)
+        {
+            return AreEqual(this, other);
+        }
+
         public override bool Equals(object obj)
         {
             return AreEqual(this, obj as IHash);
@@ -60,9 +55,14 @@ namespace Prigitsk.Core.Entities
             return Value.GetHashCode();
         }
 
-        public static IHash Create(string s)
+        public string ToShortString()
         {
-            return new Hash(s);
+            return Value.Length <= DefaultCharsLength ? Value : Value.Substring(0, DefaultCharsLength);
+        }
+
+        public override string ToString()
+        {
+            return Value;
         }
     }
 }

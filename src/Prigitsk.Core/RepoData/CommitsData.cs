@@ -14,6 +14,18 @@ namespace Prigitsk.Core.RepoData
             _commits = data.ToDictionary(item => item.Hash, item => item);
         }
 
+        public int Count => _commits.Count;
+
+        public IEnumerable<ICommit> EnumerateUpTheHistoryFrom(ICommit tip)
+        {
+            ICommit n = tip;
+            do
+            {
+                yield return n;
+                n = GetByHash(tip.Parents.FirstOrDefault());
+            } while (n != null);
+        }
+
         public ICommit GetByHash(IHash hash)
         {
             if (hash == null)
@@ -26,17 +38,6 @@ namespace Prigitsk.Core.RepoData
             return commit;
         }
 
-        public IEnumerable<ICommit> EnumerateUpTheHistoryFrom(ICommit tip)
-        {
-            ICommit n = tip;
-            do
-            {
-                yield return n;
-                n = GetByHash(tip.Parents.FirstOrDefault());
-            }
-            while (n != null);
-        }
-
         public IEnumerator<ICommit> GetEnumerator()
         {
             return _commits.Values.GetEnumerator();
@@ -46,7 +47,5 @@ namespace Prigitsk.Core.RepoData
         {
             return GetEnumerator();
         }
-
-        public int Count => _commits.Count;
     }
 }

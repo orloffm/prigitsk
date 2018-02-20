@@ -6,21 +6,6 @@ namespace Prigitsk.Core.Nodes
 {
     public class TreeWalker : ITreeWalker
     {
-        public IEnumerable<INode> EnumerateFirstParentsUpTheTreeBranchAgnostic(INode source, bool includeSelf = false)
-        {
-            if (includeSelf)
-            {
-                yield return source;
-            }
-
-            INode n = source.Parents.FirstOrDefault();
-            while (n != null)
-            {
-                yield return n;
-                n = n.Parents.FirstOrDefault();
-            }
-        }
-
         public IEnumerable<INode> EnumerateAllParentsBreadthFirst(INode source, DateTime? minimum)
         {
             var returned = new HashSet<INode>();
@@ -53,6 +38,21 @@ namespace Prigitsk.Core.Nodes
                 {
                     yield return grandParent;
                 }
+            }
+        }
+
+        public IEnumerable<INode> EnumerateFirstParentsUpTheTreeBranchAgnostic(INode source, bool includeSelf = false)
+        {
+            if (includeSelf)
+            {
+                yield return source;
+            }
+
+            INode n = source.Parents.FirstOrDefault();
+            while (n != null)
+            {
+                yield return n;
+                n = n.Parents.FirstOrDefault();
             }
         }
     }

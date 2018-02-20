@@ -3,6 +3,7 @@
     public interface IRemote
     {
         string RemoteName { get; }
+
         string Url { get; }
     }
 }

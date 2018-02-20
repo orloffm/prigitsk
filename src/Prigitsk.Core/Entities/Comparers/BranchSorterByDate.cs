@@ -10,7 +10,7 @@ namespace Prigitsk.Core.Entities.Comparers
 
         public BranchSorterByDate(IDictionary<IBranch, DateTimeOffset> startDates)
         {
-            _startDates = startDates.ToDictionary(k=>k.Key, k=>k.Value);
+            _startDates = startDates.ToDictionary(k => k.Key, k => k.Value);
         }
 
         public int Compare(IBranch x, IBranch y)

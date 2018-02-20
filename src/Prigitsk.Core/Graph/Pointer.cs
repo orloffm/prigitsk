@@ -1,5 +1,4 @@
-﻿using System;
-using Prigitsk.Core.Nodes;
+﻿using Prigitsk.Core.Nodes;
 
 namespace Prigitsk.Core.Graph
 {
@@ -11,8 +10,9 @@ namespace Prigitsk.Core.Graph
             Source = source;
         }
 
-        public INode Source { get; }
         public string Label { get; }
+
+        public INode Source { get; }
 
         public static bool AreEqual(Pointer a, Pointer b)
         {

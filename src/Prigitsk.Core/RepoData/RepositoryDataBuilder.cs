@@ -24,11 +24,6 @@ namespace Prigitsk.Core.RepoData
             _tags = new List<Tag>();
         }
 
-        public IRepositoryData Build()
-        {
-            return new RepositoryData(_commits, _remotes, _branches, _tags);
-        }
-
         public void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen)
         {
             IHash hash = Hash.Create(sha);
@@ -56,6 +51,11 @@ namespace Prigitsk.Core.RepoData
             IHash tip = Hash.Create(tipSha);
             Tag t = new Tag(tagName, tip);
             _tags.Add(t);
+        }
+
+        public IRepositoryData Build()
+        {
+            return new RepositoryData(_commits, _remotes, _branches, _tags);
         }
     }
 }

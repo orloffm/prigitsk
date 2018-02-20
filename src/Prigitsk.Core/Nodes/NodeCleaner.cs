@@ -15,33 +15,23 @@ namespace Prigitsk.Core.Nodes
             _walker = walker;
         }
 
-        public void CleanUpGraph(
-            IAssumedGraph graph,
-            SimplificationOptions options)
+        private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<INode> nodesInQuestion, IEnumerable<INode> whitelist)
         {
-            // Remove nodes that are not used in the graph.
-            // They are not needed.
-            INode[] leftOutNodes = graph.EnumerateLeftOversWithoutBranchesAndTags().ToArray();
-            for (int index = 0; index < leftOutNodes.Length; index++)
+            var whitelistSet = new HashSet<INode>(whitelist);
+
+            foreach (INode node in nodesInQuestion)
             {
-                INode n = leftOutNodes[index];
-                _manipulator.RemoveItselfFromTheNodeGraph(n);
-                graph.RemoveNodeFromLeftOvers(n);
+                foreach (INode c in node.Children)
+                {
+                    bool childIsInWhitelist = whitelistSet.Contains(c);
+                    if (!childIsInWhitelist)
+                    {
+                        return false;
+                    }
+                }
             }
 
-            // If asked, don't simplify anything,
-            if (options.PreventSimplification)
-            {
-                return;
-            }
-
-            int pass = 0;
-            bool removedAnything;
-            do
-            {
-                pass++;
-                removedAnything = MakePass(graph, options);
-            } while (removedAnything);
+            return true;
         }
 
         private bool CleanUpChildEdges(
@@ -100,6 +90,78 @@ namespace Prigitsk.Core.Nodes
             return removedAnything;
         }
 
+        public void CleanUpGraph(
+            IAssumedGraph graph,
+            SimplificationOptions options)
+        {
+            // Remove nodes that are not used in the graph.
+            // They are not needed.
+            INode[] leftOutNodes = graph.EnumerateLeftOversWithoutBranchesAndTags().ToArray();
+            for (int index = 0; index < leftOutNodes.Length; index++)
+            {
+                INode n = leftOutNodes[index];
+                _manipulator.RemoveItselfFromTheNodeGraph(n);
+                graph.RemoveNodeFromLeftOvers(n);
+            }
+
+            // If asked, don't simplify anything,
+            if (options.PreventSimplification)
+            {
+                return;
+            }
+
+            int pass = 0;
+            bool removedAnything;
+            do
+            {
+                pass++;
+                removedAnything = MakePass(graph, options);
+            } while (removedAnything);
+        }
+
+        private IEnumerable<INode> EnumerateNodesBetween(IAssumedGraph graph, INode parent, INode an)
+        {
+            foreach (INode node in graph.EnumerateNodesDownTheBranch(parent))
+            {
+                if (node == an)
+                {
+                    yield break;
+                }
+
+                yield return node;
+            }
+        }
+
+        private bool IsDirectRoadToTip(
+            INode node,
+            OriginBranch branch)
+        {
+            INode n = node;
+            while (true)
+            {
+                // Merging.
+                if (n.Parents.Count != 1)
+                {
+                    return false;
+                }
+
+                // Is it a tip?
+                if (n == branch.Source)
+                {
+                    return n.Children.Count == 0;
+                }
+
+                // Not yet a tip.
+                if (n.Children.Count != 1)
+                {
+                    // Branching,
+                    return false;
+                }
+
+                n = n.Children.Single();
+            }
+        }
+
         /// <summary>
         ///     Some child node An in the branch A contains an edge An->Bk
         ///     to the same branch B, and:
@@ -139,101 +201,6 @@ namespace Prigitsk.Core.Nodes
             // In other words - that the left side doesn't leak.
             bool noOtherChildren = CheckAllNonPrimaryChildrenAreFrom(childrenInBetween, possibleThirdGeneration);
             return noOtherChildren;
-        }
-
-        private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<INode> nodesInQuestion, IEnumerable<INode> whitelist)
-        {
-            var whitelistSet = new HashSet<INode>(whitelist);
-
-            foreach (INode node in nodesInQuestion)
-            {
-                foreach (INode c in node.Children)
-                {
-                    bool childIsInWhitelist = whitelistSet.Contains(c);
-                    if (!childIsInWhitelist)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private IEnumerable<INode> EnumerateNodesBetween(IAssumedGraph graph, INode parent, INode an)
-        {
-            foreach (INode node in graph.EnumerateNodesDownTheBranch(parent))
-            {
-                if (node == an)
-                {
-                    yield break;
-                }
-
-                yield return node;
-            }
-        }
-
-        private bool TryFindRightSideOfARhombus(
-            IAssumedGraph graph,
-            INode parent,
-            OriginBranch branchB,
-            out INode an,
-            out INode bk)
-        {
-            an = null;
-            bk = null;
-
-            if (branchB == null)
-            {
-                // Only branches, no free-floating nodes,
-                return false;
-            }
-
-            foreach (INode am in graph.EnumerateNodesDownTheBranch(parent))
-            {
-                INode leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
-                    .OrderBy(graph.GetIndexOnBranch)
-                    .FirstOrDefault();
-
-                if (leftmostChildOnB != null)
-                {
-                    an = am;
-                    bk = leftmostChildOnB;
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool IsDirectRoadToTip(
-            INode node,
-            OriginBranch branch)
-        {
-            INode n = node;
-            while (true)
-            {
-                // Merging.
-                if (n.Parents.Count != 1)
-                {
-                    return false;
-                }
-
-                // Is it a tip?
-                if (n == branch.Source)
-                {
-                    return n.Children.Count == 0;
-                }
-
-                // Not yet a tip.
-                if (n.Children.Count != 1)
-                {
-                    // Branching,
-                    return false;
-                }
-
-                n = n.Children.Single();
-            }
         }
 
         private bool IsSomeParentLinked(
@@ -331,6 +298,39 @@ namespace Prigitsk.Core.Nodes
             _manipulator.RemoveItselfFromTheNodeGraph(currentNode);
             graph.RemoveNodeFromBranch(b, currentNode);
             return true;
+        }
+
+        private bool TryFindRightSideOfARhombus(
+            IAssumedGraph graph,
+            INode parent,
+            OriginBranch branchB,
+            out INode an,
+            out INode bk)
+        {
+            an = null;
+            bk = null;
+
+            if (branchB == null)
+            {
+                // Only branches, no free-floating nodes,
+                return false;
+            }
+
+            foreach (INode am in graph.EnumerateNodesDownTheBranch(parent))
+            {
+                INode leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
+                    .OrderBy(graph.GetIndexOnBranch)
+                    .FirstOrDefault();
+
+                if (leftmostChildOnB != null)
+                {
+                    an = am;
+                    bk = leftmostChildOnB;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

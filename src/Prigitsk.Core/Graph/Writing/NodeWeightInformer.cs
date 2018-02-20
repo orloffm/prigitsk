@@ -20,6 +20,16 @@ namespace Prigitsk.Core.Graph.Writing
             MaxWidth = 0.6d;
         }
 
+        public double MaxWidth
+        {
+            get => _maxWidth;
+            set
+            {
+                _maxWidth = value;
+                _widthDiff = _maxWidth - _minWidth;
+            }
+        }
+
         public double MinWidth
         {
             get => _minWidth;
@@ -30,14 +40,24 @@ namespace Prigitsk.Core.Graph.Writing
             }
         }
 
-        public double MaxWidth
+        private int GetChange(INode n)
         {
-            get => _maxWidth;
-            set
+            return n.Deletions + n.Insertions;
+        }
+
+        public double GetWidth(INode n)
+        {
+            int diff = _maxChange - _minChange;
+            if (diff == 0)
             {
-                _maxWidth = value;
-                _widthDiff = _maxWidth - _minWidth;
+                return _baseWidth;
             }
+
+            int change = GetChange(n);
+            double result = MinWidth + _widthDiff * change / diff;
+            result = Math.Max(result, MinWidth);
+            result = Math.Min(result, MaxWidth);
+            return result;
         }
 
         public void Init(IEnumerable<INode> nodes)
@@ -66,26 +86,6 @@ namespace Prigitsk.Core.Graph.Writing
 
             _minChange = changes[minIndex];
             _maxChange = changes[maxIndex];
-        }
-
-        public double GetWidth(INode n)
-        {
-            int diff = _maxChange - _minChange;
-            if (diff == 0)
-            {
-                return _baseWidth;
-            }
-
-            int change = GetChange(n);
-            double result = MinWidth + _widthDiff * change / diff;
-            result = Math.Max(result, MinWidth);
-            result = Math.Min(result, MaxWidth);
-            return result;
-        }
-
-        private int GetChange(INode n)
-        {
-            return n.Deletions + n.Insertions;
         }
     }
 }

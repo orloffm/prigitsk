@@ -10,6 +10,11 @@ namespace Prigitsk.Core.Strategy
     public interface IBranchingStrategy
     {
         /// <summary>
+        ///     Returns HTML color for the branch. TODO: return an enum.
+        /// </summary>
+        string GetHtmlColorFor(IBranch branch);
+
+        /// <summary>
         ///     Orders branches by their logical creation priority.
         /// </summary>
         IEnumerable<IBranch> SortByPriorityDescending(IEnumerable<IBranch> branchesEnumerable);
@@ -20,10 +25,5 @@ namespace Prigitsk.Core.Strategy
         IEnumerable<IBranch> SortForWritingDescending(
             IEnumerable<IBranch> branchesEnumerable,
             IDictionary<IBranch, DateTimeOffset> firstNodeDates);
-
-        /// <summary>
-        ///     Returns HTML color for the branch. TODO: return an enum.
-        /// </summary>
-        string GetHtmlColorFor(IBranch branch);
     }
 }

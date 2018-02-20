@@ -7,7 +7,6 @@ namespace Prigitsk.Core.RepoData
     {
         public TagsData(IEnumerable<ITag> data) : base(data)
         {
-
         }
     }
 }

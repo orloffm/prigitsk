@@ -2,5 +2,6 @@
 {
     public interface ITag : IPointer
     {
+        bool Equals(ITag other);
     }
 }

@@ -7,14 +7,17 @@ namespace Prigitsk.Core.RepoData
     /// </summary>
     public interface IRepositoryDataBuilder
     {
+        void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen);
+
+        void AddRemote(string remoteName, string remoteUrl);
+
+        void AddRemoteBranch(string branchName, string tipSha);
+
+        void AddTag(string tagName, string tipSha);
+
         /// <summary>
         ///     Returns an immutable repository data set.
         /// </summary>
         IRepositoryData Build();
-
-        void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen);
-        void AddRemote(string remoteName, string remoteUrl);
-        void AddRemoteBranch(string branchName, string tipSha);
-        void AddTag(string tagName, string tipSha);
     }
 }

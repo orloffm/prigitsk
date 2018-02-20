@@ -2,5 +2,7 @@
 
 namespace Prigitsk.Core.RepoData
 {
-    public interface ITagsData : IEntityData<ITag> { }
+    public interface ITagsData : IEntityData<ITag>
+    {
+    }
 }

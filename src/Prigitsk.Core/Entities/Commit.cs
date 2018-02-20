@@ -14,19 +14,11 @@ namespace Prigitsk.Core.Entities
             CommittedWhen = commiterTimeStamp;
         }
 
-        public IHash Hash { get; }
-        public IEnumerable<IHash> Parents { get; }
         public DateTimeOffset? CommittedWhen { get; }
 
-        public bool Equals(ICommit other)
-        {
-            return AreEqual(this, other);
-        }
+        public IHash Hash { get; }
 
-        public bool Equals(Commit other)
-        {
-            return AreEqual(this, other);
-        }
+        public IEnumerable<IHash> Parents { get; }
 
         public static bool AreEqual(ICommit a, ICommit b)
         {
@@ -41,6 +33,16 @@ namespace Prigitsk.Core.Entities
             }
 
             return a.Hash.Equals(b.Hash);
+        }
+
+        public bool Equals(ICommit other)
+        {
+            return AreEqual(this, other);
+        }
+
+        public bool Equals(Commit other)
+        {
+            return AreEqual(this, other);
         }
 
         public override bool Equals(object obj)

@@ -2,10 +2,11 @@
 
 namespace Prigitsk.Core.Tools
 {
-    public interface IOrderedCollection<T>
+    public interface IOrderedSet<T>
         : ICollection<T>
     {
         T First { get; }
+
         T Last { get; }
     }
 }

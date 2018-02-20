@@ -11,11 +11,11 @@ namespace Prigitsk.Core.Graph.Writing
 {
     public class TreeWriter : ITreeWriter
     {
-        private const string BranchNodesFormat
-            = @"node [group={0}, fillcolor=""{1}"", color=""{2}""];";
-
         private const string BranchEdgesFormat
             = @"edge[color = ""{0}"", penwidth={1}];";
+
+        private const string BranchNodesFormat
+            = @"node [group={0}, fillcolor=""{1}"", color=""{2}""];";
 
         private readonly string _repositoryPath;
         private readonly CultureInfo _ukCulture;
@@ -66,16 +66,6 @@ namespace Prigitsk.Core.Graph.Writing
             return @"""" + node.Hash + @"""";
         }
 
-        private void WriteInBranchEdge(StringBuilder sb, INode parentNode, INode childNote)
-        {
-            const string edgeFormatSimple = @"{0} -> {1}; ";
-            const string edgeFormatDotted = @"{0} -> {1} [style=dashed];";
-
-            // We draw it dotted.
-            string formatToUse = childNote.SomethingWasMergedInto ? edgeFormatDotted : edgeFormatSimple;
-            sb.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
-        }
-
         private void WriteCurrentBranchesLabels(
             StringBuilder sb,
             OriginBranch[] currentBranches)
@@ -122,6 +112,16 @@ rank = sink;
     node[style = filled, color = ""black""];
     edge[arrowhead = vee, color = ""black"", penwidth = l];
     ");
+        }
+
+        private void WriteInBranchEdge(StringBuilder sb, INode parentNode, INode childNote)
+        {
+            const string edgeFormatSimple = @"{0} -> {1}; ";
+            const string edgeFormatDotted = @"{0} -> {1} [style=dashed];";
+
+            // We draw it dotted.
+            string formatToUse = childNote.SomethingWasMergedInto ? edgeFormatDotted : edgeFormatSimple;
+            sb.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
         }
 
         private void WriteNode(StringBuilder sb, INode n)

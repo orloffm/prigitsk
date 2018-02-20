@@ -20,6 +20,85 @@ namespace Prigitsk.Core.Strategy
             "^hotfix"
         };
 
+        private void AddEndingWith(
+            string endString,
+            ICollection<IBranch> source,
+            ICollection<IBranch> target,
+            IComparer<IBranch> sorter)
+        {
+            endString = endString.ToLower();
+            AddWith(s => s.EndsWith(endString), source, target, sorter);
+        }
+
+        private void AddEqual(
+            string value,
+            ICollection<IBranch> source,
+            ICollection<IBranch> target)
+        {
+            IBranch match = source.FirstOrDefault(z => z.Label == value);
+            if (match != null)
+            {
+                target.Add(match);
+                source.Remove(match);
+            }
+        }
+
+        private void AddStartingWith(
+            string startString,
+            ICollection<IBranch> source,
+            ICollection<IBranch> target,
+            IComparer<IBranch> sorter)
+        {
+            startString = startString.ToLower();
+            AddWith(s => s.StartsWith(startString), source, target, sorter);
+        }
+
+        private void AddWith(
+            Func<string, bool> predicate,
+            ICollection<IBranch> source,
+            ICollection<IBranch> target,
+            IComparer<IBranch> sorter)
+        {
+            List<IBranch> matching = source.Where(z => predicate(z.Label.ToLower())).ToList();
+            matching.Sort(sorter);
+            foreach (IBranch b in matching)
+            {
+                target.Add(b);
+                source.Remove(b);
+            }
+        }
+
+        public string GetHtmlColorFor(IBranch branch)
+        {
+            string label = branch.Label.ToLower();
+            if (label == "master")
+            {
+                return "#27E4F9";
+            }
+
+            if (label == "develop")
+            {
+                return "#FFE333";
+            }
+
+            if (label.StartsWith("hotfix"))
+            {
+                return "#FD5965";
+            }
+
+            if (IsRelease(label))
+            {
+                return "#52C322";
+            }
+
+            return "#FB3DB5";
+        }
+
+        private bool IsRelease(string label)
+        {
+            return label.StartsWith("release") || label.EndsWith("-rc");
+        }
+
         public IEnumerable<IBranch> SortByPriorityDescending(IEnumerable<IBranch> branchesEnumerable)
         {
             var branchesLeftToBeSorted = new List<IBranch>(branchesEnumerable);
@@ -71,85 +150,6 @@ namespace Prigitsk.Core.Strategy
             AddEqual("develop", branches, ret);
             AddStartingWith("", branches, ret, byDateComparer);
             return ret;
-        }
-
-        public string GetHtmlColorFor(IBranch branch)
-        {
-            string label = branch.Label.ToLower();
-            if (label == "master")
-            {
-                return "#27E4F9";
-            }
-
-            if (label == "develop")
-            {
-                return "#FFE333";
-            }
-
-            if (label.StartsWith("hotfix"))
-            {
-                return "#FD5965";
-            }
-
-            if (IsRelease(label))
-            {
-                return "#52C322";
-            }
-
-            return "#FB3DB5";
-        }
-
-        private void AddEqual(
-            string value,
-            ICollection<IBranch> source,
-            ICollection<IBranch> target)
-        {
-            IBranch match = source.FirstOrDefault(z => z.Label == value);
-            if (match != null)
-            {
-                target.Add(match);
-                source.Remove(match);
-            }
-        }
-
-        private void AddStartingWith(
-            string startString,
-            ICollection<IBranch> source,
-            ICollection<IBranch> target,
-            IComparer<IBranch> sorter)
-        {
-            startString = startString.ToLower();
-            AddWith(s => s.StartsWith(startString), source, target, sorter);
-        }
-
-        private void AddEndingWith(
-            string endString,
-            ICollection<IBranch> source,
-            ICollection<IBranch> target,
-            IComparer<IBranch> sorter)
-        {
-            endString = endString.ToLower();
-            AddWith(s => s.EndsWith(endString), source, target, sorter);
-        }
-
-        private void AddWith(
-            Func<string, bool> predicate,
-            ICollection<IBranch> source,
-            ICollection<IBranch> target,
-            IComparer<IBranch> sorter)
-        {
-            List<IBranch> matching = source.Where(z => predicate(z.Label.ToLower())).ToList();
-            matching.Sort(sorter);
-            foreach (IBranch b in matching)
-            {
-                target.Add(b);
-                source.Remove(b);
-            }
-        }
-
-        private bool IsRelease(string label)
-        {
-            return label.StartsWith("release") || label.EndsWith("-rc");
         }
     }
 }

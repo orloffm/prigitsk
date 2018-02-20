@@ -9,10 +9,9 @@ namespace Prigitsk.Core.RepoData
     {
         public BranchesData(IEnumerable<IBranch> data) : base(data)
         {
-
         }
 
-      public IEnumerable<IBranch> GetFor(IRemote remote)
+        public IEnumerable<IBranch> GetFor(IRemote remote)
         {
             return Data.Where(b => string.Equals(b.RemoteName, remote.RemoteName, StringComparison.OrdinalIgnoreCase));
         }

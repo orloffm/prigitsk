@@ -20,30 +20,37 @@ namespace Prigitsk.Core.Tree
             // Sort these branches.
             IBranch[] branchesSorted = strategy.SortByPriorityDescending(branches).ToArray();
 
+            var commits = new HashSet<ICommit>(repository.Commits);
+
             ITree tree = new Tree();
 
-            var unprocessedNodes = new HashSet<ICommit>(repository.Commits);
-
+            // Add commits by branch.
             foreach (IBranch b in branchesSorted)
             {
                 ICommit tip = repository.Commits.GetByHash(b.Tip);
 
-                var nodesInBranch = new List<ICommit>(unprocessedNodes.Count / 2);
+                var commitsInBranch = new List<ICommit>(commits.Count / 2);
                 IEnumerable<ICommit> upTheTree = repository.Commits.EnumerateUpTheHistoryFrom(tip);
                 foreach (ICommit commit in upTheTree)
                 {
-                    if (!unprocessedNodes.Contains(commit))
+                    if (!commits.Contains(commit))
                     {
                         break;
                     }
 
-                    nodesInBranch.Add(commit);
-                    unprocessedNodes.Remove(commit);
+                    commitsInBranch.Add(commit);
+                    commits.Remove(commit);
                 }
 
-                nodesInBranch.Reverse();
-                //  tree.SetBranchNodes(b, nodesInBranch);
+                commitsInBranch.Reverse();
+                tree.AddBranchCommits(b, commitsInBranch);
             }
+
+            // Now tags.
+            tree.AddTags(repository.Tags);
+
+            // And all commits not in branches.
+            tree.AddCommitsWithoutBranches(commits);
 
             return tree;
         }

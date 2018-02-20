@@ -4,9 +4,9 @@ namespace Prigitsk.Core.Git
 {
     public interface ISignature
     {
-        string Name { get; }
-
         string Email { get; }
+
+        string Name { get; }
 
         DateTimeOffset When { get; }
     }

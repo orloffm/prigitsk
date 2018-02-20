@@ -5,8 +5,8 @@ namespace Prigitsk.Core.Nodes
 {
     public class GitRef : IEquatable<GitRef>
     {
-        private const string TagPrefix = @"tag: ";
         private const string OriginPrefix = @"origin/";
+        private const string TagPrefix = @"tag: ";
 
         private GitRef()
         {
@@ -14,20 +14,21 @@ namespace Prigitsk.Core.Nodes
             IsCommit = true;
         }
 
-        public string Value { get; private set; }
-        public bool IsTag { get; private set; }
-
         public bool IsCommit
         {
             get => !IsTag;
             set => IsTag = !value;
         }
 
-        public bool IsOriginBranch { get; private set; }
-
         public bool IsLocalBranch => IsCommit && !IsOriginBranch;
 
+        public bool IsOriginBranch { get; private set; }
+
+        public bool IsTag { get; private set; }
+
         public string ObjectType { get; set; }
+
+        public string Value { get; private set; }
 
         public static GitRef FromForEachRef(
             string refName,

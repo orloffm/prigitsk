@@ -11,7 +11,13 @@ namespace Prigitsk.Core.Entities
             Name = name;
         }
 
-        public IHash Tip { get; }
         public string Name { get; }
+
+        public IHash Tip { get; }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
+        }
     }
 }

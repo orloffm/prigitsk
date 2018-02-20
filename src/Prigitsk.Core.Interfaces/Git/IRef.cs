@@ -2,7 +2,8 @@
 {
     public interface IRef
     {
-        ICommit Tip { get; }
         string FriendlyName { get; }
+
+        ICommit Tip { get; }
     }
 }

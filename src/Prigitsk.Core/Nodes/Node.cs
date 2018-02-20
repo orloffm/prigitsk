@@ -17,35 +17,65 @@ namespace Prigitsk.Core.Nodes
             SetCaptions(null);
         }
 
+        public ICollection<INode> Children { get; }
+
+        public int Deletions { get; set; }
+
         public GitRef[] GitRefs { get; private set; }
 
-        public bool Equals(Node other)
-        {
-            return AreEqual(this, other);
-        }
-
-        public DateTime Time { get; set; }
-        public int Insertions { get; set; }
-        public int Deletions { get; set; }
-        public bool SomethingWasMergedInto { get; private set; }
+        public string Hash { get; }
 
         public bool HasTagsOrNonLocalBranches
         {
             get { return GitRefs.Any(c => !c.IsLocalBranch); }
         }
 
-        public ICollection<INode> Parents { get; }
-        public ICollection<INode> Children { get; }
-        public string Hash { get; }
+        public int Insertions { get; set; }
 
-        public void SetAsSomethingWasMergedInto()
+        public ICollection<INode> Parents { get; }
+
+        public bool SomethingWasMergedInto { get; private set; }
+
+        public DateTime Time { get; set; }
+
+        public static bool AreEqual(Node a, Node b)
         {
-            SomethingWasMergedInto = true;
+            if (ReferenceEquals(a, b))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(null, b))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(null, a))
+            {
+                return false;
+            }
+
+            return string.Equals(a.Hash, b.Hash);
+        }
+
+        public bool Equals(Node other)
+        {
+            return AreEqual(this, other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return AreEqual(this, (Node) obj);
         }
 
         public override int GetHashCode()
         {
             return Hash?.GetHashCode() ?? 0;
+        }
+
+        public void SetAsSomethingWasMergedInto()
+        {
+            SomethingWasMergedInto = true;
         }
 
         public void SetCaptions(string source)
@@ -110,31 +140,6 @@ namespace Prigitsk.Core.Nodes
             }
 
             return sb.ToString();
-        }
-
-        public static bool AreEqual(Node a, Node b)
-        {
-            if (ReferenceEquals(a, b))
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(null, b))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(null, a))
-            {
-                return false;
-            }
-
-            return string.Equals(a.Hash, b.Hash);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return AreEqual(this, (Node) obj);
         }
     }
 }

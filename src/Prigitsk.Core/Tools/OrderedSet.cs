@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Core.Tools
 {
-    public class OrderedSet<T> : IOrderedCollection<T>
+    public class OrderedSet<T> : IOrderedSet<T>
     {
         private readonly IDictionary<T, LinkedListNode<T>> _dictionary;
         private readonly LinkedList<T> _linkedList;
@@ -21,40 +21,33 @@ namespace Prigitsk.Core.Tools
 
         public int Count => _dictionary.Count;
 
+        public T First => _linkedList.First.Value;
+
         public bool IsReadOnly => false;
+
+        public T Last => _linkedList.Last.Value;
 
         void ICollection<T>.Add(T item)
         {
             Add(item);
         }
 
-        public void Clear()
+        public bool Add(T item)
         {
-            _linkedList.Clear();
-            _dictionary.Clear();
-        }
-
-        public bool Remove(T item)
-        {
-            bool found = _dictionary.TryGetValue(item, out LinkedListNode<T> node);
-            if (!found)
+            if (_dictionary.ContainsKey(item))
             {
                 return false;
             }
 
-            _dictionary.Remove(item);
-            _linkedList.Remove(node);
+            LinkedListNode<T> node = _linkedList.AddLast(item);
+            _dictionary.Add(item, node);
             return true;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        public void Clear()
         {
-            return _linkedList.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            _linkedList.Clear();
+            _dictionary.Clear();
         }
 
         public bool Contains(T item)
@@ -67,19 +60,26 @@ namespace Prigitsk.Core.Tools
             _linkedList.CopyTo(array, arrayIndex);
         }
 
-        public T First => _linkedList.First.Value;
-
-        public T Last => _linkedList.Last.Value;
-
-        public bool Add(T item)
+        public IEnumerator<T> GetEnumerator()
         {
-            if (_dictionary.ContainsKey(item))
+            return _linkedList.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public bool Remove(T item)
+        {
+            bool found = _dictionary.TryGetValue(item, out LinkedListNode<T> node);
+            if (!found)
             {
                 return false;
             }
 
-            LinkedListNode<T> node = _linkedList.AddLast(item);
-            _dictionary.Add(item, node);
+            _dictionary.Remove(item);
+            _linkedList.Remove(node);
             return true;
         }
     }

@@ -1,9 +1,11 @@
-﻿namespace Prigitsk.Core.Entities
+﻿using System;
+
+namespace Prigitsk.Core.Entities
 {
     /// <summary>
     ///     Represents a remote branch.
     /// </summary>
-    public class Branch : Pointer, IBranch
+    public sealed class Branch : Pointer, IBranch, IEquatable<Branch>
     {
         public Branch(string name, IHash tip) : base(name, tip)
         {
@@ -12,8 +14,33 @@
             Label = name.Substring(indexOfSlash + 1);
         }
 
+        public string Label { get; }
+
         public string RemoteName { get; }
 
-        public string Label { get; }
+        public static bool AreEqual(IBranch a, IBranch b)
+        {
+            return ReferenceEquals(a, b);
+        }
+
+        public bool Equals(IBranch other)
+        {
+            return AreEqual(this, other);
+        }
+
+        public bool Equals(Branch other)
+        {
+            return AreEqual(this, other);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return AreEqual(this, obj as IBranch);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

@@ -12,6 +12,7 @@ namespace Prigitsk.Core.Entities
         }
 
         public string RemoteName { get; }
+
         public string Url { get; }
     }
 }

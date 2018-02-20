@@ -17,9 +17,12 @@ namespace Prigitsk.Core.RepoData
             Tags = new TagsData(tags);
         }
 
-        public ICommitsData Commits { get; }
-        public IRemotesData Remotes { get; }
         public IBranchesData Branches { get; }
+
+        public ICommitsData Commits { get; }
+
+        public IRemotesData Remotes { get; }
+
         public ITagsData Tags { get; }
     }
 }

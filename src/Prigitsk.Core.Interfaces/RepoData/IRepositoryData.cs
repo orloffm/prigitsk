@@ -5,9 +5,12 @@
     /// </summary>
     public interface IRepositoryData
     {
-        ICommitsData Commits { get; }
-        IRemotesData Remotes { get; }
         IBranchesData Branches { get; }
+
+        ICommitsData Commits { get; }
+
+        IRemotesData Remotes { get; }
+
         ITagsData Tags { get; }
     }
 }
