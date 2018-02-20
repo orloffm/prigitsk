@@ -7,8 +7,8 @@ namespace Prigitsk.Core.Tree
     public class Tree : ITree
     {
         private readonly Dictionary<IBranch, OrderedSet<Node>> _branches;
-        private readonly HashSet<ITag> _tags;
         private readonly Dictionary<IHash, Node> _nodes;
+        private readonly HashSet<ITag> _tags;
 
         public Tree()
         {
@@ -30,33 +30,20 @@ namespace Prigitsk.Core.Tree
             _branches.Add(branch, branchNodes);
         }
 
-        public void AddTags(IEnumerable<ITag> tags)
-        {
-            foreach (var tag in tags)
-                _tags.Add(tag);
-        }
-
         public void AddCommitsWithoutBranches(IEnumerable<ICommit> commits)
         {
             foreach (ICommit commit in commits)
-                 GetOrCreateNodeFromCommit(commit);
+            {
+                GetOrCreateNodeFromCommit(commit);
+            }
         }
 
-        private Node GetOrCreateNodeFromCommit(ICommit commit)
+        public void AddTags(IEnumerable<ITag> tags)
         {
-            Node node= GetOrCreateNode(commit.Hash);
-            node.Commits.Add(commit);
-
-            foreach (IHash parent in commit.Parents)
+            foreach (ITag tag in tags)
             {
-                Node parentNode=   GetOrCreateNode(parent);
-
-                // Link both.
-                node.Parents.Add(parentNode);
-                parentNode.Children.Add(node);
+                _tags.Add(tag);
             }
-
-            return node;
         }
 
         private Node GetOrCreateNode(IHash hash)
@@ -66,6 +53,23 @@ namespace Prigitsk.Core.Tree
             {
                 node = new Node(hash);
                 _nodes.Add(hash, node);
+            }
+
+            return node;
+        }
+
+        private Node GetOrCreateNodeFromCommit(ICommit commit)
+        {
+            Node node = GetOrCreateNode(commit.Hash);
+            node.Commits.Add(commit);
+
+            foreach (IHash parent in commit.Parents)
+            {
+                Node parentNode = GetOrCreateNode(parent);
+
+                // Link both.
+                node.Parents.Add(parentNode);
+                parentNode.Children.Add(node);
             }
 
             return node;

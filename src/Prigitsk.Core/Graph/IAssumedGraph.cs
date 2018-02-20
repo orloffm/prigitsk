@@ -4,6 +4,7 @@ using Prigitsk.Core.Nodes;
 
 namespace Prigitsk.Core.Graph
 {
+    [Obsolete]
     public interface IAssumedGraph
     {
         bool AnyPointersAreSourcedFrom(INode currentNode);

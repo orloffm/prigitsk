@@ -1,5 +1,8 @@
-﻿namespace Prigitsk.Core.Nodes
+﻿using System;
+
+namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public class SimplificationOptions
     {
         /// <summary>Do remove first node in the branch.</summary>

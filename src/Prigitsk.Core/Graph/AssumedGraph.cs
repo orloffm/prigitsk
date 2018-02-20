@@ -5,6 +5,7 @@ using Prigitsk.Core.Nodes;
 
 namespace Prigitsk.Core.Graph
 {
+    [Obsolete]
     public class AssumedGraph : IAssumedGraph
     {
         private readonly Dictionary<INode, OriginBranch> _branchesByNodes;

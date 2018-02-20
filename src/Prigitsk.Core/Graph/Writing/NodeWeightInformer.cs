@@ -5,6 +5,7 @@ using Prigitsk.Core.Nodes;
 
 namespace Prigitsk.Core.Graph.Writing
 {
+    [Obsolete]
     public class NodeWeightInformer : INodeWeightInformer
     {
         private readonly double _baseWidth = 0.2d;

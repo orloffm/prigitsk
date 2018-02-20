@@ -9,6 +9,7 @@ using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Core.Graph.Writing
 {
+    [Obsolete]
     public class TreeWriter : ITreeWriter
     {
         private const string BranchEdgesFormat
@@ -44,7 +45,7 @@ namespace Prigitsk.Core.Graph.Writing
             // Now the graph itself.
             var otherLinks = new PairList<INode, INode>();
             WriteNodes(graph, branchingStrategy, sb, currentBranches, otherLinks);
-            // Write all other edges
+            // Render all other edges
             WriteOtherEdges(otherLinks, sb);
             // Tags and orphaned branches
             WriteTagsAndOrphanedBranchesConnections(sb, tags, orphanedBranches);

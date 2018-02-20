@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public class GitRef : IEquatable<GitRef>
     {
         private const string OriginPrefix = @"origin/";

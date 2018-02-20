@@ -2,6 +2,8 @@
 {
     public class TreeBuildingOptions : ITreeBuildingOptions
     {
-        public string RemoteToUse { get; set; }
+        public static ITreeBuildingOptions Default => new TreeBuildingOptions();
+
+        public string RemoteToUse => null;
     }
 }

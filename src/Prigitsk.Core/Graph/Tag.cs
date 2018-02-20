@@ -3,6 +3,7 @@ using Prigitsk.Core.Nodes;
 
 namespace Prigitsk.Core.Graph
 {
+    [Obsolete]
 #pragma warning disable 660,661
     public sealed class Tag : Pointer, IEquatable<Tag>
 #pragma warning restore 660,661

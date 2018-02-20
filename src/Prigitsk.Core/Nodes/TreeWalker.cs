@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public class TreeWalker : ITreeWalker
     {
         public IEnumerable<INode> EnumerateAllParentsBreadthFirst(INode source, DateTime? minimum)

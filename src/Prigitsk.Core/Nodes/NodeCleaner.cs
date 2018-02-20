@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Graph;
 
 namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public class NodeCleaner : INodeCleaner
     {
         private readonly ITreeManipulator _manipulator;

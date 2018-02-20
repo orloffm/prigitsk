@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Prigitsk.Core.Nodes
 {
+    [Obsolete]
     public class TreeManipulator : ITreeManipulator
     {
         public void AddChild(INode source, INode immediateChild)
