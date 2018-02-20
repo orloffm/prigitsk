@@ -8,7 +8,8 @@
             Repository = repository;
         }
 
-        public string Url { get; }
         public string Repository { get; }
+
+        public string Url { get; }
     }
 }

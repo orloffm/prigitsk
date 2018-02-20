@@ -5,11 +5,6 @@ namespace Prigitsk.Console.General.Programs
     public interface IExternalAppPathProvider
     {
         /// <summary>
-        ///     Gets the full path to the external program. The executable exists, or an exception is thrown.
-        /// </summary>
-        string GetProperAppPath(ExternalApp app);
-
-        /// <summary>
         ///     Lists all programs.
         /// </summary>
         /// <returns></returns>
@@ -17,8 +12,13 @@ namespace Prigitsk.Console.General.Programs
 
         ExternalAppInfo GetAppInformation(ExternalApp app);
 
-        void SetSettingsPathFor(ExternalApp app, string fullPath);
-
         string GetFullSettingsPathFor(ExternalApp app);
+
+        /// <summary>
+        ///     Gets the full path to the external program. The executable exists, or an exception is thrown.
+        /// </summary>
+        string GetProperAppPath(ExternalApp app);
+
+        void SetSettingsPathFor(ExternalApp app, string fullPath);
     }
 }

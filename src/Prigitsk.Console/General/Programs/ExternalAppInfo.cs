@@ -22,14 +22,22 @@
             FallbackPathExists = fallbackPathExists;
         }
 
-        public string Title { get; }
-        public string ExeName { get; }
-        public string FallbackPath { get; set; }
-        public bool SettingsPathIsSet => SettingsPathExists || !string.IsNullOrWhiteSpace(SettingsPath);
-        public bool SettingsPathExists { get; }
-        public bool UsableApplicationIsPresent => SettingsPathExists || FallbackPathExists;
         public ExternalApp App { get; }
+
+        public string ExeName { get; }
+
+        public string FallbackPath { get; set; }
+
         public bool FallbackPathExists { get; }
+
         public string SettingsPath { get; }
+
+        public bool SettingsPathExists { get; }
+
+        public bool SettingsPathIsSet => SettingsPathExists || !string.IsNullOrWhiteSpace(SettingsPath);
+
+        public string Title { get; }
+
+        public bool UsableApplicationIsPresent => SettingsPathExists || FallbackPathExists;
     }
 }

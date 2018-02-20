@@ -10,8 +10,9 @@ namespace Prigitsk.Console.Verbs
             Log = log;
         }
 
-        protected T Options { get; }
         protected ILogger Log { get; }
+
+        protected T Options { get; }
 
         public void Run()
         {

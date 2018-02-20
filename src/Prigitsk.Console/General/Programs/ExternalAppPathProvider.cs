@@ -12,9 +12,9 @@ namespace Prigitsk.Console.General.Programs
 {
     public class ExternalAppPathProvider : IExternalAppPathProvider
     {
-        private static readonly Dictionary<ExternalApp, string> Titles;
         private static readonly Dictionary<ExternalApp, string> ExeNames;
         private static readonly Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>> SettingsProps;
+        private static readonly Dictionary<ExternalApp, string> Titles;
         private readonly IExeInformer _exeInformer;
         private readonly IFileSystem _fileSystem;
         private readonly ILogger _log;
@@ -46,28 +46,6 @@ namespace Prigitsk.Console.General.Programs
             _exeInformer = exeInformer;
             _settings = settings;
             _log = log;
-        }
-
-        public string GetProperAppPath(ExternalApp app)
-        {
-            string settingsPath = GetFullSettingsPathFor(app);
-            if (_fileSystem.File.Exists(settingsPath))
-            {
-                return settingsPath;
-            }
-
-            string fallbackPath;
-            string exeName = ExeNames[app];
-            bool fallbackPathExists = _exeInformer.TryFindFullPath(exeName, out fallbackPath);
-            if (fallbackPathExists)
-            {
-                return fallbackPath;
-            }
-
-            // Fail.
-            string message =
-                $"Cannot find path for {Titles[app]}. Please configure application by running it with {VerbConstants.Configure} option.";
-            throw new Exception(message);
         }
 
         public IEnumerable<ExternalApp> EnumerateApps()
@@ -107,12 +85,26 @@ namespace Prigitsk.Console.General.Programs
             return fullPath;
         }
 
-        public void SetSettingsPathFor(ExternalApp app, string fullPath)
+        public string GetProperAppPath(ExternalApp app)
         {
-            PropertyInfo propertyInfo = GetPropertyInfo(app);
+            string settingsPath = GetFullSettingsPathFor(app);
+            if (_fileSystem.File.Exists(settingsPath))
+            {
+                return settingsPath;
+            }
 
-            propertyInfo.SetValue(_settings, fullPath);
-            _settings.Save();
+            string fallbackPath;
+            string exeName = ExeNames[app];
+            bool fallbackPathExists = _exeInformer.TryFindFullPath(exeName, out fallbackPath);
+            if (fallbackPathExists)
+            {
+                return fallbackPath;
+            }
+
+            // Fail.
+            string message =
+                $"Cannot find path for {Titles[app]}. Please configure application by running it with {VerbConstants.Configure} option.";
+            throw new Exception(message);
         }
 
         private static PropertyInfo GetPropertyInfo(ExternalApp app)
@@ -120,6 +112,14 @@ namespace Prigitsk.Console.General.Programs
             MemberExpression memberExpression = (MemberExpression) SettingsProps[app].Body;
             PropertyInfo propertyInfo = (PropertyInfo) memberExpression.Member;
             return propertyInfo;
+        }
+
+        public void SetSettingsPathFor(ExternalApp app, string fullPath)
+        {
+            PropertyInfo propertyInfo = GetPropertyInfo(app);
+
+            propertyInfo.SetValue(_settings, fullPath);
+            _settings.Save();
         }
     }
 }

@@ -14,9 +14,12 @@
             Format = format;
         }
 
-        public string Repository { get; }
-        public string Target { get; }
-        public string Output { get; }
         public string Format { get; }
+
+        public string Output { get; }
+
+        public string Repository { get; }
+
+        public string Target { get; }
     }
 }

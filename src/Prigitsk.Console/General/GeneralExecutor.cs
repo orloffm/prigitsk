@@ -22,22 +22,11 @@ namespace Prigitsk.Console.General
             _log = log;
         }
 
-        public int RunSafe(string[] args)
+        private IVerbRunner CreateVerbRunner(Verb verb, IVerbRunnerOptions options)
         {
-            try
-            {
-                return RunInternal(args);
-            }
-            catch (LoggedAsFatalException)
-            {
-                _log.Fatal("Aborting execution.");
-                return 1;
-            }
-            catch (Exception ex)
-            {
-                _log.Fatal(ex, "Unhandled exception occurred. Aborting execution.");
-                return 1;
-            }
+            IVerbRunnerFactory factory = _factorySelector[verb];
+            IVerbRunner runner = factory.Create(options);
+            return runner;
         }
 
         private int RunInternal(string[] args)
@@ -57,11 +46,22 @@ namespace Prigitsk.Console.General
             return 0;
         }
 
-        private IVerbRunner CreateVerbRunner(Verb verb, IVerbRunnerOptions options)
+        public int RunSafe(string[] args)
         {
-            IVerbRunnerFactory factory = _factorySelector[verb];
-            IVerbRunner runner = factory.Create(options);
-            return runner;
+            try
+            {
+                return RunInternal(args);
+            }
+            catch (LoggedAsFatalException)
+            {
+                _log.Fatal("Aborting execution.");
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                _log.Fatal(ex, "Unhandled exception occurred. Aborting execution.");
+                return 1;
+            }
         }
     }
 }

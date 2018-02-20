@@ -3,9 +3,12 @@
     public interface IDrawRunnerOptions
         : IVerbRunnerOptions
     {
-        string Repository { get; }
-        string Target { get; }
-        string Output { get; }
         string Format { get; }
+
+        string Output { get; }
+
+        string Repository { get; }
+
+        string Target { get; }
     }
 }

@@ -26,26 +26,6 @@ namespace Prigitsk.Console.Verbs.Configure
             _console = consoleFactory.Create();
         }
 
-        protected override void RunInternal()
-        {
-            bool allGood = true;
-            foreach (ExternalApp p in _appPathProvider.EnumerateApps())
-            {
-                bool isOkNow = AskFor(p);
-                allGood &= isOkNow;
-            }
-
-            if (allGood)
-            {
-                _console.WriteLine("All values set successfully.");
-            }
-            else
-            {
-                _console.WriteLine(
-                    "Some of the values were not set successfully. Please rerun the configuration before using the application.");
-            }
-        }
-
         private bool AskFor(ExternalApp externalApp)
         {
             ExternalAppInfo info = _appPathProvider.GetAppInformation(externalApp);
@@ -81,15 +61,6 @@ namespace Prigitsk.Console.Verbs.Configure
             }
 
             return appIsUsableAfterwards;
-        }
-
-        private bool QueryAndUpdateSettingsValue(ExternalAppInfo info, out bool appIsUsableAfterwards)
-        {
-            string enteredValue = WriteInvitationAndPerformQuery(info);
-
-            bool enteredCorrectly = ProcessEnteredValue(enteredValue, info, out appIsUsableAfterwards);
-
-            return enteredCorrectly;
         }
 
         private bool ProcessEnteredValue(string enteredValue, ExternalAppInfo info, out bool appIsUsableAfterwards)
@@ -148,6 +119,46 @@ namespace Prigitsk.Console.Verbs.Configure
             return enteredCorrectly;
         }
 
+        private bool QueryAndUpdateSettingsValue(ExternalAppInfo info, out bool appIsUsableAfterwards)
+        {
+            string enteredValue = WriteInvitationAndPerformQuery(info);
+
+            bool enteredCorrectly = ProcessEnteredValue(enteredValue, info, out appIsUsableAfterwards);
+
+            return enteredCorrectly;
+        }
+
+        protected override void RunInternal()
+        {
+            bool allGood = true;
+            foreach (ExternalApp p in _appPathProvider.EnumerateApps())
+            {
+                bool isOkNow = AskFor(p);
+                allGood &= isOkNow;
+            }
+
+            if (allGood)
+            {
+                _console.WriteLine("All values set successfully.");
+            }
+            else
+            {
+                _console.WriteLine(
+                    "Some of the values were not set successfully. Please rerun the configuration before using the application.");
+            }
+        }
+
+        private string ToStringOr(string currentPath, string fallbackValue)
+        {
+            bool shouldFallback = string.IsNullOrWhiteSpace(currentPath);
+            if (shouldFallback)
+            {
+                return $"<{fallbackValue}>";
+            }
+
+            return currentPath;
+        }
+
         private string WriteInvitationAndPerformQuery(ExternalAppInfo info)
         {
             // General invitation.
@@ -166,17 +177,6 @@ namespace Prigitsk.Console.Verbs.Configure
             _console.Write("> ");
             string enteredValue = _console.ReadLine();
             return enteredValue;
-        }
-
-        private string ToStringOr(string currentPath, string fallbackValue)
-        {
-            bool shouldFallback = string.IsNullOrWhiteSpace(currentPath);
-            if (shouldFallback)
-            {
-                return $"<{fallbackValue}>";
-            }
-
-            return currentPath;
         }
     }
 }

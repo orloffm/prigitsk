@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.General.Programs;
@@ -26,27 +25,6 @@ namespace Prigitsk.Console.Verbs.Draw
         {
             _loader = loader;
             _appPathProvider = appPathProvider;
-        }
-
-        protected override void RunInternal()
-        {
-            string repositoryPath = Options.Repository;
-            //IProcessRunner processRunner = new ProcessRunner();
-            IRepositoryData repositoryData = _loader.LoadFrom(repositoryPath);
-
-            string targetPath = Options.Target ?? Options.Repository;
-            Directory.CreateDirectory(targetPath);
-            WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);
-            //WriteToFileAndMakeSvg(
-            //    repositoryData,
-            //    writeTo,
-            //    "no-tags.dot",
-            //    PickNoTags);
-            //WriteToFileAndMakeSvg(
-            //    repositoryData,
-            //    writeTo,
-            //    "simple.dot",
-            //    PickSimplified);
         }
 
         internal bool PickAll(Pointer b)
@@ -89,28 +67,26 @@ namespace Prigitsk.Console.Verbs.Draw
 
             return false;
         }
-        
-        private void WriteToFileAndMakeSvg(
-            IRepositoryData repositoryData,
-            string directoryToWriteTo,
-            string fileName,
-            Func<Pointer, bool> pickStrategy)
+
+        protected override void RunInternal()
         {
-            WriteToDotFile(repositoryData, directoryToWriteTo, fileName, pickStrategy);
+            string repositoryPath = Options.Repository;
+            //IProcessRunner processRunner = new ProcessRunner();
+            IRepositoryData repositoryData = _loader.LoadFrom(repositoryPath);
 
-        //    ConvertTo(directoryToWriteTo, fileName, "svg");
-        //    ConvertTo(directoryToWriteTo, fileName, "pdf");
-        //}
-
-        //private void ConvertTo(string repositoryPath, string fileName, string format)
-        //{
-        //    string svgFileName = Path.ChangeExtension(fileName, format);
-        //    string arguments = string.Format("{0} -T{2} -o{1}", fileName, svgFileName, format);
-        //    ProcessStartInfo psi = new ProcessStartInfo();
-        //    psi.Arguments = arguments;
-        //    psi.FileName = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
-        //    psi.WorkingDirectory = repositoryPath;
-        //    Process.Start(psi);
+            string targetPath = Options.Target ?? Options.Repository;
+            Directory.CreateDirectory(targetPath);
+            WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);
+            //WriteToFileAndMakeSvg(
+            //    repositoryData,
+            //    writeTo,
+            //    "no-tags.dot",
+            //    PickNoTags);
+            //WriteToFileAndMakeSvg(
+            //    repositoryData,
+            //    writeTo,
+            //    "simple.dot",
+            //    PickSimplified);
         }
 
         private void WriteToDotFile(
@@ -140,6 +116,29 @@ namespace Prigitsk.Console.Verbs.Draw
             string graphContent = writer.GenerateGraph(assumedGraph, bs);
             string dotpath = Path.Combine(repositoryPath, fileName);
             File.WriteAllText(dotpath, graphContent);
+        }
+
+        private void WriteToFileAndMakeSvg(
+            IRepositoryData repositoryData,
+            string directoryToWriteTo,
+            string fileName,
+            Func<Pointer, bool> pickStrategy)
+        {
+            WriteToDotFile(repositoryData, directoryToWriteTo, fileName, pickStrategy);
+
+            //    ConvertTo(directoryToWriteTo, fileName, "svg");
+            //    ConvertTo(directoryToWriteTo, fileName, "pdf");
+            //}
+
+            //private void ConvertTo(string repositoryPath, string fileName, string format)
+            //{
+            //    string svgFileName = Path.ChangeExtension(fileName, format);
+            //    string arguments = string.Format("{0} -T{2} -o{1}", fileName, svgFileName, format);
+            //    ProcessStartInfo psi = new ProcessStartInfo();
+            //    psi.Arguments = arguments;
+            //    psi.FileName = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
+            //    psi.WorkingDirectory = repositoryPath;
+            //    Process.Start(psi);
         }
     }
 }
