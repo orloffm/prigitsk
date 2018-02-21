@@ -7,5 +7,10 @@ namespace Prigitsk.Core.Tools
         bool Add(TKey key, TValue value);
 
         bool Remove(TKey key, TValue value);
+
+        /// <summary>
+        /// Enumerates all values for the key. If none are present, returns an empty enumerable.
+        /// </summary>
+        IEnumerable<TValue> TryEnumerateFor(TKey node);
     }
 }

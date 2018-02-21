@@ -25,6 +25,12 @@ namespace Prigitsk.Core.Tree
 
         IEnumerable<ITag> GetPointingTags(INode node);
 
-        IEnumerable<ITag> GetPointingBranches(INode node);
+        IEnumerable<IBranch> GetPointingBranches(INode node);
+
+        IEnumerable<IBranch> Branches { get; }
+
+        IEnumerable<INode> GetAllBranchNodes(IBranch branch);
+
+        bool IsStartingNodeOfBranch(INode node);
     }
 }

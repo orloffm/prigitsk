@@ -6,5 +6,9 @@
         bool RemoveOrphans { get; }
 
         bool RemoveOrphansEvenWithTags { get; }
+
+        bool LeaveNodesAfterLastMerge { get; }
+
+        bool AggressivelyRemoveFirstBranchNodes { get;}
     }
 }

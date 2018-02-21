@@ -5,7 +5,5 @@
         string Value { get; }
 
         bool Equals(IHash other);
-
-        string ToShortString();
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Tools;
 
@@ -23,6 +25,10 @@ namespace Prigitsk.Core.Tree
             _pointingTags = new MultipleDictionary<INode, ITag>();
             _pointingBranches = new MultipleDictionary<INode, IBranch>();
         }
+
+        public IEnumerable<IBranch> Branches => _branches.Keys.AsEnumerable();
+
+        public IEnumerable<INode> Nodes => _nodes.Values.AsEnumerable();
 
         public void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
         {
@@ -60,10 +66,37 @@ namespace Prigitsk.Core.Tree
 
         public void AddTag(ITag tag)
         {
-                _tags.Add(tag);
+            _tags.Add(tag);
 
-                INode tagTip = GetOrCreateNode(tag.Tip);
-                _pointingTags.Add(tagTip, tag);
+            INode tagTip = GetOrCreateNode(tag.Tip);
+            _pointingTags.Add(tagTip, tag);
+        }
+
+        private void AssertNoBranchesOrTagsArePointing(INode node)
+        {
+            IBranch b = GetPointingBranches(node).FirstOrDefault();
+            if (b != null)
+            {
+                throw new InvalidOperationException($"Cannot remove node {node} as branch {b} points directly to it.");
+            }
+
+            ITag t = GetPointingTags(node).FirstOrDefault();
+            if (t != null)
+            {
+                throw new InvalidOperationException($"Cannot remove node {node} as tag {t} points directly to it.");
+            }
+        }
+
+        public IEnumerable<INode> GetAllBranchNodes(IBranch branch)
+        {
+            return _branches[branch].AsEnumerable();
+        }
+
+        public IBranch GetContainingBranch(INode node)
+        {
+            IBranch branch;
+            _containedInBranch.TryGetValue(node, out branch);
+            return branch;
         }
 
         private Node GetOrCreateNode(IHash hash)
@@ -76,6 +109,79 @@ namespace Prigitsk.Core.Tree
             }
 
             return node;
+        }
+
+        public IEnumerable<IBranch> GetPointingBranches(INode node)
+        {
+            return _pointingBranches.TryEnumerateFor(node);
+        }
+
+        public IEnumerable<ITag> GetPointingTags(INode node)
+        {
+            return _pointingTags.TryEnumerateFor(node);
+        }
+
+        public bool IsStartingNodeOfBranch(INode node)
+        {
+            IBranch b = GetContainingBranch(node);
+            return ReferenceEquals(_branches[b].First, node);
+        }
+
+        public void RemoveNode(INode n)
+        {
+            // We cannot remove nodes that have direct pointers on them.
+            AssertNoBranchesOrTagsArePointing(n);
+
+            // Parents.
+            foreach (INode parent in n.Parents)
+            {
+                // Remove node.
+                parent.Children.Remove(n);
+
+                // Set its children to this parent.
+                foreach (INode nChild in n.Children)
+                {
+                    parent.Children.Add(nChild);
+                }
+            }
+
+            // Children.
+            foreach (INode child in n.Children)
+            {
+                // Was this node the child's primary parent?
+                bool isPrimary = n.Equals(child.Parents.First);
+                // Anyway, remove the node from child's parents.
+                child.Parents.Remove(n);
+
+                if (isPrimary)
+                {
+                    // As the node was the primary parent, we add the parents in the beginning of the parents list.
+                    foreach (INode nParent in n.Parents.Reverse())
+                    {
+                        child.Parents.AddFirst(nParent);
+                    }
+                }
+                else
+                {
+                    // The node was not the primary parent. So we add its parents to the end of the list.
+                    foreach (INode nParent in n.Parents)
+                    {
+                        child.Parents.AddLast(nParent);
+                    }
+                }
+            }
+
+            INode firstParent = n.Parents.FirstOrDefault();
+            firstParent?.AddAbsorbedCommit(n.Commit);
+
+            // Clear references.
+            n.Parents.Clear();
+            n.Children.Clear();
+
+            // Remove it from the branch.
+            _containedInBranch.Remove(n);
+            // Remove it from the list of all nodes.
+            _nodes.Remove(n.Commit.Hash);
         }
     }
 }

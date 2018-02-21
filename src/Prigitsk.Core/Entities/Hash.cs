@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace Prigitsk.Core.Entities
 {
-    [DebuggerDisplay("{this." + nameof(ToShortString) + "()}")]
     public sealed class Hash : IEquatable<Hash>, IHash
     {
         public const int DefaultCharsLength = 7;
@@ -55,14 +54,9 @@ namespace Prigitsk.Core.Entities
             return Value.GetHashCode();
         }
 
-        public string ToShortString()
-        {
-            return Value.Length <= DefaultCharsLength ? Value : Value.Substring(0, DefaultCharsLength);
-        }
-
         public override string ToString()
         {
-            return Value;
+            return Value.Length <= DefaultCharsLength ? Value : Value.Substring(0, DefaultCharsLength);
         }
     }
 }

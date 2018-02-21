@@ -98,27 +98,27 @@ namespace Prigitsk.Core.Nodes
         {
             // Remove nodes that are not used in the graph.
             // They are not needed.
-            INode[] leftOutNodes = graph.EnumerateLeftOversWithoutBranchesAndTags().ToArray();
-            for (int index = 0; index < leftOutNodes.Length; index++)
-            {
-                INode n = leftOutNodes[index];
-                _manipulator.RemoveItselfFromTheNodeGraph(n);
-                graph.RemoveNodeFromLeftOvers(n);
-            }
+            //INode[] leftOutNodes = graph.EnumerateLeftOversWithoutBranchesAndTags().ToArray();
+            //for (int index = 0; index < leftOutNodes.Length; index++)
+            //{
+            //    INode n = leftOutNodes[index];
+            //    _manipulator.RemoveItselfFromTheNodeGraph(n);
+            //    graph.RemoveNodeFromLeftOvers(n);
+            //}
 
-            // If asked, don't simplify anything,
-            if (options.PreventSimplification)
-            {
-                return;
-            }
+            //// If asked, don't simplify anything,
+            //if (options.PreventSimplification)
+            //{
+            //    return;
+            //}
 
-            int pass = 0;
-            bool removedAnything;
-            do
-            {
-                pass++;
-                removedAnything = MakePass(graph, options);
-            } while (removedAnything);
+            //int pass = 0;
+            //bool removedAnything;
+            //do
+            //{
+            //    pass++;
+            //    removedAnything = MakePass(graph, options);
+            //} while (removedAnything);
         }
 
         private IEnumerable<INode> EnumerateNodesBetween(IAssumedGraph graph, INode parent, INode an)

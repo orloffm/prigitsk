@@ -42,5 +42,10 @@ namespace Prigitsk.Core.Entities
         {
             return base.GetHashCode();
         }
+
+        public override string ToString()
+        {
+            return Label;
+        }
     }
 }

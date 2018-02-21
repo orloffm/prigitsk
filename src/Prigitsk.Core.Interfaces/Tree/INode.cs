@@ -10,10 +10,12 @@ namespace Prigitsk.Core.Tree
 
         ICommit Commit { get; }
 
-        IList<ICommit> AbsorbedCommits { get; }
+        IEnumerable<ICommit> AbsorbedCommits { get; }
 
             IOrderedSet<INode> Parents { get; }
 
         bool Equals(INode other);
+
+        void AddAbsorbedCommit(ICommit commit);
     }
 }

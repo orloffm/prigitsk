@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Prigitsk.Core.Entities
 {
-    [DebuggerDisplay("{Hash.ToShortString()}")]
     public sealed class Commit : IEquatable<Commit>, ICommit
     {
         public Commit(IHash hash, IEnumerable<IHash> parentsHashes, DateTimeOffset? commiterTimeStamp)
@@ -53,6 +51,11 @@ namespace Prigitsk.Core.Entities
         public override int GetHashCode()
         {
             return Hash.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return Hash.ToString();
         }
     }
 }

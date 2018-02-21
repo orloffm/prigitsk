@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Tools;
 
@@ -8,6 +9,7 @@ namespace Prigitsk.Core.Tree
     public class Node : INode, IEquatable<Node>
     {
         private readonly int _initialHash;
+        private readonly List<ICommit> _absorbedCommitsList;
 
         public Node(IHash initialCommitHash)
         {
@@ -15,16 +17,21 @@ namespace Prigitsk.Core.Tree
 
             Parents = new OrderedSet<INode>();
             Children = new HashSet<INode>();
-            AbsorbedCommits = new List<ICommit>();
+            _absorbedCommitsList = new List<ICommit>();
         }
+
+        public IEnumerable<ICommit> AbsorbedCommits => _absorbedCommitsList.AsEnumerable();
 
         public ISet<INode> Children { get; }
 
         public ICommit Commit { get; set; }
 
-        public IList<ICommit> AbsorbedCommits { get; }
-
         public IOrderedSet<INode> Parents { get; }
+
+        public void AddAbsorbedCommit(ICommit commit)
+        {
+            _absorbedCommitsList.Add(commit);
+        }
 
         public static bool AreEqual(INode a, INode b)
         {
