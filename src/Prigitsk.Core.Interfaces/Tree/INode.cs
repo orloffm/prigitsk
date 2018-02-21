@@ -8,9 +8,11 @@ namespace Prigitsk.Core.Tree
     {
         ISet<INode> Children { get; }
 
-        IOrderedSet<ICommit> Commits { get; }
+        ICommit Commit { get; }
 
-        IOrderedSet<INode> Parents { get; }
+        IList<ICommit> AbsorbedCommits { get; }
+
+            IOrderedSet<INode> Parents { get; }
 
         bool Equals(INode other);
     }

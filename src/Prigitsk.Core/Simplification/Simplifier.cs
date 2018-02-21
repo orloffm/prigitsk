@@ -6,6 +6,15 @@ namespace Prigitsk.Core.Simplification
     {
         public void Simplify(ITree tree, ISimplificationOptions options)
         {
+            if (options.RemoveUntaggedOrphans)
+            {
+                RemoveUntaggedOrphans(tree);
+            }
+        }
+
+        private void RemoveUntaggedOrphans(ITree tree)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

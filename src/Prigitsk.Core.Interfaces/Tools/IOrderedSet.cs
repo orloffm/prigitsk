@@ -3,7 +3,7 @@
 namespace Prigitsk.Core.Tools
 {
     public interface IOrderedSet<T>
-        : ICollection<T>
+        : ISet<T>
     {
         T First { get; }
 

@@ -32,9 +32,15 @@ namespace Prigitsk.Core.Tree
             {
                 Node node = GetOrCreateNodeFromCommit(commit);
                 branchNodes.Add(node);
-            }
 
+                // Link it to the branch.
+                _containedInBranch.Add(node, branch);
+            }
             _branches.Add(branch, branchNodes);
+
+            INode branchTip = GetOrCreateNode(branch.Tip);
+            _pointingBranches.Add(branchTip, branch);
+
         }
 
         public void AddCommitsWithoutBranches(IEnumerable<ICommit> commits)
@@ -50,6 +56,9 @@ namespace Prigitsk.Core.Tree
             foreach (ITag tag in tags)
             {
                 _tags.Add(tag);
+
+            INode tagTip = GetOrCreateNode(tag.Tip);
+            _pointingTags.Add(tagTip, tag);
             }
         }
 
@@ -68,7 +77,7 @@ namespace Prigitsk.Core.Tree
         private Node GetOrCreateNodeFromCommit(ICommit commit)
         {
             Node node = GetOrCreateNode(commit.Hash);
-            node.Commits.Add(commit);
+            node.Commit=commit;
 
             foreach (IHash parent in commit.Parents)
             {

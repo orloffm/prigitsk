@@ -15,12 +15,14 @@ namespace Prigitsk.Core.Tree
 
             Parents = new OrderedSet<INode>();
             Children = new HashSet<INode>();
-            Commits = new OrderedSet<ICommit>();
+            AbsorbedCommits = new List<ICommit>();
         }
 
         public ISet<INode> Children { get; }
 
-        public IOrderedSet<ICommit> Commits { get; }
+        public ICommit Commit { get; set; }
+
+        public IList<ICommit> AbsorbedCommits { get; }
 
         public IOrderedSet<INode> Parents { get; }
 

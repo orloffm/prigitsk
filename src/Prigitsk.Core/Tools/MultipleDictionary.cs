@@ -1,84 +1,110 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Prigitsk.Core.Tools
 {
-    public class MultipleDictionary<TKey, TValue> : IMultipleDictionary<TKey, TValue>
+    public class MultipleDictionary<TKey, TValue>
+        : IMultipleDictionary<TKey, TValue>
     {
+        private readonly Dictionary<TKey, ISet<TValue>> _dic;
+
+        public MultipleDictionary()
+        {
+            _dic = new Dictionary<TKey, ISet<TValue>>();
+        }
+
+        public int Count => _dic.Count;
+
+        public bool IsReadOnly => false;
+
+        public ISet<TValue> this[TKey key]
+        {
+            get => _dic[key];
+            set => _dic[key] = value;
+        }
+
+        public ICollection<TKey> Keys => _dic.Keys;
+
+        public ICollection<ISet<TValue>> Values => _dic.Values;
+
         public bool Add(TKey key, TValue value)
         {
-            throw new NotImplementedException();
+            ISet<TValue> valueSet;
+            if (!_dic.TryGetValue(key, out valueSet))
+            {
+                valueSet = new HashSet<TValue>();
+                _dic.Add(key, valueSet);
+            }
+
+            return valueSet.Add(value);
         }
 
-        public IEnumerator<KeyValuePair<TKey, ISet<TValue>>> GetEnumerator()
+        void ICollection<KeyValuePair<TKey, ISet<TValue>>>.Add(KeyValuePair<TKey, ISet<TValue>> item)
         {
-            throw new NotImplementedException();
+            ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Add(item);
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public void Add(TKey key, ISet<TValue> value)
         {
-            return GetEnumerator();
-        }
-
-        public void Add(KeyValuePair<TKey, ISet<TValue>> item)
-        {
-            throw new NotImplementedException();
+            _dic.Add(key, value);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _dic.Clear();
         }
 
-        public bool Contains(KeyValuePair<TKey, ISet<TValue>> item)
+        bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Contains(KeyValuePair<TKey, ISet<TValue>> item)
         {
-            throw new NotImplementedException();
-        }
-
-        public void CopyTo(KeyValuePair<TKey, ISet<TValue>>[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Remove(KeyValuePair<TKey, ISet<TValue>> item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Count { get; }
-
-        public bool IsReadOnly { get; }
-
-        public void Add(TKey key, ISet<TValue> value)
-        {
-            throw new NotImplementedException();
+            return ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Contains(item);
         }
 
         public bool ContainsKey(TKey key)
         {
-            throw new NotImplementedException();
+            return _dic.ContainsKey(key);
+        }
+
+        void ICollection<KeyValuePair<TKey, ISet<TValue>>>.CopyTo(
+            KeyValuePair<TKey, ISet<TValue>>[] array,
+            int arrayIndex)
+        {
+            ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).CopyTo(array, arrayIndex);
+        }
+
+        IEnumerator<KeyValuePair<TKey, ISet<TValue>>> IEnumerable<KeyValuePair<TKey, ISet<TValue>>>.GetEnumerator()
+        {
+            return _dic.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _dic.GetEnumerator();
+        }
+
+        public bool Remove(TKey key, TValue value)
+        {
+            ISet<TValue> valueSet;
+            if (!_dic.TryGetValue(key, out valueSet))
+            {
+                return false;
+            }
+
+            return valueSet.Remove(value);
+        }
+
+        bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Remove(KeyValuePair<TKey, ISet<TValue>> item)
+        {
+            return ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Remove(item);
         }
 
         public bool Remove(TKey key)
         {
-            throw new NotImplementedException();
+            return _dic.Remove(key);
         }
 
         public bool TryGetValue(TKey key, out ISet<TValue> value)
         {
-            throw new NotImplementedException();
+            return _dic.TryGetValue(key, out value);
         }
-
-        public ISet<TValue> this[TKey key]
-        {
-            get => throw new NotImplementedException();
-            set => throw new NotImplementedException();
-        }
-
-        public ICollection<TKey> Keys { get; }
-
-        public ICollection<ISet<TValue>> Values { get; }
     }
 }
