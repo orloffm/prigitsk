@@ -8,9 +8,9 @@ namespace Prigitsk.Core.Tree
     {
         private readonly IDictionary<IBranch, OrderedSet<Node>> _branches;
         private readonly IDictionary<INode, IBranch> _containedInBranch;
-        private readonly IMultipleDictionary<INode, ITag> _pointingTags;
-        private readonly IMultipleDictionary<INode, IBranch> _pointingBranches;
         private readonly IDictionary<IHash, Node> _nodes;
+        private readonly IMultipleDictionary<INode, IBranch> _pointingBranches;
+        private readonly IMultipleDictionary<INode, ITag> _pointingTags;
         private readonly ISet<ITag> _tags;
 
         public Tree()
@@ -24,42 +24,46 @@ namespace Prigitsk.Core.Tree
             _pointingBranches = new MultipleDictionary<INode, IBranch>();
         }
 
-        public void AddBranchCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
+        public void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
         {
             var branchNodes = new OrderedSet<Node>();
 
             foreach (ICommit commit in commitsInBranch)
             {
-                Node node = GetOrCreateNodeFromCommit(commit);
+                Node node = GetOrCreateNode(commit.Hash);
                 branchNodes.Add(node);
 
                 // Link it to the branch.
                 _containedInBranch.Add(node, branch);
             }
+
             _branches.Add(branch, branchNodes);
 
             INode branchTip = GetOrCreateNode(branch.Tip);
             _pointingBranches.Add(branchTip, branch);
-
         }
 
-        public void AddCommitsWithoutBranches(IEnumerable<ICommit> commits)
+        public void AddCommit(ICommit commit)
         {
-            foreach (ICommit commit in commits)
+            Node node = GetOrCreateNode(commit.Hash);
+            node.Commit = commit;
+
+            foreach (IHash parent in commit.Parents)
             {
-                GetOrCreateNodeFromCommit(commit);
+                Node parentNode = GetOrCreateNode(parent);
+
+                // Link both.
+                node.Parents.Add(parentNode);
+                parentNode.Children.Add(node);
             }
         }
 
-        public void AddTags(IEnumerable<ITag> tags)
+        public void AddTag(ITag tag)
         {
-            foreach (ITag tag in tags)
-            {
                 _tags.Add(tag);
 
-            INode tagTip = GetOrCreateNode(tag.Tip);
-            _pointingTags.Add(tagTip, tag);
-            }
+                INode tagTip = GetOrCreateNode(tag.Tip);
+                _pointingTags.Add(tagTip, tag);
         }
 
         private Node GetOrCreateNode(IHash hash)
@@ -69,23 +73,6 @@ namespace Prigitsk.Core.Tree
             {
                 node = new Node(hash);
                 _nodes.Add(hash, node);
-            }
-
-            return node;
-        }
-
-        private Node GetOrCreateNodeFromCommit(ICommit commit)
-        {
-            Node node = GetOrCreateNode(commit.Hash);
-            node.Commit=commit;
-
-            foreach (IHash parent in commit.Parents)
-            {
-                Node parentNode = GetOrCreateNode(parent);
-
-                // Link both.
-                node.Parents.Add(parentNode);
-                parentNode.Children.Add(node);
             }
 
             return node;

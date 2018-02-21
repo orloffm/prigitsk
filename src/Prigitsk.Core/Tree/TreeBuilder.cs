@@ -14,17 +14,24 @@ namespace Prigitsk.Core.Tree
             // First, get the remote.
             IRemote remote = PickRemote(repository, options);
 
+            // Commits.
+            ITree tree = new Tree();
+            foreach (ICommit commit in repository.Commits)
+            {
+                tree.AddCommit(commit);
+            }
+
             // All branches from this remote.
             IEnumerable<IBranch> branches = repository.Branches.GetFor(remote);
 
+            // Filter them so that we get only those we want to write.
+            IBranch[] branchesFiltered = branches.Where(b => options.CheckIfBranchShouldBePicked(b.Label)).ToArray();
+
             // Sort these branches.
-            IBranch[] branchesSorted = strategy.SortByPriorityDescending(branches).ToArray();
-
-            var commits = new HashSet<ICommit>(repository.Commits);
-
-            ITree tree = new Tree();
+            IBranch[] branchesSorted = strategy.SortByPriorityDescending(branchesFiltered).ToArray();
 
             // Add commits by branch.
+            var commits = new HashSet<ICommit>(repository.Commits);
             foreach (IBranch b in branchesSorted)
             {
                 ICommit tip = repository.Commits.GetByHash(b.Tip);
@@ -43,14 +50,19 @@ namespace Prigitsk.Core.Tree
                 }
 
                 commitsInBranch.Reverse();
-                tree.AddBranchCommits(b, commitsInBranch);
+                tree.AddBranchWithCommits(b, commitsInBranch);
             }
 
             // Now tags.
-            tree.AddTags(repository.Tags);
+            foreach (ITag tag in repository.Tags)
+            {
+                if (!options.CheckIfTagShouldBePicked(tag.Name))
+                {
+                    continue;
+                }
 
-            // And all commits not in branches.
-            tree.AddCommitsWithoutBranches(commits);
+                tree.AddTag(tag);
+            }
 
             return tree;
         }

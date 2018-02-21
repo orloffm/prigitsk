@@ -10,5 +10,9 @@
         ///     Branches from which remote should be used to build the graph.
         /// </summary>
         string RemoteToUse { get; }
+
+        bool CheckIfBranchShouldBePicked(string branchLabel);
+
+        bool CheckIfTagShouldBePicked(string tagName);
     }
 }

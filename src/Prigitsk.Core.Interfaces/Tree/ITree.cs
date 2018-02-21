@@ -8,16 +8,23 @@ namespace Prigitsk.Core.Tree
         /// <summary>
         ///     Adds a branch with all its commits.
         /// </summary>
-        void AddBranchCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch);
-
-        /// <summary>
-        ///     Adds commits that don't have any branches attached.
-        /// </summary>
-        void AddCommitsWithoutBranches(IEnumerable<ICommit> commits);
-
+        void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch);
+        
         /// <summary>
         ///     Adds tags.
         /// </summary>
-        void AddTags(IEnumerable<ITag> tags);
+        void AddTag(ITag tags);
+        
+        void AddCommit(ICommit commit);
+
+        IEnumerable<INode> Nodes { get; }
+
+        IBranch GetContainingBranch(INode node);
+
+        void RemoveNode(INode node);
+
+        IEnumerable<ITag> GetPointingTags(INode node);
+
+        IEnumerable<ITag> GetPointingBranches(INode node);
     }
 }

@@ -3,6 +3,8 @@
     public interface ISimplificationOptions
     {
 
-        bool RemoveUntaggedOrphans { get; }
+        bool RemoveOrphans { get; }
+
+        bool RemoveOrphansEvenWithTags { get; }
     }
 }
