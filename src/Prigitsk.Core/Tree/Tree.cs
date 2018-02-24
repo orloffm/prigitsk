@@ -163,6 +163,21 @@ namespace Prigitsk.Core.Tree
             return ReferenceEquals(_branches[b].First, node);
         }
 
+        public void RemoveEdge(INode parent, INode child)
+        {
+            if (child.Parents.First == parent)
+            {
+                // This is the main link.
+                // We never remove it explicitly.
+
+                throw new InvalidOperationException(
+                    $"Cannot remove edge that is the main link between {parent} and {child}.");
+            }
+
+            parent.Children.Remove(child);
+            child.Parents.Remove(parent);
+        }
+
         public void RemoveNode(INode n)
         {
             // We cannot remove nodes that have direct pointers on them.
@@ -218,6 +233,15 @@ namespace Prigitsk.Core.Tree
             _containedInBranch.Remove(n);
             // Remove it from the list of all nodes.
             _nodes.Remove(n.Commit.Hash);
+        }
+
+        public void DropTag(ITag tag)
+        {
+            IHash pointsTo = tag.Tip;
+            INode node = _nodes[pointsTo];
+
+            _pointingTags.Remove(node, tag);
+            _tags.Remove(tag);
         }
     }
 }

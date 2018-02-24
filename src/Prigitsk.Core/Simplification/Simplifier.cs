@@ -57,7 +57,7 @@ namespace Prigitsk.Core.Simplification
                 if (laterNodesInBranch.Contains(child) ||
                     laterNodesInBranch.Any(z => z.Children.Contains(child)))
                 {
-                    RemoveEdge(currentNode, child);
+                    tree.RemoveEdge(currentNode, child);
                     removedAnything = true;
                     continue;
                 }
@@ -69,7 +69,7 @@ namespace Prigitsk.Core.Simplification
                 if (parentIsLinked)
                 {
                     // Remove this child.
-                    RemoveEdge(currentNode, child);
+                    tree.RemoveEdge(currentNode, child);
                     removedAnything = true;
                     continue;
                 }
@@ -83,7 +83,7 @@ namespace Prigitsk.Core.Simplification
                     if (isRhombusStructure)
                     {
                         // Remove this child.
-                        RemoveEdge(currentNode, child);
+                        tree.RemoveEdge(currentNode, child);
                         removedAnything = true;
                     }
                 }
@@ -227,14 +227,6 @@ namespace Prigitsk.Core.Simplification
             return removedAnything;
         }
 
-        private void RemoveEdge(
-            INode parent,
-            INode child)
-        {
-            parent.Children.Remove(child);
-            child.Parents.Remove(parent);
-        }
-
         private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, bool optionsLeaveNodesAfterLastMerge)
         {
             bool hasExplicitPointers =
@@ -282,15 +274,21 @@ namespace Prigitsk.Core.Simplification
                     continue;
                 }
 
-                if (!removeOrphansEvenWithTags)
+                // Tags.
+                ITag[] tags = tree.GetPointingTags(node).ToArray();
+                if (tags.Length !=0)
                 {
-                    // It shouldn't have tags.
-                    ITag someTag = tree.GetPointingTags(node).FirstOrDefault();
-                    if (someTag != null)
+                    if (!removeOrphansEvenWithTags)
                     {
                         continue;
                     }
+                   foreach (ITag tag in tags)
+                {
+                    tree.DropTag(tag);
                 }
+             }
+
+
 
                 tree.RemoveNode(node);
             }

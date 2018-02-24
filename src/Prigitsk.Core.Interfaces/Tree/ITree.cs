@@ -39,6 +39,13 @@ namespace Prigitsk.Core.Tree
 
         bool IsStartingNodeOfBranch(INode node);
 
+        /// <summary>
+        ///     Removes the edge. Throws if this is the main connection between them.
+        /// </summary>
+        void RemoveEdge(INode parent, INode child);
+
         void RemoveNode(INode node);
+
+        void DropTag(ITag tag);
     }
 }
