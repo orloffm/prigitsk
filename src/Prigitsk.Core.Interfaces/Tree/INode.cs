@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Prigitsk.Core.Entities;
-using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Core.Tree
 {
@@ -8,11 +7,11 @@ namespace Prigitsk.Core.Tree
     {
         IEnumerable<ICommit> AbsorbedCommits { get; }
 
-        ISet<INode> Children { get; }
+        IEnumerable<INode> Children { get; }
 
-        ICommit Commit { get; set; }
+        ICommit Commit { get; }
 
-        IOrderedSet<INode> Parents { get; }
+        IEnumerable<INode> Parents { get; }
 
         void AddAbsorbedCommit(ICommit commit);
 

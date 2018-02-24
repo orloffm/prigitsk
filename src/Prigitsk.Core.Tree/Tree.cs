@@ -8,22 +8,22 @@ namespace Prigitsk.Core.Tree
 {
     public class Tree : ITree
     {
-        private readonly IDictionary<IBranch, OrderedSet<INode>> _branches;
-        private readonly IDictionary<INode, IBranch> _containedInBranch;
-        private readonly IDictionary<IHash, INode> _nodes;
-        private readonly IMultipleDictionary<INode, IBranch> _pointingBranches;
-        private readonly IMultipleDictionary<INode, ITag> _pointingTags;
+        private readonly IDictionary<IBranch, OrderedSet<Node>> _branches;
+        private readonly IDictionary<Node, IBranch> _containedInBranch;
+        private readonly IDictionary<IHash, Node> _nodes;
+        private readonly IMultipleDictionary<Node, IBranch> _pointingBranches;
+        private readonly IMultipleDictionary<Node, ITag> _pointingTags;
         private readonly ISet<ITag> _tags;
 
         public Tree()
         {
-            _nodes = new Dictionary<IHash, INode>();
-            _branches = new Dictionary<IBranch, OrderedSet<INode>>();
+            _nodes = new Dictionary<IHash, Node>();
+            _branches = new Dictionary<IBranch, OrderedSet<Node>>();
             _tags = new HashSet<ITag>();
 
-            _containedInBranch = new Dictionary<INode, IBranch>();
-            _pointingTags = new MultipleDictionary<INode, ITag>();
-            _pointingBranches = new MultipleDictionary<INode, IBranch>();
+            _containedInBranch = new Dictionary<Node, IBranch>();
+            _pointingTags = new MultipleDictionary<Node, ITag>();
+            _pointingBranches = new MultipleDictionary<Node, IBranch>();
         }
 
         public IEnumerable<IBranch> Branches => _branches.Keys.AsEnumerable();
@@ -32,11 +32,11 @@ namespace Prigitsk.Core.Tree
 
         public void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
         {
-            var branchNodes = new OrderedSet<INode>();
+            var branchNodes = new OrderedSet<Node>();
 
             foreach (ICommit commit in commitsInBranch)
             {
-                INode node = GetOrCreateNode(commit.Hash);
+                Node node = GetOrCreateNode(commit.Hash);
                 branchNodes.Add(node);
 
                 // Link it to the branch.
@@ -45,22 +45,22 @@ namespace Prigitsk.Core.Tree
 
             _branches.Add(branch, branchNodes);
 
-            INode branchTip = GetOrCreateNode(branch.Tip);
+            Node branchTip = GetOrCreateNode(branch.Tip);
             _pointingBranches.Add(branchTip, branch);
         }
 
         public void AddCommit(ICommit commit)
         {
-            INode node = GetOrCreateNode(commit.Hash);
-            node.Commit = commit;
+            Node node = GetOrCreateNode(commit.Hash);
+            node.SetCommit(commit);
 
             foreach (IHash parent in commit.Parents)
             {
-                INode parentNode = GetOrCreateNode(parent);
+                Node parentNode = GetOrCreateNode(parent);
 
                 // Link both.
-                node.Parents.Add(parentNode);
-                parentNode.Children.Add(node);
+                node.ParentsSet.Add(parentNode);
+                parentNode.ChildrenSet.Add(node);
             }
         }
 
@@ -68,7 +68,7 @@ namespace Prigitsk.Core.Tree
         {
             _tags.Add(tag);
 
-            INode tagTip = GetOrCreateNode(tag.Tip);
+            Node tagTip = GetOrCreateNode(tag.Tip);
             _pointingTags.Add(tagTip, tag);
         }
 
@@ -87,23 +87,34 @@ namespace Prigitsk.Core.Tree
             }
         }
 
-        public IEnumerable<INode> EnumerateNodesDownTheBranch(INode node)
+        public void DropTag(ITag tag)
         {
+            IHash pointsTo = tag.Tip;
+            Node node = Unwrap(pointsTo);
+
+            _pointingTags.Remove(node, tag);
+            _tags.Remove(tag);
+        }
+
+        public IEnumerable<INode> EnumerateNodesDownTheBranch(INode inode)
+        {
+            Node node = Unwrap(inode);
             IBranch branch = _containedInBranch[node];
-            OrderedSet<INode> set = _branches[branch];
+            OrderedSet<Node> set = _branches[branch];
             return set.EnumerateAfter(node);
         }
 
-        public IEnumerable<INode> EnumerateNodesUpTheBranch(INode node)
+        public IEnumerable<INode> EnumerateNodesUpTheBranch(INode inode)
         {
+            Node node = Unwrap(inode);
             IBranch branch = _containedInBranch[node];
-            OrderedSet<INode> set = _branches[branch];
+            OrderedSet<Node> set = _branches[branch];
             return set.EnumerateBefore(node);
         }
 
         public INode FindOldestItemOnBranch(IEnumerable<INode> nodes)
         {
-            INode[] nodesArray = nodes.ToArray();
+            Node[] nodesArray = nodes.Select(Unwrap).ToArray();
 
             // Make sure these nodes are from the same branch.
             IBranch sourceBranch = nodesArray.Select(node => _containedInBranch[node]).Distinct().SingleOrDefault();
@@ -112,7 +123,7 @@ namespace Prigitsk.Core.Tree
                 return null;
             }
 
-            OrderedSet<INode> set = _branches[sourceBranch];
+            OrderedSet<Node> set = _branches[sourceBranch];
 
             INode oldest = set.PickFirst(nodesArray);
             return oldest;
@@ -128,16 +139,17 @@ namespace Prigitsk.Core.Tree
             return _branches[branch].Last;
         }
 
-        public IBranch GetContainingBranch(INode node)
+        public IBranch GetContainingBranch(INode inode)
         {
+            Node node = Unwrap(inode);
             IBranch branch;
             _containedInBranch.TryGetValue(node, out branch);
             return branch;
         }
 
-        private INode GetOrCreateNode(IHash hash)
+        private Node GetOrCreateNode(IHash hash)
         {
-            INode node;
+            Node node;
             if (!_nodes.TryGetValue(hash, out node))
             {
                 node = new Node(hash);
@@ -149,23 +161,29 @@ namespace Prigitsk.Core.Tree
 
         public IEnumerable<IBranch> GetPointingBranches(INode node)
         {
-            return _pointingBranches.TryEnumerateFor(node);
+            Node n = Unwrap(node);
+            return _pointingBranches.TryEnumerateFor(n);
         }
 
         public IEnumerable<ITag> GetPointingTags(INode node)
         {
-            return _pointingTags.TryEnumerateFor(node);
+            Node n = Unwrap(node);
+            return _pointingTags.TryEnumerateFor(n);
         }
 
-        public bool IsStartingNodeOfBranch(INode node)
+        public bool IsStartingNodeOfBranch(INode inode)
         {
+            Node node = Unwrap(inode);
             IBranch b = GetContainingBranch(node);
             return ReferenceEquals(_branches[b].First, node);
         }
 
         public void RemoveEdge(INode parent, INode child)
         {
-            if (child.Parents.First == parent)
+            Node parentNode = Unwrap(parent);
+            Node childNode = Unwrap(child);
+
+            if (childNode.ParentsSet.First == parentNode)
             {
                 // This is the main link.
                 // We never remove it explicitly.
@@ -174,50 +192,52 @@ namespace Prigitsk.Core.Tree
                     $"Cannot remove edge that is the main link between {parent} and {child}.");
             }
 
-            parent.Children.Remove(child);
-            child.Parents.Remove(parent);
+            parentNode.ChildrenSet.Remove(childNode);
+            childNode.ParentsSet.Remove(parentNode);
         }
 
-        public void RemoveNode(INode n)
+        public void RemoveNode(INode inode)
         {
+            Node n = Unwrap(inode);
+
             // We cannot remove nodes that have direct pointers on them.
             AssertNoBranchesOrTagsArePointing(n);
 
             // Parents.
-            foreach (INode parent in n.Parents)
+            foreach (Node parent in n.ParentsSet)
             {
                 // Remove node.
-                parent.Children.Remove(n);
+                parent.ChildrenSet.Remove(n);
 
                 // Set its children to this parent.
-                foreach (INode nChild in n.Children)
+                foreach (Node nChild in n.ChildrenSet)
                 {
-                    parent.Children.Add(nChild);
+                    parent.ChildrenSet.Add(nChild);
                 }
             }
 
             // Children.
-            foreach (INode child in n.Children)
+            foreach (Node child in n.ChildrenSet)
             {
                 // Was this node the child's primary parent?
-                bool isPrimary = n.Equals(child.Parents.First);
+                bool isPrimary = n.Equals(child.ParentsSet.First);
                 // Anyway, remove the node from child's parents.
-                child.Parents.Remove(n);
+                child.ParentsSet.Remove(n);
 
                 if (isPrimary)
                 {
                     // As the node was the primary parent, we add the parents in the beginning of the parents list.
-                    foreach (INode nParent in n.Parents.Reverse())
+                    foreach (Node nParent in n.ParentsSet.Reverse())
                     {
-                        child.Parents.AddFirst(nParent);
+                        child.ParentsSet.AddFirst(nParent);
                     }
                 }
                 else
                 {
                     // The node was not the primary parent. So we add its parents to the end of the list.
-                    foreach (INode nParent in n.Parents)
+                    foreach (Node nParent in n.ParentsSet)
                     {
-                        child.Parents.AddLast(nParent);
+                        child.ParentsSet.AddLast(nParent);
                     }
                 }
             }
@@ -226,8 +246,8 @@ namespace Prigitsk.Core.Tree
             firstParent?.AddAbsorbedCommit(n.Commit);
 
             // Clear references.
-            n.Parents.Clear();
-            n.Children.Clear();
+            n.ParentsSet.Clear();
+            n.ChildrenSet.Clear();
 
             // Remove it from the branch.
             _containedInBranch.Remove(n);
@@ -235,13 +255,14 @@ namespace Prigitsk.Core.Tree
             _nodes.Remove(n.Commit.Hash);
         }
 
-        public void DropTag(ITag tag)
+        private Node Unwrap(IHash ihash)
         {
-            IHash pointsTo = tag.Tip;
-            INode node = _nodes[pointsTo];
+            return _nodes[ihash];
+        }
 
-            _pointingTags.Remove(node, tag);
-            _tags.Remove(tag);
+        private Node Unwrap(INode inode)
+        {
+            return Unwrap(inode.Commit.Hash);
         }
     }
 }

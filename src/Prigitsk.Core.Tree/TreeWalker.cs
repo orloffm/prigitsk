@@ -19,7 +19,7 @@ namespace Prigitsk.Core.Tree
             DateTimeOffset? minimum,
             ICollection<INode> returned)
         {
-            var parentsToGo = new List<INode>(source.Parents.Count);
+            var parentsToGo = new List<INode>();
 
             foreach (INode parent in source.Parents)
             {

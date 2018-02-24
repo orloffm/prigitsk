@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Entities;
+using Prigitsk.Core.Tools;
 using Prigitsk.Core.Tree;
 
 namespace Prigitsk.Core.Simplification
@@ -111,7 +112,7 @@ namespace Prigitsk.Core.Simplification
             while (true)
             {
                 // Merging.
-                if (n.Parents.Count != 1)
+                if (!n.Parents.IsSingle())
                 {
                     return false;
                 }
@@ -119,11 +120,11 @@ namespace Prigitsk.Core.Simplification
                 // Is it a tip?
                 if (n == tip)
                 {
-                    return n.Children.Count == 0;
+                    return !n.Children.Any();
                 }
 
                 // Not yet a tip.
-                if (n.Children.Count != 1)
+                if (!n.Children.IsSingle())
                 {
                     // Branching,
                     return false;
@@ -236,8 +237,7 @@ namespace Prigitsk.Core.Simplification
                 return false;
             }
 
-            bool canRemove = currentNode.Children.Count == 1 &&
-                             currentNode.Parents.Count == 1;
+            bool canRemove = currentNode.Children.IsSingle() && currentNode.Parents.IsSingle();
             if (!canRemove)
             {
                 return false;
@@ -276,19 +276,18 @@ namespace Prigitsk.Core.Simplification
 
                 // Tags.
                 ITag[] tags = tree.GetPointingTags(node).ToArray();
-                if (tags.Length !=0)
+                if (tags.Length != 0)
                 {
                     if (!removeOrphansEvenWithTags)
                     {
                         continue;
                     }
-                   foreach (ITag tag in tags)
-                {
-                    tree.DropTag(tag);
+
+                    foreach (ITag tag in tags)
+                    {
+                        tree.DropTag(tag);
+                    }
                 }
-             }
-
-
 
                 tree.RemoveNode(node);
             }

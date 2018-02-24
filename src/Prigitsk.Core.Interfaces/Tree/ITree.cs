@@ -21,6 +21,8 @@ namespace Prigitsk.Core.Tree
         /// </summary>
         void AddTag(ITag tags);
 
+        void DropTag(ITag tag);
+
         IEnumerable<INode> EnumerateNodesDownTheBranch(INode node);
 
         IEnumerable<INode> EnumerateNodesUpTheBranch(INode node);
@@ -45,7 +47,5 @@ namespace Prigitsk.Core.Tree
         void RemoveEdge(INode parent, INode child);
 
         void RemoveNode(INode node);
-
-        void DropTag(ITag tag);
     }
 }

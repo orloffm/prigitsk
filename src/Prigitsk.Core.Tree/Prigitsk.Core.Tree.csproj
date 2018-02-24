@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
+    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj" />
+  </ItemGroup>
+
+</Project>

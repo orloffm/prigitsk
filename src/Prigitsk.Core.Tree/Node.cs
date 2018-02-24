@@ -15,18 +15,22 @@ namespace Prigitsk.Core.Tree
         {
             _initialHash = initialCommitHash.GetHashCode();
 
-            Parents = new OrderedSet<INode>();
-            Children = new HashSet<INode>();
+            ParentsSet = new OrderedSet<Node>();
+            ChildrenSet = new HashSet<Node>();
             _absorbedCommitsList = new List<ICommit>();
         }
 
         public IEnumerable<ICommit> AbsorbedCommits => _absorbedCommitsList.AsEnumerable();
 
-        public ISet<INode> Children { get; }
+        public IEnumerable<INode> Children => ChildrenSet.WrapAsEnumerable();
 
-        public ICommit Commit { get; set; }
+        internal ISet<Node> ChildrenSet { get; }
 
-        public IOrderedSet<INode> Parents { get; }
+        public ICommit Commit { get; private set; }
+
+        public IEnumerable<INode> Parents => ParentsSet.WrapAsEnumerable();
+
+        internal IOrderedSet<Node> ParentsSet { get; }
 
         public void AddAbsorbedCommit(ICommit commit)
         {
@@ -56,6 +60,11 @@ namespace Prigitsk.Core.Tree
         public override int GetHashCode()
         {
             return _initialHash;
+        }
+
+        internal void SetCommit(ICommit commit)
+        {
+            Commit = commit;
         }
     }
 }

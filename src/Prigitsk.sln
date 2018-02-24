@@ -27,6 +27,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Interfaces", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Git.LibGit2Sharp", "Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj", "{B5E97E64-CBA2-43D0-9476-E28831A5D476}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Core.Tree", "Prigitsk.Core.Tree\Prigitsk.Core.Tree.csproj", "{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Core.Tools", "Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj", "{EF57B264-073F-4535-B996-877B2110794C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5E97E64-CBA2-43D0-9476-E28831A5D476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF57B264-073F-4535-B996-877B2110794C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF57B264-073F-4535-B996-877B2110794C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF57B264-073F-4535-B996-877B2110794C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF57B264-073F-4535-B996-877B2110794C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +95,8 @@ Global
 		{6C645DBC-9803-421C-8096-A1C4E7684304} = {4424EDE0-C65E-4730-9AA6-0B886F68F82E}
 		{1AEF4D1D-70EB-48CC-8B60-8592C71D5615} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
 		{B5E97E64-CBA2-43D0-9476-E28831A5D476} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
+		{FB765E3C-97C2-49D6-9E28-02E301CB4AD4} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
+		{EF57B264-073F-4535-B996-877B2110794C} = {CCEA980B-922C-4E4D-8FEC-80F3E2F2BE1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0BF1ADA-5CF8-498C-9A86-70CDB8394AD6}
