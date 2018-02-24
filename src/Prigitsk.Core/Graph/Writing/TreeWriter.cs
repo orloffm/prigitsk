@@ -35,7 +35,7 @@ namespace Prigitsk.Core.Graph.Writing
             // The graph nodes with current branch names,
             OriginBranch[] currentBranches = graph.GetCurrentBranches();
             WriteCurrentBranchesLabels(sb, currentBranches);
-            
+
             // Tags and orphaned branches names,
             Tag[] tags = graph.GetAllTags();
 

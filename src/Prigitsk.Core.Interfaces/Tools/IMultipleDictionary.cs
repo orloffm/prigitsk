@@ -9,7 +9,7 @@ namespace Prigitsk.Core.Tools
         bool Remove(TKey key, TValue value);
 
         /// <summary>
-        /// Enumerates all values for the key. If none are present, returns an empty enumerable.
+        ///     Enumerates all values for the key. If none are present, returns an empty enumerable.
         /// </summary>
         IEnumerable<TValue> TryEnumerateFor(TKey node);
     }

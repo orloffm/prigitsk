@@ -17,9 +17,9 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IFileSystem _fileSystem;
         private readonly IFileTextWriterFactory _fileWriterFactory;
         private readonly IRepositoryDataLoader _loader;
+        private readonly ISimplifier _simplifier;
         private readonly IBranchingStrategyProvider _strategyProvider;
         private readonly ITreeBuilder _treeBuilder;
-        private readonly ISimplifier _simplifier;
         private readonly ITreeRenderer _treeRenderer;
 
         public DrawRunner(
@@ -106,7 +106,7 @@ namespace Prigitsk.Console.Verbs.Draw
             ITree tree = _treeBuilder.Build(repositoryData, strategy, TreeBuildingOptions.Default);
 
             // Simplify the tree.
-            _simplifier.Simplify(tree, SimplificationOptions.None);
+            _simplifier.Simplify(tree, SimplificationOptions.Default);
 
             string targetPath = PrepareTargetPath();
 

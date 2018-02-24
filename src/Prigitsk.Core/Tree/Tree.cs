@@ -8,17 +8,17 @@ namespace Prigitsk.Core.Tree
 {
     public class Tree : ITree
     {
-        private readonly IDictionary<IBranch, OrderedSet<Node>> _branches;
+        private readonly IDictionary<IBranch, OrderedSet<INode>> _branches;
         private readonly IDictionary<INode, IBranch> _containedInBranch;
-        private readonly IDictionary<IHash, Node> _nodes;
+        private readonly IDictionary<IHash, INode> _nodes;
         private readonly IMultipleDictionary<INode, IBranch> _pointingBranches;
         private readonly IMultipleDictionary<INode, ITag> _pointingTags;
         private readonly ISet<ITag> _tags;
 
         public Tree()
         {
-            _nodes = new Dictionary<IHash, Node>();
-            _branches = new Dictionary<IBranch, OrderedSet<Node>>();
+            _nodes = new Dictionary<IHash, INode>();
+            _branches = new Dictionary<IBranch, OrderedSet<INode>>();
             _tags = new HashSet<ITag>();
 
             _containedInBranch = new Dictionary<INode, IBranch>();
@@ -32,11 +32,11 @@ namespace Prigitsk.Core.Tree
 
         public void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
         {
-            var branchNodes = new OrderedSet<Node>();
+            var branchNodes = new OrderedSet<INode>();
 
             foreach (ICommit commit in commitsInBranch)
             {
-                Node node = GetOrCreateNode(commit.Hash);
+                INode node = GetOrCreateNode(commit.Hash);
                 branchNodes.Add(node);
 
                 // Link it to the branch.
@@ -51,12 +51,12 @@ namespace Prigitsk.Core.Tree
 
         public void AddCommit(ICommit commit)
         {
-            Node node = GetOrCreateNode(commit.Hash);
+            INode node = GetOrCreateNode(commit.Hash);
             node.Commit = commit;
 
             foreach (IHash parent in commit.Parents)
             {
-                Node parentNode = GetOrCreateNode(parent);
+                INode parentNode = GetOrCreateNode(parent);
 
                 // Link both.
                 node.Parents.Add(parentNode);
@@ -87,9 +87,45 @@ namespace Prigitsk.Core.Tree
             }
         }
 
+        public IEnumerable<INode> EnumerateNodesDownTheBranch(INode node)
+        {
+            IBranch branch = _containedInBranch[node];
+            OrderedSet<INode> set = _branches[branch];
+            return set.EnumerateAfter(node);
+        }
+
+        public IEnumerable<INode> EnumerateNodesUpTheBranch(INode node)
+        {
+            IBranch branch = _containedInBranch[node];
+            OrderedSet<INode> set = _branches[branch];
+            return set.EnumerateBefore(node);
+        }
+
+        public INode FindOldestItemOnBranch(IEnumerable<INode> nodes)
+        {
+            INode[] nodesArray = nodes.ToArray();
+
+            // Make sure these nodes are from the same branch.
+            IBranch sourceBranch = nodesArray.Select(node => _containedInBranch[node]).Distinct().SingleOrDefault();
+            if (sourceBranch == null)
+            {
+                return null;
+            }
+
+            OrderedSet<INode> set = _branches[sourceBranch];
+
+            INode oldest = set.PickFirst(nodesArray);
+            return oldest;
+        }
+
         public IEnumerable<INode> GetAllBranchNodes(IBranch branch)
         {
-            return _branches[branch].AsEnumerable();
+            return _branches[branch];
+        }
+
+        public INode GetBranchTip(IBranch branch)
+        {
+            return _branches[branch].Last;
         }
 
         public IBranch GetContainingBranch(INode node)
@@ -99,9 +135,9 @@ namespace Prigitsk.Core.Tree
             return branch;
         }
 
-        private Node GetOrCreateNode(IHash hash)
+        private INode GetOrCreateNode(IHash hash)
         {
-            Node node;
+            INode node;
             if (!_nodes.TryGetValue(hash, out node))
             {
                 node = new Node(hash);

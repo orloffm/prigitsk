@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Entities;
-using Prigitsk.Core.Graph;
 using Prigitsk.Core.Tree;
 
 namespace Prigitsk.Core.Simplification
@@ -13,94 +11,36 @@ namespace Prigitsk.Core.Simplification
         private readonly ILogger _log;
         private readonly ITreeWalker _walker;
 
-        public Simplifier( ILogger log, ITreeWalker walker)
+        public Simplifier(ILogger log, ITreeWalker walker)
         {
             _log = log;
             _walker = walker;
         }
 
-        public void Simplify(ITree tree, ISimplificationOptions options)
+        private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<INode> nodesInQuestion, IEnumerable<INode> whitelist)
         {
-            // First, remove orphans, if applicable.
-            if (options.RemoveOrphans)
+            var whitelistSet = new HashSet<INode>(whitelist);
+
+            foreach (INode node in nodesInQuestion)
             {
-                RemoveOrphans(tree, options.RemoveOrphansEvenWithTags);
-            }
-
-            int pass = 0;
-            bool removedAnything;
-            do
-            {
-                _log.Debug("Doing pass {0}.", pass+1);
-                pass++;
-                removedAnything = MakePass(tree, options);
-            } while (removedAnything);
-        }
-
-        private bool MakePass(ITree tree, ISimplificationOptions options)
-        {
-            bool removedAnything = false;
-            IBranch[] branches = tree.Branches.ToArray();
-
-            foreach (IBranch b in branches)
-            {
-                INode[] nodesInBranch = tree.GetAllBranchNodes(b).ToArray();
-                var laterNodesInBranchSet = new HashSet<INode>(nodesInBranch);
-
-                for (int index = 0; index < nodesInBranch.Length; index++)
+                foreach (INode c in node.Children)
                 {
-                    INode currentNode = nodesInBranch[index];
-                    laterNodesInBranchSet.Remove(currentNode);
-                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
-
-                    // Remove edges that we got from cleaning up.
-                    removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, tree);
-                    // We never remove the branch starting node.
-                    if (options.AggressivelyRemoveFirstBranchNodes || index > 0)
+                    bool childIsInWhitelist = whitelistSet.Contains(c);
+                    if (!childIsInWhitelist)
                     {
-                        // Now, can we remove this node altogether?
-                        removedAnything |= RemoveNodeIfItIsOnlyConnecting(
-                            tree,
-                            currentNode,
-                            b,
-                            options.LeaveNodesAfterLastMerge);
+                        return false;
                     }
                 }
             }
 
-            return removedAnything ;
+            return true;
         }
 
-        private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, IBranch branch, bool optionsLeaveNodesAfterLastMerge)
-        {
-            throw new NotImplementedException();
-        }
-        private void RemoveEdge(
-            INode parent,
-            INode child)
-        {
-            parent.Children.Remove(child);
-            child.Parents.Remove(parent);
-        }
-        private bool IsSomeParentLinked(
-            INode sourceNode,
-            INode childNodeInQuestion,
-            IEnumerable<INode> allChildren)
-        {
-            // Is any of these children actually a parent of node in question?
-            var otherChildren = new HashSet<INode>(allChildren);
-            otherChildren.Remove(childNodeInQuestion);
-
-            // The whole parent tree of the particular child node in question. We don't go earlier than the source node.
-            IEnumerable<INode> parents = _walker.EnumerateAllParentsBreadthFirst(childNodeInQuestion, sourceNode.Commit.CommittedWhen);
-
-            // Is any of them linked from other children of source node?
-            bool someParentIsLinked = parents.Any(otherChildren.Contains);
-
-            return someParentIsLinked;
-        }
-
-        private bool CleanUpChildEdges(INode currentNode, INode nextNode, ICollection<INode> laterNodesInBranch, ITree tree)
+        private bool CleanUpChildEdges(
+            INode currentNode,
+            INode nextNode,
+            ICollection<INode> laterNodesInBranch,
+            ITree tree)
         {
             bool removedAnything = false;
             INode[] allChildren = currentNode.Children.ToArray();
@@ -152,6 +92,47 @@ namespace Prigitsk.Core.Simplification
             return removedAnything;
         }
 
+        private IEnumerable<INode> EnumerateNodesBetween(ITree tree, INode a, INode b)
+        {
+            return tree.EnumerateNodesDownTheBranch(a).TakeWhile(node => node != b);
+        }
+
+        /// <summary>
+        ///     Is the branch tip accessible the direct road from this node.
+        /// </summary>
+        private bool IsDirectRoadToTip(
+            ITree tree,
+            INode node)
+        {
+            INode n = node;
+            IBranch b = tree.GetContainingBranch(node);
+            INode tip = tree.GetBranchTip(b);
+
+            while (true)
+            {
+                // Merging.
+                if (n.Parents.Count != 1)
+                {
+                    return false;
+                }
+
+                // Is it a tip?
+                if (n == tip)
+                {
+                    return n.Children.Count == 0;
+                }
+
+                // Not yet a tip.
+                if (n.Children.Count != 1)
+                {
+                    // Branching,
+                    return false;
+                }
+
+                n = n.Children.Single();
+            }
+        }
+
         /// <summary>
         ///     Some child node An in the branch A contains an edge An->Bk
         ///     to the same branch B, and:
@@ -173,19 +154,19 @@ namespace Prigitsk.Core.Simplification
             IBranch branchB = tree.GetContainingBranch(child);
 
             INode an, bk;
-            bool foundClosure = TryFindRightSideOfARhombus(graph, parent, branchB, out an, out bk);
+            bool foundClosure = TryFindRightSideOfARhombus(tree, parent, branchB, out an, out bk);
             if (!foundClosure)
             {
                 // If there is no right side to the rhombus, don't care.
                 return false;
             }
 
-            IEnumerable<INode> parentsInBetween = EnumerateNodesBetween(graph, parent, an);
-            INode[] childrenInBetween = EnumerateNodesBetween(graph, child, bk).ToArray();
+            IEnumerable<INode> parentsInBetween = EnumerateNodesBetween(tree, parent, an);
+            INode[] childrenInBetween = EnumerateNodesBetween(tree, child, bk).ToArray();
 
             // Children may have third level of nodes on: themselves, their parents and the last elements.
             INode[] possibleThirdGeneration =
-                childrenInBetween.Concat(parentsInBetween).Concat(new[] { an, bk }).ToArray();
+                childrenInBetween.Concat(parentsInBetween).Concat(new[] {an, bk}).ToArray();
 
             // Check that these children don't have other children.
             // In other words - that the left side doesn't leak.
@@ -193,41 +174,100 @@ namespace Prigitsk.Core.Simplification
             return noOtherChildren;
         }
 
-        private bool TryFindRightSideOfARhombus(
-            IAssumedGraph graph,
-            INode parent,
-            OriginBranch branchB,
-            out INode an,
-            out INode bk)
+        private bool IsSomeParentLinked(
+            INode sourceNode,
+            INode childNodeInQuestion,
+            IEnumerable<INode> allChildren)
         {
-            an = null;
-            bk = null;
+            // Is any of these children actually a parent of node in question?
+            var otherChildren = new HashSet<INode>(allChildren);
+            otherChildren.Remove(childNodeInQuestion);
 
-            if (branchB == null)
+            // The whole parent tree of the particular child node in question. We don't go earlier than the source node.
+            IEnumerable<INode> parents = _walker.EnumerateAllParentsBreadthFirst(
+                childNodeInQuestion,
+                sourceNode.Commit.CommittedWhen);
+
+            // Is any of them linked from other children of source node?
+            bool someParentIsLinked = parents.Any(otherChildren.Contains);
+
+            return someParentIsLinked;
+        }
+
+        private bool MakePass(ITree tree, ISimplificationOptions options)
+        {
+            bool removedAnything = false;
+            IBranch[] branches = tree.Branches.ToArray();
+
+            foreach (IBranch b in branches)
             {
-                // Only branches, no free-floating nodes,
-                return false;
-            }
+                INode[] nodesInBranch = tree.GetAllBranchNodes(b).ToArray();
+                var laterNodesInBranchSet = new HashSet<INode>(nodesInBranch);
 
-            foreach (INode am in graph.EnumerateNodesDownTheBranch(parent))
-            {
-                INode leftmostChildOnB = am.Children.Where(c => graph.GetBranch(c) == branchB)
-                    .OrderBy(graph.GetIndexOnBranch)
-                    .FirstOrDefault();
-
-                if (leftmostChildOnB != null)
+                for (int index = 0; index < nodesInBranch.Length; index++)
                 {
-                    an = am;
-                    bk = leftmostChildOnB;
-                    return true;
+                    INode currentNode = nodesInBranch[index];
+                    laterNodesInBranchSet.Remove(currentNode);
+                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
+
+                    // Remove edges that we got from cleaning up.
+                    removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, tree);
+                    // We never remove the branch starting node.
+                    if (options.AggressivelyRemoveFirstBranchNodes || index > 0)
+                    {
+                        // Now, can we remove this node altogether?
+                        removedAnything |= RemoveNodeIfItIsOnlyConnecting(
+                            tree,
+                            currentNode,
+                            options.LeaveNodesAfterLastMerge);
+                    }
                 }
             }
 
-            return false;
+            return removedAnything;
+        }
+
+        private void RemoveEdge(
+            INode parent,
+            INode child)
+        {
+            parent.Children.Remove(child);
+            child.Parents.Remove(parent);
+        }
+
+        private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, bool optionsLeaveNodesAfterLastMerge)
+        {
+            bool hasExplicitPointers =
+                tree.GetPointingBranches(currentNode).Any() || tree.GetPointingTags(currentNode).Any();
+            if (hasExplicitPointers)
+            {
+                return false;
+            }
+
+            bool canRemove = currentNode.Children.Count == 1 &&
+                             currentNode.Parents.Count == 1;
+            if (!canRemove)
+            {
+                return false;
+            }
+
+            if (optionsLeaveNodesAfterLastMerge)
+            {
+                // We leave nodes from whose there is a
+                // road to tip - to investigate them in the graph.
+                bool isDirectRoadToTip = IsDirectRoadToTip(tree, currentNode);
+                if (isDirectRoadToTip)
+                {
+                    return false;
+                }
+            }
+
+            tree.RemoveNode(currentNode);
+            return true;
         }
 
         /// <summary>
-        /// Removes orphaned nodes (i.e. not contained in branches) that don't have tags.
+        ///     Removes orphaned nodes (i.e. not contained in branches) that don't have tags.
         /// </summary>
         private void RemoveOrphans(ITree tree, bool removeOrphansEvenWithTags)
         {
@@ -254,6 +294,56 @@ namespace Prigitsk.Core.Simplification
 
                 tree.RemoveNode(node);
             }
+        }
+
+        public void Simplify(ITree tree, ISimplificationOptions options)
+        {
+            // First, remove orphans, if applicable.
+            if (options.RemoveOrphans)
+            {
+                RemoveOrphans(tree, options.RemoveOrphansEvenWithTags);
+            }
+
+            int pass = 0;
+            bool removedAnything;
+            do
+            {
+                _log.Debug("Doing pass {0}.", pass + 1);
+                pass++;
+                removedAnything = MakePass(tree, options);
+            } while (removedAnything);
+        }
+
+        private bool TryFindRightSideOfARhombus(
+            ITree tree,
+            INode parent,
+            IBranch branchB,
+            out INode an,
+            out INode bk)
+        {
+            an = null;
+            bk = null;
+
+            if (branchB == null)
+            {
+                // Only branches, no free-floating nodes,
+                return false;
+            }
+
+            foreach (INode am in tree.EnumerateNodesDownTheBranch(parent))
+            {
+                IEnumerable<INode> allAmChildrenOnB = am.Children.Where(c => tree.GetContainingBranch(c) == branchB);
+                INode leftmostChildOnB = tree.FindOldestItemOnBranch(allAmChildrenOnB);
+
+                if (leftmostChildOnB != null)
+                {
+                    an = am;
+                    bk = leftmostChildOnB;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

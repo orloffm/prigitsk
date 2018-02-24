@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Prigitsk.Core.Tools
 {
@@ -32,9 +34,82 @@ namespace Prigitsk.Core.Tools
             Add(item);
         }
 
+        public bool Add(T item)
+        {
+            return AddLast(item);
+        }
+
+        public bool AddFirst(T item)
+        {
+            return AddInternal(item, _linkedList.AddFirst);
+        }
+
+        private bool AddInternal(T item, Func<T, LinkedListNode<T>> adder)
+        {
+            if (_dictionary.ContainsKey(item))
+            {
+                return false;
+            }
+
+            LinkedListNode<T> node = adder(item);
+            _dictionary.Add(item, node);
+            return true;
+        }
+
+        public bool AddLast(T item)
+        {
+            return AddInternal(item, _linkedList.AddLast);
+        }
+
+        public void Clear()
+        {
+            _linkedList.Clear();
+            _dictionary.Clear();
+        }
+
+        public bool Contains(T item)
+        {
+            return _dictionary.ContainsKey(item);
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            _linkedList.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerable<T> EnumerateAfter(T item)
+        {
+            LinkedListNode<T> node = _dictionary[item];
+            do
+            {
+                node = node.Next;
+                if (node == null)
+                {
+                    yield break;
+                }
+
+                yield return node.Value;
+            } while (true);
+        }
+
+        public IEnumerable<T> EnumerateBefore(T item)
+        {
+            LinkedListNode<T> node = _dictionary[item];
+            do
+            {
+                node = node.Previous;
+                if (node == null)
+                {
+                    yield break;
+                }
+
+                yield return node.Value;
+            } while (true);
+        }
+
         public void ExceptWith(IEnumerable<T> other)
         {
-            // this is already the enpty set; return
+            // this is already the empty set; return
             if (Count == 0)
             {
                 return;
@@ -54,29 +129,39 @@ namespace Prigitsk.Core.Tools
             }
         }
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            return _linkedList.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public void IntersectWith(IEnumerable<T> other)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool IsProperSubsetOf(IEnumerable<T> other)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool IsProperSupersetOf(IEnumerable<T> other)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool IsSubsetOf(IEnumerable<T> other)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool IsSupersetOf(IEnumerable<T> other)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool Overlaps(IEnumerable<T> other)
@@ -93,63 +178,34 @@ namespace Prigitsk.Core.Tools
                     return true;
                 }
             }
+
             return false;
         }
 
-        public bool SetEquals(IEnumerable<T> other)
+        public T PickFirst(IEnumerable<T> items)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void SymmetricExceptWith(IEnumerable<T> other)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void UnionWith(IEnumerable<T> other)
-        {
-            foreach (T item in other)
+            var itemsSet = new HashSet<T>(items);
+            if (itemsSet.Count < 2)
             {
-                Add(item);
-            }
-        }
-
-        public bool Add(T item)
-        {
-            if (_dictionary.ContainsKey(item))
-            {
-                return false;
+                return itemsSet.FirstOrDefault();
             }
 
-            LinkedListNode<T> node = _linkedList.AddLast(item);
-            _dictionary.Add(item, node);
-            return true;
-        }
+            T currentItem = itemsSet.First();
+            LinkedListNode<T> node = _dictionary[currentItem];
+            do
+            {
+                node = node.Previous;
+                if (node == null)
+                {
+                    return currentItem;
+                }
 
-        public void Clear()
-        {
-            _linkedList.Clear();
-            _dictionary.Clear();
-        }
-
-        public bool Contains(T item)
-        {
-            return _dictionary.ContainsKey(item);
-        }
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            _linkedList.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _linkedList.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+                // Should we switch the current item?
+                if (itemsSet.Contains(node.Value))
+                {
+                    currentItem = node.Value;
+                }
+            } while (true);
         }
 
         public bool Remove(T item)
@@ -163,6 +219,24 @@ namespace Prigitsk.Core.Tools
             _dictionary.Remove(item);
             _linkedList.Remove(node);
             return true;
+        }
+
+        public bool SetEquals(IEnumerable<T> other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SymmetricExceptWith(IEnumerable<T> other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UnionWith(IEnumerable<T> other)
+        {
+            foreach (T item in other)
+            {
+                Add(item);
+            }
         }
     }
 }

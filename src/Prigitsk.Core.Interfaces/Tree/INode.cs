@@ -6,16 +6,16 @@ namespace Prigitsk.Core.Tree
 {
     public interface INode
     {
-        ISet<INode> Children { get; }
-
-        ICommit Commit { get; }
-
         IEnumerable<ICommit> AbsorbedCommits { get; }
 
-            IOrderedSet<INode> Parents { get; }
+        ISet<INode> Children { get; }
 
-        bool Equals(INode other);
+        ICommit Commit { get; set; }
+
+        IOrderedSet<INode> Parents { get; }
 
         void AddAbsorbedCommit(ICommit commit);
+
+        bool Equals(INode other);
     }
 }

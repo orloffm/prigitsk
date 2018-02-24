@@ -2,6 +2,9 @@
 
 namespace Prigitsk.Core.Tools
 {
+    /// <summary>
+    ///     A set of different objects that are stored in addition order.
+    /// </summary>
     public interface IOrderedSet<T>
         : ISet<T>
     {
@@ -12,11 +15,17 @@ namespace Prigitsk.Core.Tools
         /// <summary>
         ///     Adds item in the beginning.
         /// </summary>
-        void AddFirst(T value);
+        bool AddFirst(T value);
 
         /// <summary>
         ///     Adds item in the end.
         /// </summary>
-        void AddLast(T value);
+        bool AddLast(T value);
+
+        IEnumerable<T> EnumerateAfter(T item);
+
+        IEnumerable<T> EnumerateBefore(T item);
+
+        T PickFirst(IEnumerable<T> items);
     }
 }

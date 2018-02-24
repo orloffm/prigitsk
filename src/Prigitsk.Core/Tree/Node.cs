@@ -8,8 +8,8 @@ namespace Prigitsk.Core.Tree
 {
     public class Node : INode, IEquatable<Node>
     {
-        private readonly int _initialHash;
         private readonly List<ICommit> _absorbedCommitsList;
+        private readonly int _initialHash;
 
         public Node(IHash initialCommitHash)
         {
