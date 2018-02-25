@@ -6,6 +6,7 @@ namespace Prigitsk.Core.Tree
     public interface ITree
     {
         IEnumerable<IBranch> Branches { get; }
+        IEnumerable<ITag> Tags { get; }
 
         IEnumerable<INode> Nodes { get; }
 

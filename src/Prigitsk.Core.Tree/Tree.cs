@@ -26,9 +26,11 @@ namespace Prigitsk.Core.Tree
             _pointingBranches = new MultipleDictionary<Node, IBranch>();
         }
 
-        public IEnumerable<IBranch> Branches => _branches.Keys.AsEnumerable();
+        public IEnumerable<IBranch> Branches => _branches.Keys.WrapAsEnumerable();
 
-        public IEnumerable<INode> Nodes => _nodes.Values.AsEnumerable();
+        public IEnumerable<INode> Nodes => _nodes.Values.WrapAsEnumerable();
+
+        public IEnumerable<ITag> Tags => _tags.WrapAsEnumerable();
 
         public void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
         {
@@ -131,7 +133,7 @@ namespace Prigitsk.Core.Tree
 
         public IEnumerable<INode> GetAllBranchNodes(IBranch branch)
         {
-            return _branches[branch];
+            return _branches[branch].WrapAsEnumerable();
         }
 
         public INode GetBranchTip(IBranch branch)
@@ -175,7 +177,7 @@ namespace Prigitsk.Core.Tree
         {
             Node node = Unwrap(inode);
             IBranch b = GetContainingBranch(node);
-            return ReferenceEquals(_branches[b].First, node);
+            return _branches[b].First == node;
         }
 
         public void RemoveEdge(INode parent, INode child)
@@ -206,7 +208,7 @@ namespace Prigitsk.Core.Tree
             // Parents.
             foreach (Node parent in n.ParentsSet)
             {
-                // Remove node.
+                // Remove node from parents' children.
                 parent.ChildrenSet.Remove(n);
 
                 // Set its children to this parent.
@@ -220,13 +222,14 @@ namespace Prigitsk.Core.Tree
             foreach (Node child in n.ChildrenSet)
             {
                 // Was this node the child's primary parent?
-                bool isPrimary = n.Equals(child.ParentsSet.First);
+                bool isPrimary = n == child.ParentsSet.First;
                 // Anyway, remove the node from child's parents.
                 child.ParentsSet.Remove(n);
 
                 if (isPrimary)
                 {
-                    // As the node was the primary parent, we add the parents in the beginning of the parents list.
+                    // As the node was the primary parent of this child,
+                    // we add its parents in the beginning of the child's parents list.
                     foreach (Node nParent in n.ParentsSet.Reverse())
                     {
                         child.ParentsSet.AddFirst(nParent);
@@ -234,7 +237,8 @@ namespace Prigitsk.Core.Tree
                 }
                 else
                 {
-                    // The node was not the primary parent. So we add its parents to the end of the list.
+                    // The node was not the primary parent of this child,
+                    // so we add its parents to the end of the list.
                     foreach (Node nParent in n.ParentsSet)
                     {
                         child.ParentsSet.AddLast(nParent);
@@ -242,7 +246,7 @@ namespace Prigitsk.Core.Tree
                 }
             }
 
-            INode firstParent = n.Parents.FirstOrDefault();
+            Node firstParent = n.ParentsSet.FirstOrDefault();
             firstParent?.AddAbsorbedCommit(n.Commit);
 
             // Clear references.

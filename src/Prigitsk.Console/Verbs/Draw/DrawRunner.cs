@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.TextWriter;
 using Prigitsk.Console.General.Programs;
+using Prigitsk.Core.Entities;
+using Prigitsk.Core.Remotes;
 using Prigitsk.Core.Rendering;
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Simplification;
@@ -21,6 +23,7 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IBranchingStrategyProvider _strategyProvider;
         private readonly ITreeBuilder _treeBuilder;
         private readonly ITreeRenderer _treeRenderer;
+        private readonly IRemoteHelper _remoteHelper;
 
         public DrawRunner(
             IDrawRunnerOptions options,
@@ -29,6 +32,7 @@ namespace Prigitsk.Console.Verbs.Draw
             ISimplifier simplifier,
             IFileSystem fileSystem,
             ITreeRenderer treeRenderer,
+            IRemoteHelper remoteHelper,
             IFileTextWriterFactory fileWriterFactory,
             IExternalAppPathProvider appPathProvider,
             IBranchingStrategyProvider strategyProvider,
@@ -40,6 +44,7 @@ namespace Prigitsk.Console.Verbs.Draw
             _simplifier = simplifier;
             _fileSystem = fileSystem;
             _treeRenderer = treeRenderer;
+            _remoteHelper = remoteHelper;
             _fileWriterFactory = fileWriterFactory;
             _appPathProvider = appPathProvider;
             _strategyProvider = strategyProvider;
@@ -101,9 +106,14 @@ namespace Prigitsk.Console.Verbs.Draw
             // Get the immutable repository information.
             IRepositoryData repositoryData = _loader.LoadFrom(Options.Repository);
 
+            ITreeBuildingOptions treeBuildingOptions = TreeBuildingOptions.Default;
+
+            // Pick the remote to work on.
+            IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, treeBuildingOptions.RemoteToUse);
+
             // Create the tree.
             IBranchingStrategy strategy = _strategyProvider.GetStrategy();
-            ITree tree = _treeBuilder.Build(repositoryData, strategy, TreeBuildingOptions.Default);
+            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
 
             // Simplify the tree.
             _simplifier.Simplify(tree, SimplificationOptions.Default);
@@ -112,7 +122,7 @@ namespace Prigitsk.Console.Verbs.Draw
 
             using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(targetPath))
             {
-                _treeRenderer.Render(tree, textWriter, TreeRenderingOptions.Default);
+                _treeRenderer.Render(tree, textWriter, remoteToUse, TreeRenderingOptions.Default);
             }
 
             // WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);

@@ -13,8 +13,6 @@ namespace Prigitsk.Core.Tree
 
         IEnumerable<INode> Parents { get; }
 
-        void AddAbsorbedCommit(ICommit commit);
-
         bool Equals(INode other);
     }
 }

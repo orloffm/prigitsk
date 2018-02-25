@@ -4,5 +4,7 @@
         : ITreeRenderingOptions
     {
         public static TreeRenderingOptions Default => new TreeRenderingOptions();
+
+        public bool TreatRepositoryAsGitHub => false;
     }
 }

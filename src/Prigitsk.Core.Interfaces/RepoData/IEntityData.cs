@@ -2,7 +2,7 @@
 
 namespace Prigitsk.Core.RepoData
 {
-    public interface IEntityData<T> : IEnumerable<T>
+    public interface IEntityData<out T> : IEnumerable<T>
     {
         int Count { get; }
     }

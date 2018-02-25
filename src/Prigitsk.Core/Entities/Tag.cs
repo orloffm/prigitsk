@@ -36,7 +36,7 @@ namespace Prigitsk.Core.Entities
 
         public override string ToString()
         {
-            return Name;
+            return FullName;
         }
     }
 }

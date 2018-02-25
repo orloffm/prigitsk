@@ -14,7 +14,7 @@ namespace Prigitsk.Core.Entities
             Label = name.Substring(indexOfSlash + 1);
         }
 
-        public string Label { get; }
+        public override string Label { get; }
 
         public string RemoteName { get; }
 

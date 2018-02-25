@@ -32,7 +32,7 @@ namespace Prigitsk.Core.Tree
 
         internal IOrderedSet<Node> ParentsSet { get; }
 
-        public void AddAbsorbedCommit(ICommit commit)
+        internal void AddAbsorbedCommit(ICommit commit)
         {
             _absorbedCommitsList.Add(commit);
         }

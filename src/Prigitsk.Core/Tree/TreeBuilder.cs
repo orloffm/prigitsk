@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
+using Prigitsk.Core.Remotes;
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Strategy;
 
@@ -9,20 +10,19 @@ namespace Prigitsk.Core.Tree
 {
     public class TreeBuilder : ITreeBuilder
     {
-        public ITree Build(IRepositoryData repository, IBranchingStrategy strategy, ITreeBuildingOptions options)
+        public ITree Build(IRepositoryData repository, IRemote remoteToUse, IBranchingStrategy strategy, ITreeBuildingOptions options )
         {
-            // First, get the remote.
-            IRemote remote = PickRemote(repository, options);
+            ITree tree = new Tree();
+       
 
             // Commits.
-            ITree tree = new Tree();
             foreach (ICommit commit in repository.Commits)
             {
                 tree.AddCommit(commit);
             }
 
             // All branches from this remote.
-            IEnumerable<IBranch> branches = repository.Branches.GetFor(remote);
+            IEnumerable<IBranch> branches = repository.Branches.GetFor(remoteToUse);
 
             // Filter them so that we get only those we want to write.
             IBranch[] branchesFiltered = branches.Where(b => options.CheckIfBranchShouldBePicked(b.Label)).ToArray();
@@ -56,7 +56,7 @@ namespace Prigitsk.Core.Tree
             // Now tags.
             foreach (ITag tag in repository.Tags)
             {
-                if (!options.CheckIfTagShouldBePicked(tag.Name))
+                if (!options.CheckIfTagShouldBePicked(tag.FullName))
                 {
                     continue;
                 }
@@ -65,45 +65,6 @@ namespace Prigitsk.Core.Tree
             }
 
             return tree;
-        }
-
-        private IRemote PickRemote(IRepositoryData repository, ITreeBuildingOptions options)
-        {
-            // We need to return something, so this check is mandatory.
-            if (repository.Remotes.Count == 0)
-            {
-                throw new InvalidOperationException("The repository does not contain remotes.");
-            }
-
-            if (string.IsNullOrWhiteSpace(options.RemoteToUse))
-            {
-                // Use default.
-                IRemote originRemote = repository.Remotes.GetRemoteByName("origin");
-
-                if (originRemote != null)
-                {
-                    return originRemote;
-                }
-
-                // Do we have multiple?
-                if (repository.Remotes.Count > 1)
-                {
-                    throw new InvalidOperationException(
-                        "The repository contains multiple remotes, cannot pick default.");
-                }
-
-                return repository.Remotes.Single();
-            }
-
-            // Find matching remote by name.
-            IRemote matching = repository.Remotes.GetRemoteByName(options.RemoteToUse);
-            if (matching == null)
-            {
-                throw new InvalidOperationException(
-                    $"The repository does not contain a remote named \"{options.RemoteToUse}\".");
-            }
-
-            return matching;
         }
     }
 }

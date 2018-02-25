@@ -7,10 +7,10 @@ namespace Prigitsk.Core.Tools
     /// </summary>
     public interface ITextWriter : IDisposable
     {
-        void Write(string value);
+        void Append(string value);
 
-        void WriteLine(string line);
+        void AppendLine(string line);
 
-        void WriteLine(string format, params object[] arg);
+        void AppendLine(string format, params object[] arg);
     }
 }

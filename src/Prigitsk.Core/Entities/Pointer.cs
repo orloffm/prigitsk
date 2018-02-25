@@ -2,22 +2,24 @@
 
 namespace Prigitsk.Core.Entities
 {
-    [DebuggerDisplay("{Name} => {Tip.ToShortString()}")]
+    [DebuggerDisplay("{FullName} => {Tip.ToShortString()}")]
     public abstract class Pointer : IPointer
     {
         protected Pointer(string name, IHash tip)
         {
             Tip = tip;
-            Name = name;
+            FullName = name;
         }
 
-        public string Name { get; }
+        public string FullName { get; }
+
+        public virtual string Label => FullName;
 
         public IHash Tip { get; }
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return FullName.GetHashCode();
         }
     }
 }

@@ -24,19 +24,19 @@ namespace Prigitsk.Console.Abstractions.TextWriter
             }
         }
 
-        public void Write(string value)
+        public void Append(string value)
         {
             _sw.Write(value);
         }
 
-        public void WriteLine(string line = null)
+        public void AppendLine(string line = null)
         {
             _sw.WriteLine(line);
         }
 
-        public void WriteLine(string format, params object[] arg)
+        public void AppendLine(string format, params object[] arg)
         {
-            WriteLine(string.Format(format, arg));
+            AppendLine(string.Format(format, arg));
         }
     }
 }
