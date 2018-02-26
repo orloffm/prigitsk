@@ -9,7 +9,6 @@ namespace Prigitsk.Core.Rendering
     {
         void Render(
             ITree tree,
-            ITextWriter textWriter,
             IRemote usedRemote,
             IBranchingStrategy strategy,
             ITreeRenderingOptions options);

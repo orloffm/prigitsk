@@ -109,7 +109,7 @@ namespace Prigitsk.Console.Verbs.Draw
             ITreeBuildingOptions treeBuildingOptions = TreeBuildingOptions.Default;
 
             // Pick the remote to work on.
-            IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, treeBuildingOptions.RemoteToUse);
+            IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
 
             // Create the tree.
             IBranchingStrategy strategy = _strategyProvider.GetStrategy();
@@ -122,7 +122,8 @@ namespace Prigitsk.Console.Verbs.Draw
 
             using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(targetPath))
             {
-                _treeRenderer.Render(tree, textWriter, remoteToUse, strategy, TreeRenderingOptions.Default);
+                var treeRenderer = _treeRendererFactory.Create(textWriter);
+                _treeRenderer.Render(tree, remoteToUse, strategy, TreeRenderingOptions.Default);
             }
 
             // WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);

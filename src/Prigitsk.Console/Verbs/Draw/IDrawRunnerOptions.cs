@@ -10,5 +10,10 @@
         string Repository { get; }
 
         string Target { get; }
+
+        /// <summary>
+        /// Which remote to use to build the graph. Default means origin or the single existing one.
+        /// </summary>
+        string RemoteToUse { get; }
     }
 }

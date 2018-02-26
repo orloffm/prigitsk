@@ -21,10 +21,15 @@ namespace Prigitsk.Core.Rendering
 
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
+        private readonly ITextWriter _textWriter;
 
-        public TreeRenderer(ILogger log, IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
+        public TreeRenderer(
+            ILogger log,
+            ITextWriter textWriter,
+            IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {
             _log = log;
+            _textWriter = textWriter;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
@@ -51,7 +56,6 @@ namespace Prigitsk.Core.Rendering
 
         public void Render(
             ITree tree,
-            ITextWriter textWriter,
             IRemote usedRemote,
             IBranchingStrategy branchingStrategy,
             ITreeRenderingOptions options)
@@ -59,36 +63,35 @@ namespace Prigitsk.Core.Rendering
             IRemoteWebUrlProvider remoteUrlProvider =
                 _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote, options.TreatRepositoryAsGitHub);
 
-            WriteHeader(textWriter);
+            WriteHeader();
 
             IBranch[] currentBranches = tree.Branches.Where(b => tree.EnumerateNodes(b).Any()).ToArray();
-            WriteCurrentBranchesLabels(textWriter, currentBranches, remoteUrlProvider);
+            WriteCurrentBranchesLabels(currentBranches, remoteUrlProvider);
 
             // Tags and orphaned branches names,
             ITag[] tags = tree.Tags.ToArray();
 
             IBranch[] orphanedBranches = tree.Branches.Where(b => !tree.EnumerateNodes(b).Any()).ToArray();
 
-            WriteTagsAndOrphanedBranches(textWriter, tags, orphanedBranches, remoteUrlProvider);
+            WriteTagsAndOrphanedBranches(tags, orphanedBranches, remoteUrlProvider);
 
             // Now the graph itself.
             var otherLinks = new PairList<INode, INode>();
-            WriteNodes(tree, textWriter, branchingStrategy, currentBranches, remoteUrlProvider, otherLinks);
+            WriteNodes(tree, branchingStrategy, currentBranches, remoteUrlProvider, otherLinks);
 
             // Render all other edges
-            WriteOtherEdges(otherLinks, textWriter, remoteUrlProvider);
+            WriteOtherEdges(otherLinks, remoteUrlProvider);
 
             // Tags and orphaned branches
-            WriteTagsAndOrphanedBranchesConnections(textWriter, tags, orphanedBranches);
-            WriteFooter(textWriter);
+            WriteTagsAndOrphanedBranchesConnections(tags, orphanedBranches);
+            WriteFooter();
         }
 
         private void WriteCurrentBranchesLabels(
-            ITextWriter sb,
             IEnumerable<IBranch> currentBranches,
             IRemoteWebUrlProvider remoteUrlProvider)
         {
-            sb.AppendLine(
+            _textWriter.AppendLine(
                 @"// branch names
     node[shape = none, fixedsize = false, penwidth = O, fillcolor = none, width = 0, height = 0, margin =""0.05""];");
             // 0 - branch short name
@@ -108,18 +111,18 @@ rank = sink;
                     MakeHandle(b),
                     b.Label,
                     url);
-                sb.AppendLine(text);
+                _textWriter.AppendLine(text);
             }
         }
 
-        private void WriteFooter(ITextWriter sb)
+        private void WriteFooter()
         {
-            sb.Append("}");
+            _textWriter.Append("}");
         }
 
-        private void WriteHeader(ITextWriter textWriter)
+        private void WriteHeader()
         {
-            textWriter.AppendLine(
+            _textWriter.AppendLine(
                 @"strict digraph g{
     rankdir = ""LR"";
     nodesep = 0.2;
@@ -136,7 +139,6 @@ rank = sink;
         }
 
         private void WriteInBranchEdge(
-            ITextWriter sb,
             INode parentNode,
             INode childNote,
             IRemoteWebUrlProvider remoteUrlProvider)
@@ -146,27 +148,26 @@ rank = sink;
 
             // We draw it dotted.
             string formatToUse = childNote.AbsorbedCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
-            sb.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
+            _textWriter.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
         }
 
-        private void WriteNode(ITextWriter sb, INode n, IRemoteWebUrlProvider remoteUrlProvider)
+        private void WriteNode(INode n, IRemoteWebUrlProvider remoteUrlProvider)
         {
             double width = 0.2d;
             string size = width.ToString("##.##", CultureInfo.InvariantCulture);
             const string nodeFormat = @"""{0}"" [width={1}, height={1}, URL=""{3}""];";
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
-            sb.AppendLine(string.Format(nodeFormat, MakeNodeHandle(n), size, url));
+            _textWriter.AppendLine(string.Format(nodeFormat, MakeNodeHandle(n), size, url));
         }
 
         private void WriteNodes(
             ITree tree,
-            ITextWriter sb,
             IBranchingStrategy branchingStrategy,
             IBranch[] currentBranches,
             IRemoteWebUrlProvider remoteUrlProvider,
             PairList<INode, INode> otherLinks)
         {
-            sb.AppendLine(
+            _textWriter.AppendLine(
                 @"// graph
 node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]
 // branches");
@@ -190,9 +191,9 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 // 0 - branch short name
                 // 1 - color
                 string htmlString = branchingStrategy.GetHtmlColorFor(b);
-                sb.AppendLine(string.Format(BranchNodesFormat, MakeHandle(b), htmlString, htmlString));
-                sb.AppendLine(string.Format(BranchEdgesFormat, htmlString, 2));
-                sb.AppendLine(branchNodesStart);
+                _textWriter.AppendLine(string.Format(BranchNodesFormat, MakeHandle(b), htmlString, htmlString));
+                _textWriter.AppendLine(string.Format(BranchEdgesFormat, htmlString, 2));
+                _textWriter.AppendLine(branchNodesStart);
                 // All nodes in the branch.
                 INode[] nodesInBranch = tree.EnumerateNodes(b).ToArray();
                 var edgesInBranch = new PairList<INode, INode>();
@@ -200,7 +201,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 {
                     INode currentNode = nodesInBranch[index];
                     INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
-                    WriteNode(sb, currentNode, remoteUrlProvider);
+                    WriteNode(currentNode, remoteUrlProvider);
                     if (nextNode != null)
                     {
                         edgesInBranch.Add(currentNode, nextNode);
@@ -215,27 +216,27 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
 
                 foreach (Tuple<INode, INode> tuple in edgesInBranch.EnumerateItems())
                 {
-                    WriteInBranchEdge(sb, tuple.Item1, tuple.Item2, remoteUrlProvider);
+                    WriteInBranchEdge(tuple.Item1, tuple.Item2, remoteUrlProvider);
                 }
 
-                sb.AppendLine(branchNodesEnd);
+                _textWriter.AppendLine(branchNodesEnd);
                 // Now link to the branch name node.
                 // 0 - last node in branch
                 // 1 - branch short name
                 const string branchEndEdge = @"""{0}"" -> ""{1}"" [color=""#b0b0b0"", style=dotted, arrowhead=none];";
                 string text = string.Format(branchEndEdge, MakeNodeHandle(b.Tip), MakeHandle(b));
-                sb.AppendLine(text);
-                sb.AppendLine();
+                _textWriter.AppendLine(text);
+                _textWriter.AppendLine();
             }
 
             INode[] allLeftOvers = tree.Nodes.Where(n => tree.GetContainingBranch(n) == null).ToArray();
             if (allLeftOvers.Length > 0)
             {
                 // Left-overs, without branches.
-                sb.AppendLine(string.Format(BranchNodesFormat, @"""""", "white", "black"));
+                _textWriter.AppendLine(string.Format(BranchNodesFormat, @"""""", "white", "black"));
                 foreach (INode currentNode in allLeftOvers)
                 {
-                    WriteNode(sb, currentNode, remoteUrlProvider);
+                    WriteNode(currentNode, remoteUrlProvider);
                     // Remember children.
                     foreach (INode child in currentNode.Children)
                     {
@@ -247,11 +248,10 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
 
         private void WriteOtherEdges(
             PairList<INode, INode> otherLinks,
-            ITextWriter sb,
             IRemoteWebUrlProvider remoteUrlProvider)
         {
-            sb.AppendLine("// all other edges");
-            sb.AppendLine(string.Format(BranchEdgesFormat, "black", 1));
+            _textWriter.AppendLine("// all other edges");
+            _textWriter.AppendLine(string.Format(BranchEdgesFormat, "black", 1));
             foreach (Tuple<INode, INode> pair in otherLinks.EnumerateItems())
             {
                 const string edgeFormatUrl = @"""{0}"" -> ""{1}"" [URL = ""{2}""];";
@@ -264,19 +264,18 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                     MakeNodeHandle(nodeA),
                     MakeNodeHandle(nodeB),
                     url);
-                sb.AppendLine(text);
+                _textWriter.AppendLine(text);
             }
 
-            sb.AppendLine();
+            _textWriter.AppendLine();
         }
 
         private void WriteTagsAndOrphanedBranches(
-            ITextWriter sb,
             ITag[] tags,
             IBranch[] orphanedBranches,
             IRemoteWebUrlProvider remoteUrlProvider)
         {
-            sb.AppendLine(@"// orphaned branches");
+            _textWriter.AppendLine(@"// orphaned branches");
             // 0 - branch short name
             // 1 - branch friendly name
             // 2 - repository path
@@ -290,10 +289,10 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                     MakeHandle(b),
                     b.Label,
                     url);
-                sb.AppendLine(text);
+                _textWriter.AppendLine(text);
             }
 
-            sb.AppendLine(
+            _textWriter.AppendLine(
                 @"// tags
 node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=""0.11,0.055""]");
             // 0 - tag short name
@@ -308,14 +307,16 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                     MakeHandle(tag),
                     tag.Label,
                     url);
-                sb.AppendLine(text);
+                _textWriter.AppendLine(text);
             }
         }
 
-        private void WriteTagsAndOrphanedBranchesConnections(ITextWriter sb, ITag[] tags, IBranch[] orphanedBranches)
+        private void WriteTagsAndOrphanedBranchesConnections(
+            IEnumerable<ITag> tags,
+            IEnumerable<IBranch> orphanedBranches)
         {
             // orphaned branches are simply linked
-            sb.AppendLine(
+            _textWriter.AppendLine(
                 @"// orphaned branches links
         edge[color = ""#b0b0b0"", style=dotted, arrowhead=none, len=0.3];");
             // 0 - source node
@@ -327,11 +328,11 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                     orphanedBranchLinkFormat,
                     MakeNodeHandle(b.Tip),
                     MakeHandle(b));
-                sb.AppendLine(text);
+                _textWriter.AppendLine(text);
             }
 
-            sb.AppendLine();
-            sb.AppendLine(
+            _textWriter.AppendLine();
+            _textWriter.AppendLine(
                 @"// tags
         edge[penwidth = l];");
             // 0 - source node
@@ -346,7 +347,7 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                     tagLinkFormat,
                     MakeNodeHandle(tag.Tip),
                     MakeHandle(tag));
-                sb.AppendLine(text);
+                _textWriter.AppendLine(text);
             }
         }
     }

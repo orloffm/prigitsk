@@ -17,7 +17,9 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
                 source.Repository,
                 source.Target,
                 source.Output,
-                source.Format);
+                source.Format,
+                source.RemoteToUse
+                );
         }
     }
 }

@@ -6,12 +6,14 @@
             string repository = null,
             string target = null,
             string output = null,
-            string format = null)
+            string format = null,
+            string remoteToUse = null)
         {
             Repository = repository;
             Target = target;
             Output = output;
             Format = format;
+            RemoteToUse = remoteToUse;
         }
 
         public string Format { get; }
@@ -21,5 +23,7 @@
         public string Repository { get; }
 
         public string Target { get; }
+
+        public string RemoteToUse { get; }
     }
 }

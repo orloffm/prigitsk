@@ -14,6 +14,12 @@ namespace Prigitsk.Console.CommandLine.Parsing
         [Option('o', "output", HelpText = "Output file name.")]
         public string Output { get; set; }
 
+        [Option(
+            'r',
+            "remote",
+            HelpText = "Remote to build the graph against. Origin or the single available is used by default.")]
+        public string RemoteToUse { get; set; }
+
         /// <summary>
         ///     The repository directory.
         /// </summary>
