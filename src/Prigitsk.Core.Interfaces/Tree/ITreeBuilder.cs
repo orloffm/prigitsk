@@ -7,7 +7,7 @@ namespace Prigitsk.Core.Tree
     public interface ITreeBuilder
     {
         ITree Build(
-            IRepositoryData repository, 
+            IRepositoryData repository,
             IRemote remoteToUse,
             IBranchingStrategy strategy,
             ITreeBuildingOptions options);

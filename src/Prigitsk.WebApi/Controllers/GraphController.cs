@@ -1,8 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Prigitsk.WebApi.Controllers
+﻿namespace Prigitsk.WebApi.Controllers
 {
     [Route("api/[controller]")]
     public class GraphController : Controller

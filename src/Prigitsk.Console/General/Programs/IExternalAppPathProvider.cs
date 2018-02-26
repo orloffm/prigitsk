@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Prigitsk.Console.General.Programs
+﻿namespace Prigitsk.Console.General.Programs
 {
     public interface IExternalAppPathProvider
     {

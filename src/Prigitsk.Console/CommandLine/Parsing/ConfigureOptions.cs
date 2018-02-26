@@ -1,5 +1,4 @@
-﻿using CommandLine;
-using Prigitsk.Console.General;
+﻿using Prigitsk.Console.General;
 
 namespace Prigitsk.Console.CommandLine.Parsing
 {

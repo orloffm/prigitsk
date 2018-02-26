@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
-using Prigitsk.Core.Remotes;
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Strategy;
 
@@ -10,10 +8,13 @@ namespace Prigitsk.Core.Tree
 {
     public class TreeBuilder : ITreeBuilder
     {
-        public ITree Build(IRepositoryData repository, IRemote remoteToUse, IBranchingStrategy strategy, ITreeBuildingOptions options )
+        public ITree Build(
+            IRepositoryData repository,
+            IRemote remoteToUse,
+            IBranchingStrategy strategy,
+            ITreeBuildingOptions options)
         {
             ITree tree = new Tree();
-       
 
             // Commits.
             foreach (ICommit commit in repository.Commits)
@@ -28,15 +29,15 @@ namespace Prigitsk.Core.Tree
             IBranch[] branchesFiltered = branches.Where(b => options.CheckIfBranchShouldBePicked(b.Label)).ToArray();
 
             // Sort these branches.
-            IBranch[] branchesSorted = strategy.SortByPriorityDescending(branchesFiltered).ToArray();
 
-            // Add commits by branch.
+            // Branches.
+            IBranch[] branchesSorted = strategy.SortByPriorityDescending(branchesFiltered).ToArray();
             var commits = new HashSet<ICommit>(repository.Commits);
             foreach (IBranch b in branchesSorted)
             {
                 ICommit tip = repository.Commits.GetByHash(b.Tip);
 
-                var commitsInBranch = new List<ICommit>(commits.Count / 2);
+                var commitsInBranch = new List<ICommit>(commits.Count / 3);
                 IEnumerable<ICommit> upTheTree = repository.Commits.EnumerateUpTheHistoryFrom(tip);
                 foreach (ICommit commit in upTheTree)
                 {

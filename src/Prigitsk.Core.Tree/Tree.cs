@@ -45,8 +45,10 @@ namespace Prigitsk.Core.Tree
                 _containedInBranch.Add(node, branch);
             }
 
+            // Branch and all its nodes ordered from the start. The tip is the last one.
             _branches.Add(branch, branchNodes);
 
+            // Especially save the tip.
             Node branchTip = GetOrCreateNode(branch.Tip);
             _pointingBranches.Add(branchTip, branch);
         }
@@ -98,6 +100,11 @@ namespace Prigitsk.Core.Tree
             _tags.Remove(tag);
         }
 
+        public IEnumerable<INode> EnumerateNodes(IBranch branch)
+        {
+            return _branches[branch].WrapAsEnumerable();
+        }
+
         public IEnumerable<INode> EnumerateNodesDownTheBranch(INode inode)
         {
             Node node = Unwrap(inode);
@@ -129,11 +136,6 @@ namespace Prigitsk.Core.Tree
 
             INode oldest = set.PickFirst(nodesArray);
             return oldest;
-        }
-
-        public IEnumerable<INode> GetAllBranchNodes(IBranch branch)
-        {
-            return _branches[branch].WrapAsEnumerable();
         }
 
         public INode GetBranchTip(IBranch branch)

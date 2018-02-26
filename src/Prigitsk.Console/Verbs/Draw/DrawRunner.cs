@@ -19,11 +19,11 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IFileSystem _fileSystem;
         private readonly IFileTextWriterFactory _fileWriterFactory;
         private readonly IRepositoryDataLoader _loader;
+        private readonly IRemoteHelper _remoteHelper;
         private readonly ISimplifier _simplifier;
         private readonly IBranchingStrategyProvider _strategyProvider;
         private readonly ITreeBuilder _treeBuilder;
         private readonly ITreeRenderer _treeRenderer;
-        private readonly IRemoteHelper _remoteHelper;
 
         public DrawRunner(
             IDrawRunnerOptions options,
@@ -122,7 +122,7 @@ namespace Prigitsk.Console.Verbs.Draw
 
             using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(targetPath))
             {
-                _treeRenderer.Render(tree, textWriter, remoteToUse, TreeRenderingOptions.Default);
+                _treeRenderer.Render(tree, textWriter, remoteToUse, strategy, TreeRenderingOptions.Default);
             }
 
             // WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);

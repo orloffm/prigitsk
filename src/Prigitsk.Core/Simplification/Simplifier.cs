@@ -202,7 +202,7 @@ namespace Prigitsk.Core.Simplification
 
             foreach (IBranch b in branches)
             {
-                INode[] nodesInBranch = tree.GetAllBranchNodes(b).ToArray();
+                INode[] nodesInBranch = tree.EnumerateNodes(b).ToArray();
                 var laterNodesInBranchSet = new HashSet<INode>(nodesInBranch);
 
                 for (int index = 0; index < nodesInBranch.Length; index++)

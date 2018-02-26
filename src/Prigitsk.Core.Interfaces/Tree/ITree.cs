@@ -6,9 +6,10 @@ namespace Prigitsk.Core.Tree
     public interface ITree
     {
         IEnumerable<IBranch> Branches { get; }
-        IEnumerable<ITag> Tags { get; }
 
         IEnumerable<INode> Nodes { get; }
+
+        IEnumerable<ITag> Tags { get; }
 
         /// <summary>
         ///     Adds a branch with all its commits.
@@ -24,13 +25,13 @@ namespace Prigitsk.Core.Tree
 
         void DropTag(ITag tag);
 
+        IEnumerable<INode> EnumerateNodes(IBranch branch);
+
         IEnumerable<INode> EnumerateNodesDownTheBranch(INode node);
 
         IEnumerable<INode> EnumerateNodesUpTheBranch(INode node);
 
         INode FindOldestItemOnBranch(IEnumerable<INode> allAmChildrenOnB);
-
-        IEnumerable<INode> GetAllBranchNodes(IBranch branch);
 
         INode GetBranchTip(IBranch branch);
 

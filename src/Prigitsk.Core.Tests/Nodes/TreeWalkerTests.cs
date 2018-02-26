@@ -1,7 +1,6 @@
 using System.Linq;
 using Moq;
 using Prigitsk.Core.Tree;
-using Xunit;
 
 namespace Prigitsk.Core.Tests.Nodes
 {

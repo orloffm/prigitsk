@@ -19,6 +19,24 @@ namespace Prigitsk.Core.Remotes
             return _baseUrl;
         }
 
-        public string GetBranchLink(IBranch branch) => $"{_baseUrl}/tree/{branch.Label}";
+        public string GetBranchLink(IBranch branch)
+        {
+            return $"{_baseUrl}/tree/{branch.Label}";
+        }
+
+        public string GetCommitLink(ICommit commit)
+        {
+            return $"{_baseUrl}/commit/{commit.Hash.ToShortString()}";
+        }
+
+        public string GetCompareCommitsLink(ICommit nodeA, ICommit nodeB)
+        {
+            return $"{_baseUrl}/compare/{nodeA.Hash.ToShortString()}...{nodeB.Hash.ToShortString()}";
+        }
+
+        public string GetTagLink(ITag tag)
+        {
+            return $"{_baseUrl}/releases/tag/{tag.Label}";
+        }
     }
 }

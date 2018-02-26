@@ -9,6 +9,8 @@ namespace Prigitsk.Core.Tools
     {
         void Append(string value);
 
+        void AppendLine();
+
         void AppendLine(string line);
 
         void AppendLine(string format, params object[] arg);

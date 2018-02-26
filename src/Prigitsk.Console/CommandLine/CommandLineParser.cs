@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using Autofac.Features.Indexed;
+﻿using Autofac.Features.Indexed;
 using CommandLine;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.CommandLine.Conversion;

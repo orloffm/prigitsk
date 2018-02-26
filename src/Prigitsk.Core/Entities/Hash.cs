@@ -53,9 +53,14 @@ namespace Prigitsk.Core.Entities
             return Value.GetHashCode();
         }
 
-        public override string ToString()
+        public string ToShortString()
         {
             return Value.Length <= DefaultCharsLength ? Value : Value.Substring(0, DefaultCharsLength);
+        }
+
+        public override string ToString()
+        {
+            return ToShortString();
         }
     }
 }

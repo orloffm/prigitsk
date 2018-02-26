@@ -2,15 +2,12 @@
 using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.RepoData;
-using Prigitsk.Core.Tree;
 
 namespace Prigitsk.Core.Remotes
 {
     public class RemoteHelper
         : IRemoteHelper
     {
-      
-
         public IRemote PickRemote(IRepositoryData repository, string remoteToUse)
         {
             // We need to return something, so this check is mandatory.

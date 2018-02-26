@@ -1,6 +1,4 @@
 ﻿using System.IO.Abstractions;
-using System.Reflection;
-using Autofac;
 using Prigitsk.Console.CommandLine.Conversion;
 using Prigitsk.Console.CommandLine.Conversion.Configure;
 using Prigitsk.Console.CommandLine.Conversion.Draw;
@@ -13,6 +11,11 @@ using Prigitsk.Console.Verbs.Draw;
 using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Git.LibGit2Sharp;
 using Prigitsk.Core.RepoData;
+using ContainerBuilder = Autofac.ContainerBuilder;
+using IContainer = Autofac.IContainer;
+using ModuleRegistrationExtensions = Autofac.ModuleRegistrationExtensions;
+using RegistrationExtensions = Autofac.RegistrationExtensions;
+using ResolutionExtensions = Autofac.ResolutionExtensions;
 
 namespace Prigitsk.Console
 {
@@ -25,7 +28,7 @@ namespace Prigitsk.Console
             //logger.Info("ABC");
             IContainer container = PrepareContainer();
 
-            IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
+            IGeneralExecutor exec = ResolutionExtensions.Resolve<IGeneralExecutor>(container);
             int exitCode = exec.RunSafe(args);
 
             return exitCode;
@@ -36,27 +39,36 @@ namespace Prigitsk.Console
             ContainerBuilder builder = new ContainerBuilder();
 
             // core assembly
-            builder.RegisterAssemblyTypes(typeof(BranchWrapped).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces();
+            RegistrationExtensions.AsImplementedInterfaces(
+                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(BranchWrapped).Assembly));
+            RegistrationExtensions.AsImplementedInterfaces(
+                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(RepositoryData).Assembly));
 
             // external
-            builder.RegisterModule<NLoggerModule>();
-            builder.RegisterType<FileSystem>().As<IFileSystem>();
+            ModuleRegistrationExtensions.RegisterModule<NLoggerModule>(builder);
+            RegistrationExtensions.RegisterType<FileSystem>(builder).As<IFileSystem>();
 
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
-            builder.RegisterInstance(AppSettings.Default).AsSelf();
+            RegistrationExtensions.AsImplementedInterfaces(
+                RegistrationExtensions.RegisterAssemblyTypes(builder, Assembly.GetExecutingAssembly()));
+            RegistrationExtensions.AsSelf(RegistrationExtensions.RegisterInstance(builder, AppSettings.Default));
 
             // converters
-            builder.RegisterType<ConfigureRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Configure)
+            RegistrationExtensions.RegisterType<ConfigureRunnerFactory>(builder)
+                .Keyed<IVerbRunnerFactory>(Verb.Configure)
                 .InstancePerLifetimeScope();
-            builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Draw).InstancePerLifetimeScope();
-            builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Fetch).InstancePerLifetimeScope();
+            RegistrationExtensions.RegisterType<DrawRunnerFactory>(builder).Keyed<IVerbRunnerFactory>(Verb.Draw)
+                .InstancePerLifetimeScope();
+            RegistrationExtensions.RegisterType<FetchRunnerFactory>(builder).Keyed<IVerbRunnerFactory>(Verb.Fetch)
+                .InstancePerLifetimeScope();
 
-            builder.RegisterType<ConfigureVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Configure)
+            RegistrationExtensions.RegisterType<ConfigureVerbOptionsConverter>(builder)
+                .Keyed<IVerbOptionsConverter>(Verb.Configure)
                 .InstancePerLifetimeScope();
-            builder.RegisterType<DrawVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Draw)
+            RegistrationExtensions.RegisterType<DrawVerbOptionsConverter>(builder)
+                .Keyed<IVerbOptionsConverter>(Verb.Draw)
                 .InstancePerLifetimeScope();
-            builder.RegisterType<FetchVerbOptionsConverter>().Keyed<IVerbOptionsConverter>(Verb.Fetch)
+            RegistrationExtensions.RegisterType<FetchVerbOptionsConverter>(builder)
+                .Keyed<IVerbOptionsConverter>(Verb.Fetch)
                 .InstancePerLifetimeScope();
 
             IContainer container = builder.Build();

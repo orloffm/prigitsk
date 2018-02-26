@@ -1,7 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Remotes;
+using Prigitsk.Core.Strategy;
 using Prigitsk.Core.Tools;
 using Prigitsk.Core.Tree;
 
@@ -9,6 +13,12 @@ namespace Prigitsk.Core.Rendering
 {
     public sealed class TreeRenderer : ITreeRenderer
     {
+        private const string BranchEdgesFormat
+            = @"edge[color = ""{0}"", penwidth={1}];";
+
+        private const string BranchNodesFormat
+            = @"node [group={0}, fillcolor=""{1}"", color=""{2}""];";
+
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
 
@@ -16,47 +26,6 @@ namespace Prigitsk.Core.Rendering
         {
             _log = log;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
-        }
-
-        public void Render(ITree tree, ITextWriter textWriter, IRemote usedRemote, ITreeRenderingOptions options)
-        {
-            IRemoteWebUrlProvider remoteUrlProvider = _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote, options.TreatRepositoryAsGitHub);
-
-            WriteHeader(textWriter);
-
-            WriteCurrentBranchesLabels(tree, textWriter, remoteUrlProvider);
-
-            // Tags and orphaned branches names,
-            ITag[] tags = tree.Tags.ToArray();
-
-            OriginBranch[] orphanedBranches = graph.GetOrphanedBranches();
-
-            WriteTagsAndOrphanedBranches(sb, tags, orphanedBranches);
-        }
-
-        private void WriteCurrentBranchesLabels(ITree tree, ITextWriter textWriter, IRemoteWebUrlProvider remoteUrlProvider)
-        {
-            textWriter.AppendLine(
-                @"// branch names
-    node[shape = none, fixedsize = false, penwidth = O, fillcolor = none, width = 0, height = 0, margin =""0.05""];");
-            // 0 - branch short name
-            // 1 - branch label
-            // 2 - repository path
-            const string currentBranchLabelFormat = @"subgraph {{
-rank = sink;
-    {0} [label=""{1}"", group=""{0}"", URL=""{2}""];
-}}";
-            foreach (IBranch b in tree.Branches)
-            {
-                string url = remoteUrlProvider?.GetBranchLink(b);
-
-                string text = string.Format(
-                    currentBranchLabelFormat,
-                    MakeHandle(b),
-                    b.Label,
-                    url);
-                textWriter.AppendLine(text);
-            }
         }
 
         private string MakeHandle(IPointer pointerObject)
@@ -67,7 +36,85 @@ rank = sink;
                 .Replace("-", "_")
                 .Replace(" ", "_");
 
-            return  pointerLabel;
+            return pointerLabel;
+        }
+
+        private string MakeNodeHandle(INode node)
+        {
+            return MakeNodeHandle(node.Commit.Hash);
+        }
+
+        private string MakeNodeHandle(IHash hash)
+        {
+            return hash.ToShortString();
+        }
+
+        public void Render(
+            ITree tree,
+            ITextWriter textWriter,
+            IRemote usedRemote,
+            IBranchingStrategy branchingStrategy,
+            ITreeRenderingOptions options)
+        {
+            IRemoteWebUrlProvider remoteUrlProvider =
+                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote, options.TreatRepositoryAsGitHub);
+
+            WriteHeader(textWriter);
+
+            IBranch[] currentBranches = tree.Branches.Where(b => tree.EnumerateNodes(b).Any()).ToArray();
+            WriteCurrentBranchesLabels(textWriter, currentBranches, remoteUrlProvider);
+
+            // Tags and orphaned branches names,
+            ITag[] tags = tree.Tags.ToArray();
+
+            IBranch[] orphanedBranches = tree.Branches.Where(b => !tree.EnumerateNodes(b).Any()).ToArray();
+
+            WriteTagsAndOrphanedBranches(textWriter, tags, orphanedBranches, remoteUrlProvider);
+
+            // Now the graph itself.
+            var otherLinks = new PairList<INode, INode>();
+            WriteNodes(tree, textWriter, branchingStrategy, currentBranches, remoteUrlProvider, otherLinks);
+
+            // Render all other edges
+            WriteOtherEdges(otherLinks, textWriter, remoteUrlProvider);
+
+            // Tags and orphaned branches
+            WriteTagsAndOrphanedBranchesConnections(textWriter, tags, orphanedBranches);
+            WriteFooter(textWriter);
+        }
+
+        private void WriteCurrentBranchesLabels(
+            ITextWriter sb,
+            IEnumerable<IBranch> currentBranches,
+            IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            sb.AppendLine(
+                @"// branch names
+    node[shape = none, fixedsize = false, penwidth = O, fillcolor = none, width = 0, height = 0, margin =""0.05""];");
+            // 0 - branch short name
+            // 1 - branch label
+            // 2 - repository path
+            const string currentBranchLabelFormat = @"subgraph {{
+rank = sink;
+    {0} [label=""{1}"", group=""{0}"", URL=""{2}""];
+}}";
+
+            foreach (IBranch b in currentBranches)
+            {
+                string url = remoteUrlProvider?.GetBranchLink(b);
+
+                string text = string.Format(
+                    currentBranchLabelFormat,
+                    MakeHandle(b),
+                    b.Label,
+                    url);
+                sb.AppendLine(text);
+            }
+        }
+
+        private void WriteFooter(ITextWriter sb)
+        {
+            sb.Append("}");
         }
 
         private void WriteHeader(ITextWriter textWriter)
@@ -86,6 +133,221 @@ rank = sink;
     node[style = filled, color = ""black""];
     edge[arrowhead = vee, color = ""black"", penwidth = l];
     ");
+        }
+
+        private void WriteInBranchEdge(
+            ITextWriter sb,
+            INode parentNode,
+            INode childNote,
+            IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            const string edgeFormatSimple = @"""{0}"" -> ""{1}""; ";
+            const string edgeFormatDotted = @"""{0}"" -> ""{1}"" [style=dashed];";
+
+            // We draw it dotted.
+            string formatToUse = childNote.AbsorbedCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
+            sb.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
+        }
+
+        private void WriteNode(ITextWriter sb, INode n, IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            double width = 0.2d;
+            string size = width.ToString("##.##", CultureInfo.InvariantCulture);
+            const string nodeFormat = @"""{0}"" [width={1}, height={1}, URL=""{3}""];";
+            string url = remoteUrlProvider?.GetCommitLink(n.Commit);
+            sb.AppendLine(string.Format(nodeFormat, MakeNodeHandle(n), size, url));
+        }
+
+        private void WriteNodes(
+            ITree tree,
+            ITextWriter sb,
+            IBranchingStrategy branchingStrategy,
+            IBranch[] currentBranches,
+            IRemoteWebUrlProvider remoteUrlProvider,
+            PairList<INode, INode> otherLinks)
+        {
+            sb.AppendLine(
+                @"// graph
+node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.055"", shape = circle, penwidth = 2, fillcolor = ""#FF0000""]
+// branches");
+            const string branchNodesStart = @"subgraph {";
+            const string branchNodesEnd = @"
+}";
+
+            var firstNodeDates = new Dictionary<IBranch, DateTimeOffset>();
+            foreach (IBranch b in currentBranches)
+            {
+                DateTimeOffset firstNodeDate = tree.EnumerateNodes(b).First().Commit.CommittedWhen.Value;
+                firstNodeDates.Add(b, firstNodeDate);
+            }
+
+            IBranch[] currentBranchesSorted =
+                branchingStrategy.SortForWritingDescending(currentBranches, firstNodeDates).ToArray();
+
+            foreach (IBranch b in currentBranchesSorted)
+            {
+                // Header.
+                // 0 - branch short name
+                // 1 - color
+                string htmlString = branchingStrategy.GetHtmlColorFor(b);
+                sb.AppendLine(string.Format(BranchNodesFormat, MakeHandle(b), htmlString, htmlString));
+                sb.AppendLine(string.Format(BranchEdgesFormat, htmlString, 2));
+                sb.AppendLine(branchNodesStart);
+                // All nodes in the branch.
+                INode[] nodesInBranch = tree.EnumerateNodes(b).ToArray();
+                var edgesInBranch = new PairList<INode, INode>();
+                for (int index = 0; index < nodesInBranch.Length; index++)
+                {
+                    INode currentNode = nodesInBranch[index];
+                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
+                    WriteNode(sb, currentNode, remoteUrlProvider);
+                    if (nextNode != null)
+                    {
+                        edgesInBranch.Add(currentNode, nextNode);
+                    }
+
+                    // Other children.
+                    foreach (Node child in currentNode.Children)
+                    {
+                        otherLinks.Add(currentNode, child);
+                    }
+                }
+
+                foreach (Tuple<INode, INode> tuple in edgesInBranch.EnumerateItems())
+                {
+                    WriteInBranchEdge(sb, tuple.Item1, tuple.Item2, remoteUrlProvider);
+                }
+
+                sb.AppendLine(branchNodesEnd);
+                // Now link to the branch name node.
+                // 0 - last node in branch
+                // 1 - branch short name
+                const string branchEndEdge = @"""{0}"" -> ""{1}"" [color=""#b0b0b0"", style=dotted, arrowhead=none];";
+                string text = string.Format(branchEndEdge, MakeNodeHandle(b.Tip), MakeHandle(b));
+                sb.AppendLine(text);
+                sb.AppendLine();
+            }
+
+            INode[] allLeftOvers = tree.Nodes.Where(n => tree.GetContainingBranch(n) == null).ToArray();
+            if (allLeftOvers.Length > 0)
+            {
+                // Left-overs, without branches.
+                sb.AppendLine(string.Format(BranchNodesFormat, @"""""", "white", "black"));
+                foreach (INode currentNode in allLeftOvers)
+                {
+                    WriteNode(sb, currentNode, remoteUrlProvider);
+                    // Remember children.
+                    foreach (INode child in currentNode.Children)
+                    {
+                        otherLinks.Add(currentNode, child);
+                    }
+                }
+            }
+        }
+
+        private void WriteOtherEdges(
+            PairList<INode, INode> otherLinks,
+            ITextWriter sb,
+            IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            sb.AppendLine("// all other edges");
+            sb.AppendLine(string.Format(BranchEdgesFormat, "black", 1));
+            foreach (Tuple<INode, INode> pair in otherLinks.EnumerateItems())
+            {
+                const string edgeFormatUrl = @"""{0}"" -> ""{1}"" [URL = ""{2}""];";
+
+                INode nodeA = pair.Item1;
+                INode nodeB = pair.Item2;
+                string url = remoteUrlProvider?.GetCompareCommitsLink(nodeA.Commit, nodeB.Commit);
+                string text = string.Format(
+                    edgeFormatUrl,
+                    MakeNodeHandle(nodeA),
+                    MakeNodeHandle(nodeB),
+                    url);
+                sb.AppendLine(text);
+            }
+
+            sb.AppendLine();
+        }
+
+        private void WriteTagsAndOrphanedBranches(
+            ITextWriter sb,
+            ITag[] tags,
+            IBranch[] orphanedBranches,
+            IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            sb.AppendLine(@"// orphaned branches");
+            // 0 - branch short name
+            // 1 - branch friendly name
+            // 2 - repository path
+            const string orphanedBranchFormat = @"{0} [label=""{1}"", URL=""{2}""];";
+
+            foreach (IBranch b in orphanedBranches)
+            {
+                string url = remoteUrlProvider?.GetBranchLink(b);
+                string text = string.Format(
+                    orphanedBranchFormat,
+                    MakeHandle(b),
+                    b.Label,
+                    url);
+                sb.AppendLine(text);
+            }
+
+            sb.AppendLine(
+                @"// tags
+node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=""0.11,0.055""]");
+            // 0 - tag short name
+            // 1 - tag friendly name
+            // 2 - repository path
+            const string tagFormat = @"""{0}"" [label=""{1}"", URL=""{2}""];";
+            foreach (ITag tag in tags)
+            {
+                string url = remoteUrlProvider?.GetTagLink(tag);
+                string text = string.Format(
+                    tagFormat,
+                    MakeHandle(tag),
+                    tag.Label,
+                    url);
+                sb.AppendLine(text);
+            }
+        }
+
+        private void WriteTagsAndOrphanedBranchesConnections(ITextWriter sb, ITag[] tags, IBranch[] orphanedBranches)
+        {
+            // orphaned branches are simply linked
+            sb.AppendLine(
+                @"// orphaned branches links
+        edge[color = ""#b0b0b0"", style=dotted, arrowhead=none, len=0.3];");
+            // 0 - source node
+            // 1 - branch short name
+            const string orphanedBranchLinkFormat = @"""{0}"" -> ""{1}"";";
+            foreach (IBranch b in orphanedBranches)
+            {
+                string text = string.Format(
+                    orphanedBranchLinkFormat,
+                    MakeNodeHandle(b.Tip),
+                    MakeHandle(b));
+                sb.AppendLine(text);
+            }
+
+            sb.AppendLine();
+            sb.AppendLine(
+                @"// tags
+        edge[penwidth = l];");
+            // 0 - source node
+            // 1 - tag short name
+            const string tagLinkFormat = @"subgraph {{
+    rank = ""same"";
+    ""{0}"" -> ""{1}"";
+}}";
+            foreach (ITag tag in tags)
+            {
+                string text = string.Format(
+                    tagLinkFormat,
+                    MakeNodeHandle(tag.Tip),
+                    MakeHandle(tag));
+                sb.AppendLine(text);
+            }
         }
     }
 }

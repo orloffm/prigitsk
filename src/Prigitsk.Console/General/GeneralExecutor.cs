@@ -1,5 +1,4 @@
-﻿using System;
-using Autofac.Features.Indexed;
+﻿using Autofac.Features.Indexed;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.CommandLine;
 using Prigitsk.Console.Verbs;
