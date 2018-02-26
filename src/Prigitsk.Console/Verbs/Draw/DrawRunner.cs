@@ -62,48 +62,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string targetPath = _fileSystem.Path.Combine(targetDirectory, Options.Output);
             return targetPath;
         }
-
-        //internal bool PickAll(Pointer b)
-        //{
-        //    return true;
-        //}
-
-        //internal bool PickNoTags(Pointer b)
-        //{
-        //    if (b is Tag)
-        //    {
-        //        return false;
-        //    }
-
-        //    return PickAll(b);
-        //}
-
-        //internal bool PickSimplified(Pointer b)
-        //{
-        //    string label = b.Label.ToLower();
-        //    if (b is Tag)
-        //    {
-        //        //if (label.StartsWith("6"))
-        //        //{
-        //        //    return true;
-        //        //}
-        //    }
-        //    else
-        //    {
-        //        if (label == "develop"
-        //            || label.Contains("master")
-        //            || label.Contains("release")
-        //            || label.EndsWith("-rc")
-        //            // || label.Contains("mifid")
-        //        )
-        //        {
-        //            return true;
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
+        
         protected override void RunInternal()
         {
             // Get the immutable repository information.
@@ -133,57 +92,5 @@ namespace Prigitsk.Console.Verbs.Draw
             string graphVizArgs = $@"""{tempPath}"" -Tsvg -o""{targetPath}""";
             _processRunner.Execute(graphVizCommand, graphVizArgs);
         }
-
-        //private void WriteToDotFile(
-        //    IRepositoryData repositoryData,
-        //    string repositoryPath,
-        //    string fileName,
-        //    Func<Pointer, bool> pickStrategy)
-        //{
-        //    // What branches we have.
-        //    IBranchingStrategy bs = new CommonFlowBranchingStrategy();
-        //    // Try to distribute the nodes among the branches,
-        //    // according to the branching strategy.
-        //    IBranchAssumer ba = new BranchAssumer(bs, new TreeWalker(), pickStrategy);
-        //    IAssumedGraph assumedGraph = ba.AssumeTheBranchGraph(repositoryData);
-        //    INodeCleaner cleaner = new NodeCleaner(new TreeManipulator(), new TreeWalker());
-        //    SimplificationOptions options = new SimplificationOptions
-        //    {
-        //        PreventSimplification = false,
-        //        AggressivelyRemoveFirstBranchNodes = true,
-        //        LeaveNodesAfterLastMerge = false
-        //    };
-        //    cleaner.CleanUpGraph(assumedGraph, options);
-        //    // Render the graph.
-        //    // TODO: extract from git remote -v?
-        //    ITreeRenderer writer
-        //        = new TreeWriter(@"https://github.com/torvalds/linux");
-        //    string graphContent = writer.GenerateGraph(assumedGraph, bs);
-        //    string dotpath = Path.Combine(repositoryPath, fileName);
-        //    File.WriteAllText(dotpath, graphContent);
-        //}
-
-        //private void WriteToFileAndMakeSvg(
-        //    IRepositoryData repositoryData,
-        //    string directoryToWriteTo,
-        //    string fileName,
-        //    Func<Pointer, bool> pickStrategy)
-        //{
-        //    WriteToDotFile(repositoryData, directoryToWriteTo, fileName, pickStrategy);
-
-        //    //    ConvertTo(directoryToWriteTo, fileName, "svg");
-        //    //    ConvertTo(directoryToWriteTo, fileName, "pdf");
-        //    //}
-
-        //    //private void ConvertTo(string repositoryPath, string fileName, string format)
-        //    //{
-        //    //    string svgFileName = Path.ChangeExtension(fileName, format);
-        //    //    string arguments = string.Format("{0} -T{2} -o{1}", fileName, svgFileName, format);
-        //    //    ProcessStartInfo psi = new ProcessStartInfo();
-        //    //    psi.Arguments = arguments;
-        //    //    psi.FileName = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
-        //    //    psi.WorkingDirectory = repositoryPath;
-        //    //    Process.Start(psi);
-        //}
     }
 }

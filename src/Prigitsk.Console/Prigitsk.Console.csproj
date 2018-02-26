@@ -137,6 +137,14 @@
       <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>
       <Name>Prigitsk.Core.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj">
+      <Project>{EF57B264-073F-4535-B996-877B2110794C}</Project>
+      <Name>Prigitsk.Core.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Tree\Prigitsk.Core.Tree.csproj">
+      <Project>{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}</Project>
+      <Name>Prigitsk.Core.Tree</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj">
       <Project>{874a79be-3d6e-426b-9a32-ba862558f6f1}</Project>
       <Name>Prigitsk.Shared</Name>

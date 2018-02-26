@@ -66,5 +66,10 @@ namespace Prigitsk.Core.Tree
         {
             Commit = commit;
         }
+
+        public override string ToString()
+        {
+            return Commit.ToString();
+        }
     }
 }

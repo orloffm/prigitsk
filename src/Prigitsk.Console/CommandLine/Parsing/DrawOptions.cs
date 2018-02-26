@@ -16,7 +16,6 @@ namespace Prigitsk.Console.CommandLine.Parsing
         public string Output { get; set; }
 
         [Option(
-            'r',
             "remote",
             HelpText = "Remote to build the graph against. Origin or the single available is used by default.")]
         public string RemoteToUse { get; set; }
@@ -24,7 +23,7 @@ namespace Prigitsk.Console.CommandLine.Parsing
         /// <summary>
         ///     The repository directory.
         /// </summary>
-        [Option( "repository", HelpText = "Directory containing a .git repository.")]
+        [Option('r', "repository", HelpText = "Directory containing a .git repository.")]
         public string Repository { get; set; }
 
         /// <summary>

@@ -12,6 +12,8 @@ using Prigitsk.Console.Verbs.Draw;
 using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Git.LibGit2Sharp;
 using Prigitsk.Core.RepoData;
+using Prigitsk.Core.Tools;
+using Prigitsk.Core.Tree;
 using ContainerBuilder = Autofac.ContainerBuilder;
 using IContainer = Autofac.IContainer;
 using ModuleRegistrationExtensions = Autofac.ModuleRegistrationExtensions;
@@ -39,18 +41,22 @@ namespace Prigitsk.Console
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-            // core assembly
+            // assemblies
+            RegistrationExtensions.AsImplementedInterfaces(
+                RegistrationExtensions.RegisterAssemblyTypes(builder, Assembly.GetExecutingAssembly()));
             RegistrationExtensions.AsImplementedInterfaces(
                 RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(BranchWrapped).Assembly));
             RegistrationExtensions.AsImplementedInterfaces(
                 RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(RepositoryData).Assembly));
+            RegistrationExtensions.AsImplementedInterfaces(
+                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(ProcessRunner).Assembly));
+            RegistrationExtensions.AsImplementedInterfaces(
+                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(Tree).Assembly));
 
             // external
             ModuleRegistrationExtensions.RegisterModule<NLoggerModule>(builder);
             RegistrationExtensions.RegisterType<FileSystem>(builder).As<IFileSystem>();
 
-            RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, Assembly.GetExecutingAssembly()));
             RegistrationExtensions.AsSelf(RegistrationExtensions.RegisterInstance(builder, AppSettings.Default));
 
             // converters
