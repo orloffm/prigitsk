@@ -1,4 +1,6 @@
-﻿namespace Prigitsk.Console.Abstractions.Registry
+﻿using System.Diagnostics;
+
+namespace Prigitsk.Console.Abstractions.Registry
 {
     public sealed class RegistryKey : IRegistryKey
     {

@@ -1,4 +1,6 @@
-﻿namespace Prigitsk.Console.General.Programs
+﻿using System.Collections.Generic;
+
+namespace Prigitsk.Console.General.Programs
 {
     public interface IExternalAppPathProvider
     {

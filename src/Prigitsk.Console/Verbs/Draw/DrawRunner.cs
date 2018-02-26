@@ -18,20 +18,22 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IExternalAppPathProvider _appPathProvider;
         private readonly IFileSystem _fileSystem;
         private readonly IFileTextWriterFactory _fileWriterFactory;
+        private readonly IProcessRunner _processRunner;
         private readonly IRepositoryDataLoader _loader;
         private readonly IRemoteHelper _remoteHelper;
         private readonly ISimplifier _simplifier;
         private readonly IBranchingStrategyProvider _strategyProvider;
         private readonly ITreeBuilder _treeBuilder;
-        private readonly ITreeRenderer _treeRenderer;
+        private readonly ITreeRendererFactory _treeRendererFactory;
 
         public DrawRunner(
             IDrawRunnerOptions options,
+            IProcessRunner processRunner,
             IRepositoryDataLoader loader,
             ITreeBuilder treeBuilder,
             ISimplifier simplifier,
             IFileSystem fileSystem,
-            ITreeRenderer treeRenderer,
+            ITreeRendererFactory treeRendererFactory,
             IRemoteHelper remoteHelper,
             IFileTextWriterFactory fileWriterFactory,
             IExternalAppPathProvider appPathProvider,
@@ -39,11 +41,12 @@ namespace Prigitsk.Console.Verbs.Draw
             ILogger log)
             : base(options, log)
         {
+            _processRunner = processRunner;
             _loader = loader;
             _treeBuilder = treeBuilder;
             _simplifier = simplifier;
             _fileSystem = fileSystem;
-            _treeRenderer = treeRenderer;
+            _treeRendererFactory = treeRendererFactory;
             _remoteHelper = remoteHelper;
             _fileWriterFactory = fileWriterFactory;
             _appPathProvider = appPathProvider;
@@ -106,8 +109,6 @@ namespace Prigitsk.Console.Verbs.Draw
             // Get the immutable repository information.
             IRepositoryData repositoryData = _loader.LoadFrom(Options.Repository);
 
-            ITreeBuildingOptions treeBuildingOptions = TreeBuildingOptions.Default;
-
             // Pick the remote to work on.
             IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
 
@@ -118,25 +119,19 @@ namespace Prigitsk.Console.Verbs.Draw
             // Simplify the tree.
             _simplifier.Simplify(tree, SimplificationOptions.Default);
 
-            string targetPath = PrepareTargetPath();
+            string tempPath = _fileSystem.Path.GetTempFileName();
 
-            using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(targetPath))
+            using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(tempPath))
             {
-                var treeRenderer = _treeRendererFactory.Create(textWriter);
-                _treeRenderer.Render(tree, remoteToUse, strategy, TreeRenderingOptions.Default);
+                var treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
+                treeRenderer.Render(tree, remoteToUse, strategy, TreeRenderingOptions.Default);
             }
 
-            // WriteToFileAndMakeSvg(repositoryData, targetPath, "full.dot", PickAll);
-            //WriteToFileAndMakeSvg(
-            //    repositoryData,
-            //    writeTo,
-            //    "no-tags.dot",
-            //    PickNoTags);
-            //WriteToFileAndMakeSvg(
-            //    repositoryData,
-            //    writeTo,
-            //    "simple.dot",
-            //    PickSimplified);
+            string targetPath = PrepareTargetPath();
+
+            string graphVizCommand = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
+            string graphVizArgs = $@"""{tempPath}"" -Tsvg -o""{targetPath}""";
+            _processRunner.Execute(graphVizCommand, graphVizArgs);
         }
 
         //private void WriteToDotFile(

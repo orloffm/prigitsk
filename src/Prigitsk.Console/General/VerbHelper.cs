@@ -1,4 +1,6 @@
-﻿namespace Prigitsk.Console.General
+﻿using System;
+
+namespace Prigitsk.Console.General
 {
     public static class VerbHelper
     {

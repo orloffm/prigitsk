@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions;
+﻿using System;
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.Registry;
 

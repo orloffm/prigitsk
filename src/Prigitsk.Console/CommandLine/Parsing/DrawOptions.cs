@@ -1,4 +1,5 @@
-﻿using Prigitsk.Console.General;
+﻿using CommandLine;
+using Prigitsk.Console.General;
 
 namespace Prigitsk.Console.CommandLine.Parsing
 {
@@ -23,7 +24,7 @@ namespace Prigitsk.Console.CommandLine.Parsing
         /// <summary>
         ///     The repository directory.
         /// </summary>
-        [Option('r', "repository", HelpText = "Directory containing a .git repository.")]
+        [Option( "repository", HelpText = "Directory containing a .git repository.")]
         public string Repository { get; set; }
 
         /// <summary>

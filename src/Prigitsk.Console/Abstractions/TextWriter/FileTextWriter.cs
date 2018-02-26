@@ -1,4 +1,6 @@
-﻿using System.IO.Abstractions;
+﻿using System.IO;
+using System.IO.Abstractions;
+using System.Text;
 using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Console.Abstractions.TextWriter

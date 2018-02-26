@@ -1,4 +1,6 @@
-﻿namespace Prigitsk.Console.Abstractions.Registry
+﻿using System;
+
+namespace Prigitsk.Console.Abstractions.Registry
 {
     public interface IRegistryKey : IDisposable
     {
