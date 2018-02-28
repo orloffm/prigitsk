@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Core.Tree
+﻿namespace Prigitsk.Core.Graph
 {
     public class TreeBuildingOptions : ITreeBuildingOptions
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Tools;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     public class Node : INode, IEquatable<Node>
     {

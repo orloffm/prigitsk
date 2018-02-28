@@ -1,9 +1,9 @@
 using System.Linq;
 using Moq;
-using Prigitsk.Core.Tree;
+using Prigitsk.Core.Graph;
 using Xunit;
 
-namespace Prigitsk.Core.Tests.Nodes
+namespace Prigitsk.Core.Tests.Graph
 {
     public class TreeWalkerTests
     {

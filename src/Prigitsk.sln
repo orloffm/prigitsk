@@ -27,9 +27,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Interfaces", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Git.LibGit2Sharp", "Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj", "{B5E97E64-CBA2-43D0-9476-E28831A5D476}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Core.Tree", "Prigitsk.Core.Tree\Prigitsk.Core.Tree.csproj", "{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Graph", "Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj", "{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prigitsk.Core.Tools", "Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj", "{EF57B264-073F-4535-B996-877B2110794C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Prigitsk.Core.Tools", "Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj", "{EF57B264-073F-4535-B996-877B2110794C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

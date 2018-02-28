@@ -13,7 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj" />
-    <ProjectReference Include="..\Prigitsk.Core.Tree\Prigitsk.Core.Tree.csproj" />
+    <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj" />
     <ProjectReference Include="..\Prigitsk.Core\Prigitsk.Core.csproj" />
   </ItemGroup>
 

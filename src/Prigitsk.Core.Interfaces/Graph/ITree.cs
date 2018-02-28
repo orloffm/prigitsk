@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Prigitsk.Core.Entities;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     public interface ITree
     {
@@ -36,6 +36,8 @@ namespace Prigitsk.Core.Tree
         INode GetBranchTip(IBranch branch);
 
         IBranch GetContainingBranch(INode node);
+
+        INode GetNode(IHash ihash);
 
         IEnumerable<IBranch> GetPointingBranches(INode node);
 

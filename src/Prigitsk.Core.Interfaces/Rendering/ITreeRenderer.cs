@@ -1,6 +1,6 @@
 ﻿using Prigitsk.Core.Entities;
+using Prigitsk.Core.Graph;
 using Prigitsk.Core.Strategy;
-using Prigitsk.Core.Tree;
 
 namespace Prigitsk.Core.Rendering
 {

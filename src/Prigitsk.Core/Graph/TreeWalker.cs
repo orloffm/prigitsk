@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     // TODO: minimum time
     public class TreeWalker : ITreeWalker

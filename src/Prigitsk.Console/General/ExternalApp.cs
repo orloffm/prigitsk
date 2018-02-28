@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Console.General.Programs
+﻿namespace Prigitsk.Console.General
 {
     public enum ExternalApp
     {

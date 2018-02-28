@@ -4,7 +4,7 @@ using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Tools;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     public class Tree : ITree
     {
@@ -149,6 +149,11 @@ namespace Prigitsk.Core.Tree
             IBranch branch;
             _containedInBranch.TryGetValue(node, out branch);
             return branch;
+        }
+
+        public INode GetNode(IHash ihash)
+        {
+            return _nodes[ihash];
         }
 
         private Node GetOrCreateNode(IHash hash)

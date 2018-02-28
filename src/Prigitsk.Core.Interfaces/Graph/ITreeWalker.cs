@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     public interface ITreeWalker
     {

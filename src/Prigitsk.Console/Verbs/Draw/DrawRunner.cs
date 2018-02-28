@@ -1,15 +1,17 @@
 ﻿using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.TextWriter;
+using Prigitsk.Console.General;
 using Prigitsk.Console.General.Programs;
 using Prigitsk.Core.Entities;
+using Prigitsk.Core.Graph;
 using Prigitsk.Core.Remotes;
 using Prigitsk.Core.Rendering;
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Simplification;
 using Prigitsk.Core.Strategy;
 using Prigitsk.Core.Tools;
-using Prigitsk.Core.Tree;
+using Prigitsk.Core.Graph;
 
 namespace Prigitsk.Console.Verbs.Draw
 {

@@ -2,7 +2,7 @@
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Strategy;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     public interface ITreeBuilder
     {

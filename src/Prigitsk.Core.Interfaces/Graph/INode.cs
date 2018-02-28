@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Prigitsk.Core.Entities;
 
-namespace Prigitsk.Core.Tree
+namespace Prigitsk.Core.Graph
 {
     public interface INode
     {

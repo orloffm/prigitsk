@@ -1,4 +1,4 @@
-﻿using Prigitsk.Core.Tree;
+﻿using Prigitsk.Core.Graph;
 
 namespace Prigitsk.Core.Simplification
 {

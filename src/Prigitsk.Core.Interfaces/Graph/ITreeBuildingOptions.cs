@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Core.Tree
+﻿namespace Prigitsk.Core.Graph
 {
     /// <summary>
     ///     Options for building the initial tree from the repository.

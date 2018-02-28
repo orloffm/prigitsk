@@ -13,7 +13,7 @@ using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Git.LibGit2Sharp;
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Tools;
-using Prigitsk.Core.Tree;
+using Prigitsk.Core.Graph;
 using ContainerBuilder = Autofac.ContainerBuilder;
 using IContainer = Autofac.IContainer;
 using ModuleRegistrationExtensions = Autofac.ModuleRegistrationExtensions;
