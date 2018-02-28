@@ -3,12 +3,12 @@ using LibGit2Sharp;
 
 namespace Prigitsk.Core.Git.LibGit2Sharp
 {
-    public class SignatureWrapped
-        : ISignature
+    public class GitSignatureWrapped
+        : IGitSignature
     {
         private readonly Signature _signature;
 
-        private SignatureWrapped(Signature signature)
+        private GitSignatureWrapped(Signature signature)
         {
             _signature = signature;
         }
@@ -19,9 +19,9 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
 
         public DateTimeOffset When => _signature.When;
 
-        public static ISignature Create(Signature signature)
+        public static IGitSignature Create(Signature signature)
         {
-            return new SignatureWrapped(signature);
+            return new GitSignatureWrapped(signature);
         }
     }
 }

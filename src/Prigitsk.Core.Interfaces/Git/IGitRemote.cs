@@ -1,6 +1,6 @@
 ﻿namespace Prigitsk.Core.Git
 {
-    public interface IRemote
+    public interface IGitRemote
     {
         string Name { get; }
 

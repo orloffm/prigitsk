@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.TextWriter;
 using Prigitsk.Console.General;
@@ -11,7 +12,6 @@ using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Simplification;
 using Prigitsk.Core.Strategy;
 using Prigitsk.Core.Tools;
-using Prigitsk.Core.Graph;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
@@ -20,8 +20,8 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IExternalAppPathProvider _appPathProvider;
         private readonly IFileSystem _fileSystem;
         private readonly IFileTextWriterFactory _fileWriterFactory;
-        private readonly IProcessRunner _processRunner;
         private readonly IRepositoryDataLoader _loader;
+        private readonly IProcessRunner _processRunner;
         private readonly IRemoteHelper _remoteHelper;
         private readonly ISimplifier _simplifier;
         private readonly IBranchingStrategyProvider _strategyProvider;
@@ -64,7 +64,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string targetPath = _fileSystem.Path.Combine(targetDirectory, Options.Output);
             return targetPath;
         }
-        
+
         protected override void RunInternal()
         {
             // Get the immutable repository information.
@@ -78,13 +78,17 @@ namespace Prigitsk.Console.Verbs.Draw
             ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
 
             // Simplify the tree.
-            _simplifier.Simplify(tree, SimplificationOptions.Default);
+            SimplificationOptions soptions = SimplificationOptions.Default;
+            soptions.AggressivelyRemoveFirstBranchNodes = false;
+
+            _simplifier.Simplify(tree, soptions);
 
             string tempPath = _fileSystem.Path.GetTempFileName();
+            tempPath = _fileSystem.Path.ChangeExtension(tempPath, "dot");
 
-            using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(tempPath))
+            using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(tempPath, Encoding.ASCII))
             {
-                var treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
+                ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
                 treeRenderer.Render(tree, remoteToUse, strategy, TreeRenderingOptions.Default);
             }
 
@@ -92,7 +96,7 @@ namespace Prigitsk.Console.Verbs.Draw
 
             string graphVizCommand = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
             string graphVizArgs = $@"""{tempPath}"" -Tsvg -o""{targetPath}""";
-            _processRunner.Execute(graphVizCommand, graphVizArgs);
+          string result =  _processRunner.Execute(graphVizCommand, graphVizArgs);
         }
     }
 }

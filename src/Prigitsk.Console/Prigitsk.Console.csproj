@@ -55,6 +55,7 @@
     <Compile Include="Abstractions\Console\IConsoleFactory.cs" />
     <Compile Include="Abstractions\TextWriter\FileTextWriter.cs" />
     <Compile Include="Abstractions\TextWriter\FileTextWriterFactory.cs" />
+    <Compile Include="Abstractions\TextWriter\IFileTextWriter.cs" />
     <Compile Include="Abstractions\TextWriter\IFileTextWriterFactory.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\CommandLineParseResult.cs" />

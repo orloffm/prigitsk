@@ -155,7 +155,7 @@ rank = sink;
         {
             double width = 0.2d;
             string size = width.ToString("##.##", CultureInfo.InvariantCulture);
-            const string nodeFormat = @"""{0}"" [width={1}, height={1}, URL=""{3}""];";
+            const string nodeFormat = @"""{0}"" [width={1}, height={1}, URL=""{2}""];";
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
             _textWriter.AppendLine(string.Format(nodeFormat, MakeNodeHandle(n), size, url));
         }

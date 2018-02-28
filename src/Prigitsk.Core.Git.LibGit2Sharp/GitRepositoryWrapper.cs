@@ -4,53 +4,53 @@ using LibGit2Sharp;
 
 namespace Prigitsk.Core.Git.LibGit2Sharp
 {
-    public class RepositoryWrapper : IRepository
+    public class GitRepositoryWrapper : IGitRepository
     {
         private readonly Repository _repository;
         private bool _disposed;
 
-        internal RepositoryWrapper(Repository repository)
+        internal GitRepositoryWrapper(Repository repository)
         {
             _repository = repository;
         }
 
-        public IEnumerable<IBranch> Branches
+        public IEnumerable<IGitBranch> Branches
         {
             get
             {
                 AssertNotDisposed();
 
-                return _repository.Branches.Select(BranchWrapped.Create);
+                return _repository.Branches.Select(GitBranchWrapped.Create);
             }
         }
 
-        public IEnumerable<ICommit> Commits
+        public IEnumerable<IGitCommit> Commits
         {
             get
             {
                 AssertNotDisposed();
 
-                return _repository.Commits.Select(CommitWrapped.Create);
+                return _repository.Commits.Select(GitCommitWrapped.Create);
             }
         }
 
-        public IEnumerable<IRemote> Remotes
+        public IEnumerable<IGitRemote> Remotes
         {
             get
             {
                 AssertNotDisposed();
 
-                return _repository.Network.Remotes.Select(RemoteWrapped.Create);
+                return _repository.Network.Remotes.Select(GitRemoteWrapped.Create);
             }
         }
 
-        public IEnumerable<ITag> TagsOnCommits
+        public IEnumerable<IGitTag> TagsOnCommits
         {
             get
             {
                 AssertNotDisposed();
 
-                return _repository.Tags.Select(TagWrapped.Create).Where(t => t.Tip != null);
+                return _repository.Tags.Select(GitTagWrapped.Create).Where(t => t.Tip != null);
             }
         }
 

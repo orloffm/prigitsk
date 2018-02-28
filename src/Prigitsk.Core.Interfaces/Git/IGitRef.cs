@@ -1,9 +1,9 @@
 ﻿namespace Prigitsk.Core.Git
 {
-    public interface IRef
+    public interface IGitRef
     {
         string FriendlyName { get; }
 
-        ICommit Tip { get; }
+        IGitCommit Tip { get; }
     }
 }

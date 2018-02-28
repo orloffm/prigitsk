@@ -3,7 +3,7 @@ using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Remotes
 {
-    public class GitHubRemoteWebUrlProvider : IRemoteWebUrlProvider
+    public class GitHubRemoteWebUrlProvider : IGitHubRemoteWebUrlProvider
     {
         private readonly string _baseUrl;
         private readonly ILogger _log;

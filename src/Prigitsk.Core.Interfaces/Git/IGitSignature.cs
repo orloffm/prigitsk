@@ -2,7 +2,7 @@
 
 namespace Prigitsk.Core.Git
 {
-    public interface ISignature
+    public interface IGitSignature
     {
         string Email { get; }
 

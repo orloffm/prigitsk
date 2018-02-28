@@ -1,20 +1,22 @@
-﻿using System.IO.Abstractions;
+﻿using System;
+using System.IO.Abstractions;
+using System.Text;
 using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Console.Abstractions.TextWriter
 {
     public sealed class FileTextWriterFactory : IFileTextWriterFactory
     {
-        private readonly IFileSystem _fileSystem;
+        private readonly Func<string, Encoding, IFileTextWriter> _writerMaker;
 
-        public FileTextWriterFactory(IFileSystem fileSystem)
+        public FileTextWriterFactory( Func<string, Encoding, IFileTextWriter> writerMaker)
         {
-            _fileSystem = fileSystem;
+            _writerMaker = writerMaker;
         }
 
-        public ITextWriter OpenForWriting(string path)
+        public ITextWriter OpenForWriting(string path, Encoding encoding = null)
         {
-            return new FileTextWriter(_fileSystem, path);
+            return _writerMaker(path, encoding);
         }
     }
 }

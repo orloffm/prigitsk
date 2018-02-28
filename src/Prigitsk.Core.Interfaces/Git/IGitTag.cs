@@ -1,6 +1,6 @@
 ﻿namespace Prigitsk.Core.Git
 {
-    public interface ITag : IRef
+    public interface IGitTag : IGitRef
     {
     }
 }

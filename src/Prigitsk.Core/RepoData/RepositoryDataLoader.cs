@@ -6,10 +6,10 @@ namespace Prigitsk.Core.RepoData
     public class RepositoryDataLoader : IRepositoryDataLoader
     {
         private readonly IRepositoryDataBuilderFactory _dataBuilderFactory;
-        private readonly IRepositoryFactory _repositoryFactory;
+        private readonly IGitRepositoryFactory _repositoryFactory;
 
         public RepositoryDataLoader(
-            IRepositoryFactory repositoryFactory,
+            IGitRepositoryFactory repositoryFactory,
             IRepositoryDataBuilderFactory dataBuilderFactory)
         {
             _repositoryFactory = repositoryFactory;
@@ -20,7 +20,7 @@ namespace Prigitsk.Core.RepoData
         {
             IRepositoryDataBuilder builder = _dataBuilderFactory.CreateBuilder();
 
-            using (IRepository repository = _repositoryFactory.Open(gitRepository))
+            using (IGitRepository repository = _repositoryFactory.Open(gitRepository))
             {
                 PopulateBuilder(builder, repository);
             }
@@ -29,10 +29,10 @@ namespace Prigitsk.Core.RepoData
             return data;
         }
 
-        private void PopulateBuilder(IRepositoryDataBuilder builder, IRepository repo)
+        private void PopulateBuilder(IRepositoryDataBuilder builder, IGitRepository repo)
         {
             // Commits
-            foreach (ICommit c in repo.Commits)
+            foreach (IGitCommit c in repo.Commits)
             {
                 string[] parentShas = c.Parents.Select(p => p.Sha).ToArray();
 
@@ -40,13 +40,13 @@ namespace Prigitsk.Core.RepoData
             }
 
             // Remotes
-            foreach (IRemote r in repo.Remotes)
+            foreach (IGitRemote r in repo.Remotes)
             {
                 builder.AddRemote(r.Name, r.Url);
             }
 
             // Branches
-            foreach (IBranch b in repo.Branches)
+            foreach (IGitBranch b in repo.Branches)
             {
                 if (!b.IsRemote)
                 {
@@ -57,7 +57,7 @@ namespace Prigitsk.Core.RepoData
             }
 
             // Tags
-            foreach (ITag t in repo.TagsOnCommits)
+            foreach (IGitTag t in repo.TagsOnCommits)
             {
                 builder.AddTag(t.FriendlyName, t.Tip.Sha);
             }

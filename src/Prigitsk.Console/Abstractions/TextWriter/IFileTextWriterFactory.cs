@@ -1,4 +1,5 @@
-﻿using Prigitsk.Core.Tools;
+﻿using System.Text;
+using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Console.Abstractions.TextWriter
 {
@@ -7,6 +8,6 @@ namespace Prigitsk.Console.Abstractions.TextWriter
     /// </summary>
     public interface IFileTextWriterFactory
     {
-        ITextWriter OpenForWriting(string path);
+        ITextWriter OpenForWriting(string path, Encoding encoding = null);
     }
 }

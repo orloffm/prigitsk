@@ -22,7 +22,7 @@ namespace Prigitsk.Core.RepoData
             do
             {
                 yield return n;
-                n = GetByHash(tip.Parents.FirstOrDefault());
+                n = GetByHash(n.Parents.FirstOrDefault());
             } while (n != null);
         }
 

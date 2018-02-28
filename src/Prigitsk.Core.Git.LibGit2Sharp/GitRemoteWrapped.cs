@@ -2,11 +2,11 @@
 
 namespace Prigitsk.Core.Git.LibGit2Sharp
 {
-    public sealed class RemoteWrapped : IRemote
+    public sealed class GitRemoteWrapped : IGitRemote
     {
         private readonly Remote _remote;
 
-        private RemoteWrapped(Remote remote)
+        private GitRemoteWrapped(Remote remote)
         {
             _remote = remote;
         }
@@ -15,9 +15,9 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
 
         public string Url => _remote.Url;
 
-        public static IRemote Create(Remote remote)
+        public static IGitRemote Create(Remote remote)
         {
-            return new RemoteWrapped(remote);
+            return new GitRemoteWrapped(remote);
         }
     }
 }

@@ -4,7 +4,7 @@ using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Remotes
 {
-    public class RemoteWebUrlProviderFactory : IRemoteWebUrlProviderFactory
+    public sealed class RemoteWebUrlProviderFactory : IRemoteWebUrlProviderFactory
     {
         private const string GitHubFqdn = "github.com";
 
@@ -14,10 +14,10 @@ namespace Prigitsk.Core.Remotes
         /// <summary>
         ///     Factory that spawns web url providers for GitHub URLs.
         /// </summary>
-        private readonly Func<IGitHubRemoteParameters, GitHubRemoteWebUrlProvider> _gitHubProviderMaker;
+        private readonly Func<IGitHubRemoteParameters, IGitHubRemoteWebUrlProvider> _gitHubProviderMaker;
 
         public RemoteWebUrlProviderFactory(
-            Func<IGitHubRemoteParameters, GitHubRemoteWebUrlProvider> gitHubProviderMaker)
+            Func<IGitHubRemoteParameters, IGitHubRemoteWebUrlProvider> gitHubProviderMaker)
         {
             _gitHubProviderMaker = gitHubProviderMaker;
         }
@@ -43,7 +43,7 @@ namespace Prigitsk.Core.Remotes
             string repository = m.Groups["repository"].Value;
 
             GitHubRemoteParameters parameters = new GitHubRemoteParameters(server, user, repository);
-            GitHubRemoteWebUrlProvider gitHubProvider = _gitHubProviderMaker(parameters);
+            IGitHubRemoteWebUrlProvider gitHubProvider = _gitHubProviderMaker(parameters);
             return gitHubProvider;
         }
     }

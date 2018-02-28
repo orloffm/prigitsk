@@ -1,6 +1,6 @@
 ﻿namespace Prigitsk.Core.Git
 {
-    public interface IBranch : IRef
+    public interface IGitBranch : IGitRef
     {
         bool IsRemote { get; }
     }

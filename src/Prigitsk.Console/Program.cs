@@ -45,7 +45,7 @@ namespace Prigitsk.Console
             RegistrationExtensions.AsImplementedInterfaces(
                 RegistrationExtensions.RegisterAssemblyTypes(builder, Assembly.GetExecutingAssembly()));
             RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(BranchWrapped).Assembly));
+                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(GitBranchWrapped).Assembly));
             RegistrationExtensions.AsImplementedInterfaces(
                 RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(RepositoryData).Assembly));
             RegistrationExtensions.AsImplementedInterfaces(

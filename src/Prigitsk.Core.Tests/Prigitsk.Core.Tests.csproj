@@ -68,9 +68,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\EH.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graph\TreeTests.cs" />
     <Compile Include="Graph\TreeWalkerTests.cs" />
+    <Compile Include="RepoData\CommitsDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -96,6 +98,7 @@
       <Name>Prigitsk.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
