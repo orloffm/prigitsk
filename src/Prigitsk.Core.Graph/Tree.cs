@@ -32,13 +32,13 @@ namespace Prigitsk.Core.Graph
 
         public IEnumerable<ITag> Tags => _tags.WrapAsEnumerable();
 
-        public void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch)
+        public void AddBranch(IBranch branch, IEnumerable<IHash> hashesInBranch)
         {
             var branchNodes = new OrderedSet<Node>();
 
-            foreach (ICommit commit in commitsInBranch)
+            foreach (IHash hash in hashesInBranch)
             {
-                Node node = GetOrCreateNode(commit.Hash);
+                Node node = GetOrCreateNode(hash);
                 branchNodes.Add(node);
 
                 // Link it to the branch.
@@ -153,7 +153,8 @@ namespace Prigitsk.Core.Graph
 
         public INode GetNode(IHash ihash)
         {
-            return _nodes[ihash];
+            _nodes.TryGetValue(ihash, out Node value);
+            return value;
         }
 
         private Node GetOrCreateNode(IHash hash)
@@ -260,9 +261,18 @@ namespace Prigitsk.Core.Graph
             n.ParentsSet.Clear();
             n.ChildrenSet.Clear();
 
-            // Remove it from the branch.
-            _containedInBranch.Remove(n);
-            // Remove it from the list of all nodes.
+            IBranch b;
+            _containedInBranch.TryGetValue(n, out b);
+            if (b != null)
+            {
+                // Remove its pointer to its branch.
+                _containedInBranch.Remove(n);
+
+                // Remove from the nodes of the branch.
+                _branches[b].Remove(n);
+            }
+
+            // Remove node from the list of all nodes.
             _nodes.Remove(n.Commit.Hash);
         }
 

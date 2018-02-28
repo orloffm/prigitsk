@@ -37,7 +37,7 @@ namespace Prigitsk.Core.Graph
             {
                 ICommit tip = repository.Commits.GetByHash(b.Tip);
 
-                var commitsInBranch = new List<ICommit>(commits.Count / 3);
+                var hashesInBranch = new List<IHash>(commits.Count / 3);
                 IEnumerable<ICommit> upTheTree = repository.Commits.EnumerateUpTheHistoryFrom(tip);
                 foreach (ICommit commit in upTheTree)
                 {
@@ -46,12 +46,12 @@ namespace Prigitsk.Core.Graph
                         break;
                     }
 
-                    commitsInBranch.Add(commit);
+                    hashesInBranch.Add(commit.Hash);
                     commits.Remove(commit);
                 }
 
-                commitsInBranch.Reverse();
-                tree.AddBranchWithCommits(b, commitsInBranch);
+                hashesInBranch.Reverse();
+                tree.AddBranch(b, hashesInBranch);
             }
 
             // Now tags.

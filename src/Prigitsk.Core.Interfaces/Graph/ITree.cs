@@ -14,7 +14,7 @@ namespace Prigitsk.Core.Graph
         /// <summary>
         ///     Adds a branch with all its commits.
         /// </summary>
-        void AddBranchWithCommits(IBranch branch, IEnumerable<ICommit> commitsInBranch);
+        void AddBranch(IBranch branch, IEnumerable<IHash> hashesInBranch);
 
         void AddCommit(ICommit commit);
 
@@ -37,6 +37,9 @@ namespace Prigitsk.Core.Graph
 
         IBranch GetContainingBranch(INode node);
 
+        /// <summary>
+        ///     Returns node by hash or null if it does not exist.
+        /// </summary>
         INode GetNode(IHash ihash);
 
         IEnumerable<IBranch> GetPointingBranches(INode node);
