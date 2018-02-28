@@ -1,0 +1,32 @@
+.prigitsk-container {
+    display: grid;
+    width: 100vw;
+    height: 100vh;
+    grid-template-areas: "head head"
+                         "main opt"
+                         "main foot";
+    grid-template-rows: 50px 1fr 30px;
+    grid-template-columns: 1fr 150px;
+}
+
+html {
+    overflow-y: hidden;
+    overflow-x: hidden;
+    padding: 10pt;
+}
+
+.prigitsk-header {
+    grid-area: head;
+}
+
+.prigitsk-viewport {
+    grid-area: main;
+}
+
+.prigitsk-options {
+    grid-area: opt;
+}
+
+.prigitsk-footer {
+    grid-area: foot;
+}

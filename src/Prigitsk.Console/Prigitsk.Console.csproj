@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1E6C2185-0EF1-4F09-BA5C-E6D29BDCEFBA}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Prigitsk.Console</RootNamespace>
+    <AssemblyName>prigitsk</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstractions\Console\Console.cs" />
+    <Compile Include="Abstractions\Console\ConsoleFactory.cs" />
+    <Compile Include="Abstractions\Console\IConsole.cs" />
+    <Compile Include="Abstractions\Console\IConsoleFactory.cs" />
+    <Compile Include="Abstractions\TextWriter\FileTextWriter.cs" />
+    <Compile Include="Abstractions\TextWriter\FileTextWriterFactory.cs" />
+    <Compile Include="Abstractions\TextWriter\IFileTextWriter.cs" />
+    <Compile Include="Abstractions\TextWriter\IFileTextWriterFactory.cs" />
+    <Compile Include="CommandLine\CommandLineParser.cs" />
+    <Compile Include="CommandLine\CommandLineParseResult.cs" />
+    <Compile Include="CommandLine\Parsing\ConfigureOptions.cs" />
+    <Compile Include="CommandLine\Conversion\Configure\ConfigureVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Draw\DrawVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Fetch\FetchVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Configure\IConfigureVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Draw\IDrawVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\Fetch\IFetchVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Parsing\IVerbOptions.cs" />
+    <Compile Include="CommandLine\Conversion\IVerbOptionsConverter.cs" />
+    <Compile Include="CommandLine\Conversion\VerbOptionsConverterBase.cs" />
+    <Compile Include="General\ExternalApp.cs" />
+    <Compile Include="General\Programs\ExternalAppInfo.cs" />
+    <Compile Include="General\Programs\ExternalAppPathProvider.cs" />
+    <Compile Include="General\Programs\IExternalAppPathProvider.cs" />
+    <Compile Include="Tools\ExeInformer.cs" />
+    <Compile Include="Abstractions\IWindowsEnvironment.cs" />
+    <Compile Include="Tools\IExeInformer.cs" />
+    <Compile Include="Abstractions\Registry\IRegistry.cs" />
+    <Compile Include="Abstractions\Registry\IRegistryKey.cs" />
+    <Compile Include="Abstractions\Registry\Registry.cs" />
+    <Compile Include="Abstractions\Registry\RegistryKey.cs" />
+    <Compile Include="Abstractions\WindowsEnvironment.cs" />
+    <Compile Include="General\VerbConstants.cs" />
+    <Compile Include="General\VerbHelper.cs" />
+    <Compile Include="Properties\AppSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AppSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Abstractions\Settings\ISettingsWrapper.cs" />
+    <Compile Include="Abstractions\Settings\SettingsWrapper.cs" />
+    <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
+    <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
+    <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />
+    <Compile Include="Verbs\Draw\DrawRunnerFactory.cs" />
+    <Compile Include="Verbs\Draw\IDrawRunnerOptions.cs" />
+    <Compile Include="Verbs\Fetch\FetchRunnerFactory.cs" />
+    <Compile Include="Verbs\Fetch\IFetchRunner.cs" />
+    <Compile Include="Verbs\Draw\DrawRunner.cs" />
+    <Compile Include="CommandLine\Parsing\DrawOptions.cs" />
+    <Compile Include="CommandLine\Parsing\FetchOptions.cs" />
+    <Compile Include="CommandLine\ICommandLineParser.cs" />
+    <Compile Include="Verbs\Draw\IDrawRunner.cs" />
+    <Compile Include="Verbs\Configure\ConfigureRunner.cs" />
+    <Compile Include="Verbs\Configure\ConfigureRunnerOptions.cs" />
+    <Compile Include="Verbs\Draw\DrawRunnerOptions.cs" />
+    <Compile Include="Verbs\Fetch\FetchRunner.cs" />
+    <Compile Include="Verbs\Fetch\FetchRunnerOptions.cs" />
+    <Compile Include="General\GeneralExecutor.cs" />
+    <Compile Include="General\IGeneralExecutor.cs" />
+    <Compile Include="Verbs\Fetch\IFetchRunnerOptions.cs" />
+    <Compile Include="Verbs\IVerbRunner.cs" />
+    <Compile Include="Verbs\IVerbRunnerFactory.cs" />
+    <Compile Include="Verbs\IVerbRunnerOptions.cs" />
+    <Compile Include="Verbs\VerbRunnerBase.cs" />
+    <Compile Include="Verbs\VerbRunnerFactoryBase.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="General\Verb.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Properties\AppSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AppSettings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj">
+      <Project>{B5E97E64-CBA2-43D0-9476-E28831A5D476}</Project>
+      <Name>Prigitsk.Core.Git.LibGit2Sharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj">
+      <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>
+      <Name>Prigitsk.Core.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj">
+      <Project>{EF57B264-073F-4535-B996-877B2110794C}</Project>
+      <Name>Prigitsk.Core.Tools</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj">
+      <Project>{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}</Project>
+      <Name>Prigitsk.Core.Graph</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj">
+      <Project>{874a79be-3d6e-426b-9a32-ba862558f6f1}</Project>
+      <Name>Prigitsk.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core\Prigitsk.Core.csproj">
+      <Project>{b6a51ab9-2b61-49c7-b3d8-4afede30220c}</Project>
+      <Name>Prigitsk.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac">
+      <Version>4.6.2</Version>
+    </PackageReference>
+    <PackageReference Include="CommandLineParser">
+      <Version>2.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="LibGit2Sharp.NativeBinaries">
+      <Version>1.0.192</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions">
+      <Version>2.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="NLog.Extensions.Logging">
+      <Version>1.0.0-rtm-rc6</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.Abstractions">
+      <Version>2.1.0.178</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
