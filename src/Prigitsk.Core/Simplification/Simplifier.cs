@@ -265,8 +265,9 @@ namespace Prigitsk.Core.Simplification
         {
             INode[] nodes = tree.Nodes.ToArray();
 
-            foreach (INode node in nodes)
+            for (int index = 0; index < nodes.Length; index++)
             {
+                INode node = nodes[index];
                 // It shouldn't be on any branch.
                 IBranch containingBranch = tree.GetContainingBranch(node);
                 if (containingBranch != null)

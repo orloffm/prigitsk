@@ -9,7 +9,7 @@ namespace Prigitsk.Core.RepoData
     public sealed class RepositoryDataBuilder : IRepositoryDataBuilder
     {
         private readonly List<Branch> _branches;
-        private readonly List<Commit> _commits;
+        private readonly Dictionary<IHash, Commit> _commits;
         private readonly ILogger _logger;
         private readonly List<Remote> _remotes;
         private readonly List<Tag> _tags;
@@ -18,7 +18,7 @@ namespace Prigitsk.Core.RepoData
         {
             _logger = logger;
 
-            _commits = new List<Commit>();
+            _commits = new Dictionary<IHash, Commit>();
             _remotes = new List<Remote>();
             _branches = new List<Branch>();
             _tags = new List<Tag>();
@@ -30,7 +30,7 @@ namespace Prigitsk.Core.RepoData
             IHash[] parentHashes = parentShas.Select(Hash.Create).ToArray();
 
             Commit commit = new Commit(hash, parentHashes, committerWhen);
-            _commits.Add(commit);
+            _commits.Add(hash, commit);
         }
 
         public void AddRemote(string remoteName, string remoteUrl)
@@ -55,7 +55,31 @@ namespace Prigitsk.Core.RepoData
 
         public IRepositoryData Build()
         {
-            return new RepositoryData(_commits, _remotes, _branches, _tags);
+            CheckData();
+
+            return new RepositoryData(_commits.Values, _remotes, _branches, _tags);
+        }
+
+        private void CheckData()
+        {
+            // Each branch and tag must have a commit.
+            foreach (Branch b in _branches)
+            {
+                if (!_commits.ContainsKey(b.Tip))
+                {
+                    throw new InvalidOperationException(
+                        $"The commit {b.Tip} for branch {b} has not yet been loaded, cannot store data.");
+                }
+            }
+
+            foreach (Tag t in _tags)
+            {
+                if (!_commits.ContainsKey(t.Tip))
+                {
+                    throw new InvalidOperationException(
+                        $"The commit {t.Tip} for tag {t} has not yet been loaded, cannot store data.");
+                }
+            }
         }
     }
 }
