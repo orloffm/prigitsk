@@ -6,6 +6,7 @@ using Prigitsk.Console.CommandLine.Conversion.Draw;
 using Prigitsk.Console.CommandLine.Conversion.Fetch;
 using Prigitsk.Console.General;
 using Prigitsk.Console.Properties;
+using Prigitsk.Console.Tools;
 using Prigitsk.Console.Verbs;
 using Prigitsk.Console.Verbs.Configure;
 using Prigitsk.Console.Verbs.Draw;

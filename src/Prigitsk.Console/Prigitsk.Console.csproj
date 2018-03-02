@@ -90,6 +90,7 @@
     </Compile>
     <Compile Include="Abstractions\Settings\ISettingsWrapper.cs" />
     <Compile Include="Abstractions\Settings\SettingsWrapper.cs" />
+    <Compile Include="Tools\ProcessRunner.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunnerOptions.cs" />

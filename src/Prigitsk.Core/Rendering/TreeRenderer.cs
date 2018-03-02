@@ -14,10 +14,10 @@ namespace Prigitsk.Core.Rendering
     public sealed class TreeRenderer : ITreeRenderer
     {
         private const string BranchEdgesFormat
-            = @"edge[color = ""{0}"", penwidth={1}];";
+            = @"edge[color=""{0}"", penwidth={1}];";
 
         private const string BranchNodesFormat
-            = @"node [group={0}, fillcolor=""{1}"", color=""{2}""];";
+            = @"node[group=""{0}"", fillcolor=""{1}"", color=""{2}""];";
 
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
@@ -33,7 +33,7 @@ namespace Prigitsk.Core.Rendering
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
-        private string MakeHandle(IPointer pointerObject)
+        private string MakePointerHandle(IPointer pointerObject)
         {
             string pointerLabel = pointerObject.Label
                 .Trim()
@@ -99,7 +99,7 @@ namespace Prigitsk.Core.Rendering
             // 2 - repository path
             const string currentBranchLabelFormat = @"subgraph {{
 rank = sink;
-    {0} [label=""{1}"", group=""{0}"", URL=""{2}""];
+    ""{0}"" [label=""{1}"", group=""{0}"", URL=""{2}""];
 }}";
 
             foreach (IBranch b in currentBranches)
@@ -108,7 +108,7 @@ rank = sink;
 
                 string text = string.Format(
                     currentBranchLabelFormat,
-                    MakeHandle(b),
+                    MakePointerHandle(b),
                     b.Label,
                     url);
                 _textWriter.AppendLine(text);
@@ -191,7 +191,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 // 0 - branch short name
                 // 1 - color
                 string htmlString = branchingStrategy.GetHtmlColorFor(b);
-                _textWriter.AppendLine(string.Format(BranchNodesFormat, MakeHandle(b), htmlString, htmlString));
+                _textWriter.AppendLine(string.Format(BranchNodesFormat, MakePointerHandle(b), htmlString, htmlString));
                 _textWriter.AppendLine(string.Format(BranchEdgesFormat, htmlString, 2));
                 _textWriter.AppendLine(branchNodesStart);
                 // All nodes in the branch.
@@ -224,7 +224,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
                 // 0 - last node in branch
                 // 1 - branch short name
                 const string branchEndEdge = @"""{0}"" -> ""{1}"" [color=""#b0b0b0"", style=dotted, arrowhead=none];";
-                string text = string.Format(branchEndEdge, MakeNodeHandle(b.Tip), MakeHandle(b));
+                string text = string.Format(branchEndEdge, MakeNodeHandle(b.Tip), MakePointerHandle(b));
                 _textWriter.AppendLine(text);
                 _textWriter.AppendLine();
             }
@@ -279,14 +279,14 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
             // 0 - branch short name
             // 1 - branch friendly name
             // 2 - repository path
-            const string orphanedBranchFormat = @"{0} [label=""{1}"", URL=""{2}""];";
+            const string orphanedBranchFormat = @"""{0}"" [label=""{1}"", URL=""{2}""];";
 
             foreach (IBranch b in orphanedBranches)
             {
                 string url = remoteUrlProvider?.GetBranchLink(b);
                 string text = string.Format(
                     orphanedBranchFormat,
-                    MakeHandle(b),
+                    MakePointerHandle(b),
                     b.Label,
                     url);
                 _textWriter.AppendLine(text);
@@ -304,7 +304,7 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                 string url = remoteUrlProvider?.GetTagLink(tag);
                 string text = string.Format(
                     tagFormat,
-                    MakeHandle(tag),
+                    MakePointerHandle(tag),
                     tag.Label,
                     url);
                 _textWriter.AppendLine(text);
@@ -327,7 +327,7 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                 string text = string.Format(
                     orphanedBranchLinkFormat,
                     MakeNodeHandle(b.Tip),
-                    MakeHandle(b));
+                    MakePointerHandle(b));
                 _textWriter.AppendLine(text);
             }
 
@@ -346,7 +346,7 @@ node[shape = cds, fixedsize = false, fillcolor =""#C6C6C6"", penwidth=l, margin=
                 string text = string.Format(
                     tagLinkFormat,
                     MakeNodeHandle(tag.Tip),
-                    MakeHandle(tag));
+                    MakePointerHandle(tag));
                 _textWriter.AppendLine(text);
             }
         }

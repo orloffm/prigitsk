@@ -58,10 +58,16 @@ namespace Prigitsk.Console.Verbs.Draw
         private string PrepareTargetPath()
         {
             string targetDirectory = Options.Target ?? Options.Repository;
+            string targetName = Options.Output;
+            if (string.IsNullOrWhiteSpace(targetName))
+            {
+                var di = _fileSystem.DirectoryInfo.FromDirectoryName(Options.Repository);
+                targetName = di.Name + "." + Options.Format;
+            }
 
             _fileSystem.Directory.CreateDirectory(targetDirectory);
 
-            string targetPath = _fileSystem.Path.Combine(targetDirectory, Options.Output);
+            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetName);
             return targetPath;
         }
 
@@ -96,7 +102,16 @@ namespace Prigitsk.Console.Verbs.Draw
 
             string graphVizCommand = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
             string graphVizArgs = $@"""{tempPath}"" -Tsvg -o""{targetPath}""";
-          string result =  _processRunner.Execute(graphVizCommand, graphVizArgs);
+            Log.Info($"Starting GraphViz with arguments: [{graphVizArgs}].");
+            int code = _processRunner.Execute(graphVizCommand, graphVizArgs);
+            if (code != 0)
+            {
+                Log.Error("GraphViz execution failed.");
+            }
+            else
+            {
+                Log.Info("GraphViz execution succeeded.");
+            }
         }
     }
 }

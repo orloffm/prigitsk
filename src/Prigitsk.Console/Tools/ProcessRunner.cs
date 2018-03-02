@@ -1,14 +1,22 @@
 ﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
+using Prigitsk.Core.Tools;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Console.Tools
 {
     public class ProcessRunner : IProcessRunner
     {
-        public string Execute(
+        private readonly ILogger _log;
+
+        public ProcessRunner(ILogger log)
+        {
+            _log = log;
+        }
+
+        public int Execute(
             string command,
             string argument)
         {
-            string executeResult = string.Empty;
             Process executeProcess = new Process
             {
                 StartInfo =
@@ -16,20 +24,23 @@ namespace Prigitsk.Core.Tools
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     FileName = command,
                     Arguments = argument,
                     WindowStyle = ProcessWindowStyle.Hidden
                 }
             };
             executeProcess.Start();
-            executeResult = executeProcess.StandardOutput.ReadToEnd();
+            string outResult = executeProcess.StandardOutput.ReadToEnd();
+            string errorResult = executeProcess.StandardError.ReadToEnd();
             executeProcess.WaitForExit();
-            if (executeProcess.ExitCode == 0)
+            _log.Info(outResult);
+            if (!string.IsNullOrWhiteSpace(errorResult))
             {
-                return executeResult;
+                _log.Error(errorResult);
             }
 
-            return string.Empty;
+            return executeProcess.ExitCode;
         }
     }
 }
