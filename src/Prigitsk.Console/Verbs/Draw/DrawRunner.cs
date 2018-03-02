@@ -61,7 +61,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string targetName = Options.Output;
             if (string.IsNullOrWhiteSpace(targetName))
             {
-                var di = _fileSystem.DirectoryInfo.FromDirectoryName(Options.Repository);
+                DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(Options.Repository);
                 targetName = di.Name + "." + Options.Format;
             }
 

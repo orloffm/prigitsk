@@ -30,7 +30,8 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             {
                 AssertNotDisposed();
 
-                return _repository.Commits.QueryBy(new CommitFilter(){ IncludeReachableFrom = _repository.Refs }).Select(GitCommitWrapped.Create);
+                return _repository.Commits.QueryBy(new CommitFilter {IncludeReachableFrom = _repository.Refs})
+                    .Select(GitCommitWrapped.Create);
             }
         }
 

@@ -53,6 +53,12 @@ namespace Prigitsk.Core.RepoData
                     continue;
                 }
 
+                if (b.UpstreamCanonicalName == "refs/heads/HEAD")
+                {
+                    // No HEAD.
+                    continue;
+                }
+
                 builder.AddRemoteBranch(b.FriendlyName, b.Tip.Sha);
             }
 

@@ -1,5 +1,6 @@
 ﻿using System.IO.Abstractions;
 using System.Reflection;
+using Autofac;
 using Prigitsk.Console.CommandLine.Conversion;
 using Prigitsk.Console.CommandLine.Conversion.Configure;
 using Prigitsk.Console.CommandLine.Conversion.Draw;
@@ -12,14 +13,8 @@ using Prigitsk.Console.Verbs.Configure;
 using Prigitsk.Console.Verbs.Draw;
 using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Git.LibGit2Sharp;
-using Prigitsk.Core.RepoData;
-using Prigitsk.Core.Tools;
 using Prigitsk.Core.Graph;
-using ContainerBuilder = Autofac.ContainerBuilder;
-using IContainer = Autofac.IContainer;
-using ModuleRegistrationExtensions = Autofac.ModuleRegistrationExtensions;
-using RegistrationExtensions = Autofac.RegistrationExtensions;
-using ResolutionExtensions = Autofac.ResolutionExtensions;
+using Prigitsk.Core.RepoData;
 
 namespace Prigitsk.Console
 {

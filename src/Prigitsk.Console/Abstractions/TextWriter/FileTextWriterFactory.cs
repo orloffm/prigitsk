@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO.Abstractions;
 using System.Text;
 using Prigitsk.Core.Tools;
 
@@ -9,7 +8,7 @@ namespace Prigitsk.Console.Abstractions.TextWriter
     {
         private readonly Func<string, Encoding, IFileTextWriter> _writerMaker;
 
-        public FileTextWriterFactory( Func<string, Encoding, IFileTextWriter> writerMaker)
+        public FileTextWriterFactory(Func<string, Encoding, IFileTextWriter> writerMaker)
         {
             _writerMaker = writerMaker;
         }

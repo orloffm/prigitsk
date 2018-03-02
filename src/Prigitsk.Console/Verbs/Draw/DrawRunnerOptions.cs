@@ -20,10 +20,10 @@
 
         public string Output { get; }
 
+        public string RemoteToUse { get; }
+
         public string Repository { get; }
 
         public string Target { get; }
-
-        public string RemoteToUse { get; }
     }
 }

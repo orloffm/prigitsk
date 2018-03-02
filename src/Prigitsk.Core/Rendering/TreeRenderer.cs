@@ -33,6 +33,16 @@ namespace Prigitsk.Core.Rendering
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
+        private string MakeNodeHandle(INode node)
+        {
+            return MakeNodeHandle(node.Commit.Hash);
+        }
+
+        private string MakeNodeHandle(IHash hash)
+        {
+            return hash.ToShortString();
+        }
+
         private string MakePointerHandle(IPointer pointerObject)
         {
             string pointerLabel = pointerObject.Label
@@ -44,16 +54,6 @@ namespace Prigitsk.Core.Rendering
             return pointerLabel;
         }
 
-        private string MakeNodeHandle(INode node)
-        {
-            return MakeNodeHandle(node.Commit.Hash);
-        }
-
-        private string MakeNodeHandle(IHash hash)
-        {
-            return hash.ToShortString();
-        }
-
         public void Render(
             ITree tree,
             IRemote usedRemote,
@@ -61,7 +61,7 @@ namespace Prigitsk.Core.Rendering
             ITreeRenderingOptions options)
         {
             IRemoteWebUrlProvider remoteUrlProvider =
-                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote, options.TreatRepositoryAsGitHub);
+                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.TreatRepositoryAsGitHub);
 
             WriteHeader();
 
