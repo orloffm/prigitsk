@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Remotes
 {
@@ -9,7 +8,7 @@ namespace Prigitsk.Core.Remotes
         private const string GitHubFqdn = "github.com";
 
         private const string RemoteRegex =
-            @"(git@|https?://)(?<server>[^/:]+)[:/]{1}(?<user>[^/]+)/(?<repository>[^/]+)\.git";
+            @"(git@|https?://)(?<server>[^/:]+)[:/]{1}(?<user>[^/]+)/(?<repository>[^/\.]+)";
 
         /// <summary>
         ///     Factory that spawns web url providers for GitHub URLs.
@@ -22,10 +21,10 @@ namespace Prigitsk.Core.Remotes
             _gitHubProviderMaker = gitHubProviderMaker;
         }
 
-        public IRemoteWebUrlProvider CreateUrlProvider(IRemote usedRemote, bool forceGitHub = false)
+        public IRemoteWebUrlProvider CreateUrlProvider(string remoteUrl, bool forceGitHub = false)
         {
             Regex r = new Regex(RemoteRegex);
-            Match m = r.Match(usedRemote.Url);
+            Match m = r.Match(remoteUrl);
             if (!m.Success)
             {
                 return null;

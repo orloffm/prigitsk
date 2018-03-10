@@ -15,6 +15,8 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
 
         public override IGitCommit Tip => GitCommitWrapped.Create(_branch.Tip);
 
+        public string UpstreamCanonicalName => _branch.UpstreamBranchCanonicalName;
+
         public static IGitBranch Create(Branch arg)
         {
             return new GitBranchWrapped(arg);

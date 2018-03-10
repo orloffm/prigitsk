@@ -193,15 +193,6 @@ namespace Prigitsk.Core.Graph
             Node parentNode = Unwrap(parent);
             Node childNode = Unwrap(child);
 
-            if (childNode.ParentsSet.First == parentNode)
-            {
-                // This is the main link.
-                // We never remove it explicitly.
-
-                throw new InvalidOperationException(
-                    $"Cannot remove edge that is the main link between {parent} and {child}.");
-            }
-
             parentNode.ChildrenSet.Remove(childNode);
             childNode.ParentsSet.Remove(parentNode);
         }
