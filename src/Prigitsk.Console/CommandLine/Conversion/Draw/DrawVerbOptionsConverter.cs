@@ -20,7 +20,11 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
                 source.Format,
                 source.RemoteToUse,
                 source.ForceTreatAsGitHub,
-                source.LeaveTails
+                source.LeaveHeads,
+                source.RemoveTails,
+                source.PreventSimplification,
+                source.KeepAllOrphans,
+                source.KeepOrphansWithTags
             );
         }
     }

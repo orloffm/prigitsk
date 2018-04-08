@@ -84,12 +84,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IBranchingStrategy strategy = _strategyProvider.GetStrategy();
             ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
 
-            // Simplify the tree.
-            SimplificationOptions simplificationOptions = SimplificationOptions.Default;
-            simplificationOptions.AggressivelyRemoveFirstBranchNodes = false;
-            simplificationOptions.LeaveTails = Options.LeaveTails;
-
-            _simplifier.Simplify(tree, simplificationOptions);
+            SimplifyTree(tree);
 
             string tempPath = _fileSystem.Path.GetTempFileName();
             tempPath = _fileSystem.Path.ChangeExtension(tempPath, "dot");
@@ -162,6 +157,22 @@ namespace Prigitsk.Console.Verbs.Draw
             string targetPath = _fileSystem.Path.Combine(targetDirectory, targetFileName);
             Log.Debug($"Will save to {targetPath}.");
             return targetPath;
+        }
+
+        private void SimplifyTree(ITree tree)
+        {
+            bool simplify = !Options.PreventSimplification;
+            if (simplify)
+            {
+                // Simplify the tree.
+                SimplificationOptions simplificationOptions = SimplificationOptions.Default;
+                simplificationOptions.LeaveTails = Options.LeaveHeads;
+                simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
+                simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
+                simplificationOptions.KeepOrphansWithTags = Options.KeepOrphansWithTags;
+
+                _simplifier.Simplify(tree, simplificationOptions);
+            }
         }
     }
 }

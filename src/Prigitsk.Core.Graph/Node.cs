@@ -8,7 +8,7 @@ namespace Prigitsk.Core.Graph
 {
     public class Node : INode, IEquatable<Node>
     {
-        private readonly List<Node> _absorbedNodesList;
+        private readonly List<Node> _absorbedParentsList;
         private readonly int _initialHash;
 
         public Node(IHash initialCommitHash)
@@ -17,10 +17,10 @@ namespace Prigitsk.Core.Graph
 
             ParentsSet = new OrderedSet<Node>();
             ChildrenSet = new HashSet<Node>();
-            _absorbedNodesList = new List<Node>();
+            _absorbedParentsList = new List<Node>();
         }
 
-        public IEnumerable<ICommit> AbsorbedChildCommits => _absorbedNodesList.Select(n => n.Commit);
+        public IEnumerable<ICommit> AbsorbedParentCommits => _absorbedParentsList.Select(n => n.Commit);
 
         public IEnumerable<INode> Children => ChildrenSet.WrapAsEnumerable();
 
@@ -62,10 +62,10 @@ namespace Prigitsk.Core.Graph
             return Commit.ToString();
         }
 
-        internal void AddAbsorbedChild(Node node)
+        internal void AddAbsorbedParent(Node node)
         {
-            _absorbedNodesList.Add(node);
-            _absorbedNodesList.AddRange(node._absorbedNodesList);
+            _absorbedParentsList.AddRange(node._absorbedParentsList);
+            _absorbedParentsList.Add(node);
         }
 
         internal void SetCommit(ICommit commit)

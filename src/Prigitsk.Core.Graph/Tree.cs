@@ -158,6 +158,13 @@ namespace Prigitsk.Core.Graph
         {
             Node node = Unwrap(inode);
             IBranch b = GetContainingBranch(node);
+
+            if (b == null)
+            {
+                // No branch at all.
+                return false;
+            }
+
             return _branches[b].First == node;
         }
 
@@ -216,10 +223,10 @@ namespace Prigitsk.Core.Graph
                         child.ParentsSet.AddLast(nParent);
                     }
                 }
-            }
 
-            Node firstParent = n.ParentsSet.FirstOrDefault();
-            firstParent?.AddAbsorbedChild(n);
+                // Add this node to the list of absorbed ones.
+                child.AddAbsorbedParent(n);
+            }
 
             // Clear references.
             n.ParentsSet.Clear();

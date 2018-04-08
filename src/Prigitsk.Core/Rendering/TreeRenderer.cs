@@ -146,7 +146,7 @@ rank = sink;
             const string edgeFormatDotted = @"""{0}"" -> ""{1}"" [style=dashed];";
 
             // We draw it dotted.
-            string formatToUse = parentNode.AbsorbedChildCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
+            string formatToUse = childNote.AbsorbedParentCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
             _textWriter.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
         }
 

@@ -2,12 +2,12 @@
 {
     public interface ISimplificationOptions
     {
-        bool AggressivelyRemoveFirstBranchNodes { get; }
+        bool FirstBranchNodeMayBeRemoved { get; }
+
+        bool KeepAllOrphans { get; }
+
+        bool KeepOrphansWithTags { get; }
 
         bool LeaveTails { get; }
-
-        bool RemoveOrphans { get; }
-
-        bool RemoveOrphansEvenWithTags { get; }
     }
 }

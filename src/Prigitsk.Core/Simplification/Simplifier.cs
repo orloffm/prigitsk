@@ -21,9 +21,9 @@ namespace Prigitsk.Core.Simplification
         public void Simplify(ITree tree, ISimplificationOptions options)
         {
             // First, remove orphans, if applicable.
-            if (options.RemoveOrphans)
+            if (!options.KeepAllOrphans)
             {
-                RemoveOrphans(tree, options.RemoveOrphansEvenWithTags);
+                RemoveOrphans(tree, options.KeepOrphansWithTags);
             }
 
             int pass = 0;
@@ -231,8 +231,9 @@ namespace Prigitsk.Core.Simplification
 
                     // Remove edges that we got from cleaning up.
                     removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, tree);
-                    // We never remove the branch starting node.
-                    if (options.AggressivelyRemoveFirstBranchNodes || index > 0)
+
+                    bool canRemoveTheNode = index > 0 || options.FirstBranchNodeMayBeRemoved;
+                    if (canRemoveTheNode)
                     {
                         // Now, can we remove this node altogether?
                         removedAnything |= RemoveNodeIfItIsOnlyConnecting(
@@ -281,7 +282,7 @@ namespace Prigitsk.Core.Simplification
         /// <summary>
         ///     Removes orphaned nodes (i.e. not contained in branches) that don't have tags.
         /// </summary>
-        private void RemoveOrphans(ITree tree, bool removeOrphansEvenWithTags)
+        private void RemoveOrphans(ITree tree, bool keepOrphansWithTags)
         {
             INode[] nodes = tree.Nodes.ToArray();
 
@@ -299,7 +300,7 @@ namespace Prigitsk.Core.Simplification
                 ITag[] tags = tree.GetPointingTags(node).ToArray();
                 if (tags.Length != 0)
                 {
-                    if (!removeOrphansEvenWithTags)
+                    if (keepOrphansWithTags)
                     {
                         continue;
                     }

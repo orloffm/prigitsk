@@ -5,20 +5,20 @@
     {
         public SimplificationOptions()
         {
-            RemoveOrphans = true;
-            RemoveOrphansEvenWithTags = true;
+            KeepAllOrphans = false;
+            KeepOrphansWithTags = false;
             LeaveTails = false;
-            AggressivelyRemoveFirstBranchNodes = true;
+            FirstBranchNodeMayBeRemoved = false;
         }
-
-        public bool AggressivelyRemoveFirstBranchNodes { get; set; }
 
         public static SimplificationOptions Default => new SimplificationOptions();
 
+        public bool FirstBranchNodeMayBeRemoved { get; set; }
+
+        public bool KeepAllOrphans { get; set; }
+
+        public bool KeepOrphansWithTags { get; set; }
+
         public bool LeaveTails { get; set; }
-
-        public bool RemoveOrphans { get; set; }
-
-        public bool RemoveOrphansEvenWithTags { get; set; }
     }
 }
