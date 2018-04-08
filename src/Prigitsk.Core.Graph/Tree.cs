@@ -219,7 +219,7 @@ namespace Prigitsk.Core.Graph
             }
 
             Node firstParent = n.ParentsSet.FirstOrDefault();
-            firstParent?.AddAbsorbedCommit(n.Commit);
+            firstParent?.AddAbsorbedChild(n);
 
             // Clear references.
             n.ParentsSet.Clear();
