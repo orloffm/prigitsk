@@ -4,7 +4,7 @@
     {
         bool AggressivelyRemoveFirstBranchNodes { get; }
 
-        bool LeaveNodesAfterLastMerge { get; }
+        bool LeaveTails { get; }
 
         bool RemoveOrphans { get; }
 

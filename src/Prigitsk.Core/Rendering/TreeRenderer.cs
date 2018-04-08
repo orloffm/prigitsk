@@ -40,7 +40,7 @@ namespace Prigitsk.Core.Rendering
             ITreeRenderingOptions options)
         {
             IRemoteWebUrlProvider remoteUrlProvider =
-                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.TreatRepositoryAsGitHub);
+                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.ForceTreatAsGitHub);
 
             WriteHeader();
 
@@ -233,7 +233,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
             if (allLeftOvers.Length > 0)
             {
                 // Left-overs, without branches.
-                _textWriter.AppendLine(string.Format(BranchNodesFormat, @"""""", "white", "black"));
+                _textWriter.AppendLine(string.Format(BranchNodesFormat, string.Empty, "white", "black"));
                 foreach (INode currentNode in allLeftOvers)
                 {
                     WriteNode(currentNode, remoteUrlProvider);

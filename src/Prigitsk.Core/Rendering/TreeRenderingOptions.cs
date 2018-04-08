@@ -3,8 +3,13 @@
     public sealed class TreeRenderingOptions
         : ITreeRenderingOptions
     {
+        public TreeRenderingOptions()
+        {
+            ForceTreatAsGitHub = false;
+        }
+
         public static TreeRenderingOptions Default => new TreeRenderingOptions();
 
-        public bool TreatRepositoryAsGitHub => false;
+        public bool ForceTreatAsGitHub { get; set; }
     }
 }

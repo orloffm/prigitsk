@@ -85,18 +85,23 @@ namespace Prigitsk.Console.Verbs.Draw
             ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
 
             // Simplify the tree.
-            SimplificationOptions soptions = SimplificationOptions.Default;
-            soptions.AggressivelyRemoveFirstBranchNodes = false;
+            SimplificationOptions simplificationOptions = SimplificationOptions.Default;
+            simplificationOptions.AggressivelyRemoveFirstBranchNodes = false;
+            simplificationOptions.LeaveTails = Options.LeaveTails;
 
-            _simplifier.Simplify(tree, soptions);
+            _simplifier.Simplify(tree, simplificationOptions);
 
             string tempPath = _fileSystem.Path.GetTempFileName();
             tempPath = _fileSystem.Path.ChangeExtension(tempPath, "dot");
 
+            // Rendering options.
+            TreeRenderingOptions renderingOptions = TreeRenderingOptions.Default;
+            renderingOptions.ForceTreatAsGitHub = Options.ForceTreatAsGitHub;
+
             using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(tempPath, Encoding.ASCII))
             {
                 ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
-                treeRenderer.Render(tree, remoteToUse, strategy, TreeRenderingOptions.Default);
+                treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
             }
 
             string targetPath = PrepareTargetPath();

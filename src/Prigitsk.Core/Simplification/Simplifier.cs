@@ -238,7 +238,7 @@ namespace Prigitsk.Core.Simplification
                         removedAnything |= RemoveNodeIfItIsOnlyConnecting(
                             tree,
                             currentNode,
-                            options.LeaveNodesAfterLastMerge);
+                            options.LeaveTails);
                     }
                 }
             }
@@ -246,8 +246,9 @@ namespace Prigitsk.Core.Simplification
             return removedAnything;
         }
 
-        private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, bool optionsLeaveNodesAfterLastMerge)
+        private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, bool leaveTails)
         {
+            // No pointers?
             bool hasExplicitPointers =
                 tree.GetPointingBranches(currentNode).Any() || tree.GetPointingTags(currentNode).Any();
             if (hasExplicitPointers)
@@ -255,13 +256,14 @@ namespace Prigitsk.Core.Simplification
                 return false;
             }
 
+            // Only connects two nodes?
             bool canRemove = currentNode.Children.IsSingle() && currentNode.Parents.IsSingle();
             if (!canRemove)
             {
                 return false;
             }
 
-            if (optionsLeaveNodesAfterLastMerge)
+            if (leaveTails)
             {
                 // We leave nodes from whose there is a
                 // road to tip - to investigate them in the graph.

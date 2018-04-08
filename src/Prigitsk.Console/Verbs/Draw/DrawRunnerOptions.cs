@@ -3,17 +3,21 @@
     public class DrawRunnerOptions : IDrawRunnerOptions
     {
         public DrawRunnerOptions(
-            string repository = null,
-            string target = null,
-            string output = null,
-            string format = null,
-            string remoteToUse = null)
+            string repository ,
+            string target ,
+            string output ,
+            string format ,
+            string remoteToUse ,
+            bool forceTreatAsGitHub ,
+            bool leaveTails )
         {
             Repository = repository;
             TargetDirectory = target;
             OutputFileName = output;
             Format = format;
             RemoteToUse = remoteToUse;
+            ForceTreatAsGitHub = forceTreatAsGitHub;
+            LeaveTails = leaveTails;
         }
 
         public string Format { get; }
@@ -25,5 +29,9 @@
         public string Repository { get; }
 
         public string TargetDirectory { get; }
+
+        public bool ForceTreatAsGitHub { get; }
+
+        public bool LeaveTails { get; }
     }
 }
