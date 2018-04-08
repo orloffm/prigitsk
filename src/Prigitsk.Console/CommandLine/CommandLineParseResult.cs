@@ -3,7 +3,7 @@ using Prigitsk.Console.Verbs;
 
 namespace Prigitsk.Console.CommandLine
 {
-    public class CommandLineParseResult
+    public sealed class CommandLineParseResult
     {
         protected CommandLineParseResult()
         {

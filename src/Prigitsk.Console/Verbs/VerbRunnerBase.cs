@@ -14,15 +14,29 @@ namespace Prigitsk.Console.Verbs
 
         protected T Options { get; }
 
+        /// <summary>
+        ///     Logically separated to have a common place to prepare things before execution.
+        /// </summary>
+        protected virtual void Initialise()
+        {
+        }
+
         public void Run()
         {
-            Log.Info($"Running {GetType().Name}...");
+            Log.Debug($"Initialising {GetType().Name}...");
+
+            Initialise();
+
+            Log.Debug("Running.");
 
             RunInternal();
 
-            Log.Trace("Successfully completed run.");
+            Log.Debug("Successfully completed run.");
         }
 
+        /// <summary>
+        ///     The actual execution happens here.
+        /// </summary>
         protected abstract void RunInternal();
     }
 }

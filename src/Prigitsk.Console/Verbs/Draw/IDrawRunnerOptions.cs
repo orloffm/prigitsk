@@ -5,7 +5,10 @@
     {
         string Format { get; }
 
-        string Output { get; }
+        /// <summary>
+        ///     Output file name.
+        /// </summary>
+        string OutputFileName { get; }
 
         /// <summary>
         ///     Which remote to use to build the graph. Default means origin or the single existing one.
@@ -14,6 +17,9 @@
 
         string Repository { get; }
 
-        string Target { get; }
+        /// <summary>
+        ///     Target directory.
+        /// </summary>
+        string TargetDirectory { get; }
     }
 }

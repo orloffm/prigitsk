@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions;
+﻿using System;
+using System.IO.Abstractions;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.TextWriter;
@@ -28,6 +29,9 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly ITreeBuilder _treeBuilder;
         private readonly ITreeRendererFactory _treeRendererFactory;
 
+        private DirectoryInfoBase _repositoryDir;
+        private string _outputFormat;
+
         public DrawRunner(
             IDrawRunnerOptions options,
             IProcessRunner processRunner,
@@ -55,26 +59,68 @@ namespace Prigitsk.Console.Verbs.Draw
             _strategyProvider = strategyProvider;
         }
 
+        private DirectoryInfoBase GetRepositoryToUse()
+        {
+            bool usingCurrentDir = false;
+            string repositoryDirectory = Options.Repository;
+            if (string.IsNullOrWhiteSpace(repositoryDirectory))
+            {
+                repositoryDirectory = _fileSystem.Directory.GetCurrentDirectory();
+                Log.Info($"Using current directory '{repositoryDirectory}' as repository path.");
+                usingCurrentDir = true;
+            }
+
+            DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(repositoryDirectory);
+            if (!usingCurrentDir && !di.Exists)
+            {
+                throw new Exception($"The specified repository directory {repositoryDirectory} does not exist.");
+            }
+
+            return di;
+        }
+
+        protected override void Initialise()
+        {
+            _repositoryDir = GetRepositoryToUse();
+            _outputFormat = Options.Format;
+
+            if (string.IsNullOrWhiteSpace(_outputFormat))
+            {
+                Log.Info("Output format not specified. Will use SVG.");
+                _outputFormat = "svg";
+            }
+        }
+
         private string PrepareTargetPath()
         {
-            string targetDirectory = Options.Target ?? Options.Repository;
-            string targetName = Options.Output;
-            if (string.IsNullOrWhiteSpace(targetName))
+            string targetDirectory = Options.TargetDirectory;
+            if (string.IsNullOrWhiteSpace(targetDirectory))
             {
-                DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(Options.Repository);
-                targetName = di.Name + "." + Options.Format;
+                targetDirectory = _repositoryDir.FullName;
+                Log.Info($"Target directory not specified, will use repository directory.");
+            }
+
+            string targetFileName = Options.OutputFileName;
+            if (string.IsNullOrWhiteSpace(targetFileName))
+            {
+         
+
+                targetFileName = _repositoryDir.Name + "." + _outputFormat;
+                Log.Info($"Target file name not specified, will use {targetFileName} instead.");
             }
 
             _fileSystem.Directory.CreateDirectory(targetDirectory);
 
-            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetName);
+            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetFileName);
+            Log.Debug($"Will save to {targetPath}.");
             return targetPath;
         }
 
         protected override void RunInternal()
         {
             // Get the immutable repository information.
-            IRepositoryData repositoryData = _loader.LoadFrom(Options.Repository);
+
+            IRepositoryData repositoryData = _loader.LoadFrom(_repositoryDir.FullName);
 
             // Pick the remote to work on.
             IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
@@ -101,7 +147,7 @@ namespace Prigitsk.Console.Verbs.Draw
             string targetPath = PrepareTargetPath();
 
             string graphVizCommand = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
-            string graphVizArgs = $@"""{tempPath}"" -Tsvg -o""{targetPath}""";
+            string graphVizArgs = $@"""{tempPath}"" -T{_outputFormat} -o""{targetPath}""";
             Log.Info($"Starting GraphViz with arguments: [{graphVizArgs}].");
             int code = _processRunner.Execute(graphVizCommand, graphVizArgs);
             if (code != 0)
@@ -111,6 +157,7 @@ namespace Prigitsk.Console.Verbs.Draw
             else
             {
                 Log.Info("GraphViz execution succeeded.");
+                Log.Info($"Saved to {targetPath}.");
             }
         }
     }

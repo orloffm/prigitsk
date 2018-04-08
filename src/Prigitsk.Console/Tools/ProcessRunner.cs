@@ -34,7 +34,10 @@ namespace Prigitsk.Console.Tools
             string outResult = executeProcess.StandardOutput.ReadToEnd();
             string errorResult = executeProcess.StandardError.ReadToEnd();
             executeProcess.WaitForExit();
-            _log.Info(outResult);
+            if (!string.IsNullOrWhiteSpace(outResult))
+            {
+                _log.Info(outResult);
+            }
             if (!string.IsNullOrWhiteSpace(errorResult))
             {
                 _log.Error(errorResult);

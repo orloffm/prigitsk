@@ -33,6 +33,7 @@ namespace Prigitsk.Console.General
         {
             _log.Trace("Application starting.");
 
+            // Parses command line without sanity checks.
             CommandLineParseResult parseResult = _parser.Parse(args);
             if (!parseResult.IsCorrect || !parseResult.Verb.HasValue)
             {
