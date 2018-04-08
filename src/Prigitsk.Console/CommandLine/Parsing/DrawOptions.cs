@@ -6,8 +6,22 @@ namespace Prigitsk.Console.CommandLine.Parsing
     [Verb(VerbConstants.Draw, HelpText = "Create a diagram of the branch structure.")]
     public class DrawOptions : IVerbOptions
     {
+        [Option(
+            'g',
+            Default = false,
+            HelpText =
+                "Forcefully treat the repository as belonging to a GitHub server when rendering. Affects the links.")]
+        public bool ForceTreatAsGitHub { get; set; }
+
         [Option('f', "format", HelpText = "Output file format.")]
         public string Format { get; set; }
+
+        [Option(
+            "leaveTails",
+            Default = false,
+            HelpText =
+                "Prevent concatenation of nodes on branches after last merge or diversion. In other words, this leaves all final direct commits on a branch untouched.")]
+        public bool LeaveTails { get; set; }
 
         /// <summary>
         ///     The target file name.

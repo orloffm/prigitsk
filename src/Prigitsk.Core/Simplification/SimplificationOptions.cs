@@ -7,7 +7,7 @@
         {
             RemoveOrphans = true;
             RemoveOrphansEvenWithTags = true;
-            LeaveNodesAfterLastMerge = false;
+            LeaveTails = false;
             AggressivelyRemoveFirstBranchNodes = true;
         }
 
@@ -15,7 +15,7 @@
 
         public static SimplificationOptions Default => new SimplificationOptions();
 
-        public bool LeaveNodesAfterLastMerge { get; set; }
+        public bool LeaveTails { get; set; }
 
         public bool RemoveOrphans { get; set; }
 
