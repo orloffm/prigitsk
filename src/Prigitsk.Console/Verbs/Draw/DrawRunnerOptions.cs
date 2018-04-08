@@ -10,20 +10,20 @@
             string remoteToUse = null)
         {
             Repository = repository;
-            Target = target;
-            Output = output;
+            TargetDirectory = target;
+            OutputFileName = output;
             Format = format;
             RemoteToUse = remoteToUse;
         }
 
         public string Format { get; }
 
-        public string Output { get; }
+        public string OutputFileName { get; }
 
         public string RemoteToUse { get; }
 
         public string Repository { get; }
 
-        public string Target { get; }
+        public string TargetDirectory { get; }
     }
 }
