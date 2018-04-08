@@ -140,14 +140,13 @@ rank = sink;
 
         private void WriteInBranchEdge(
             INode parentNode,
-            INode childNote,
-            IRemoteWebUrlProvider remoteUrlProvider)
+            INode childNote)
         {
             const string edgeFormatSimple = @"""{0}"" -> ""{1}""; ";
             const string edgeFormatDotted = @"""{0}"" -> ""{1}"" [style=dashed];";
 
             // We draw it dotted.
-            string formatToUse = childNote.AbsorbedCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
+            string formatToUse = parentNode.AbsorbedChildCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
             _textWriter.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
         }
 
@@ -216,7 +215,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
 
                 foreach (Tuple<INode, INode> tuple in edgesInBranch.EnumerateItems())
                 {
-                    WriteInBranchEdge(tuple.Item1, tuple.Item2, remoteUrlProvider);
+                    WriteInBranchEdge(tuple.Item1, tuple.Item2);
                 }
 
                 _textWriter.AppendLine(branchNodesEnd);
