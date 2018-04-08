@@ -18,6 +18,24 @@ namespace Prigitsk.Core.Simplification
             _walker = walker;
         }
 
+        public void Simplify(ITree tree, ISimplificationOptions options)
+        {
+            // First, remove orphans, if applicable.
+            if (!options.KeepAllOrphans)
+            {
+                RemoveOrphans(tree, options.KeepOrphansWithTags);
+            }
+
+            int pass = 0;
+            bool removedAnything;
+            do
+            {
+                _log.Debug("Doing pass {0}.", pass + 1);
+                pass++;
+                removedAnything = MakePass(tree, options);
+            } while (removedAnything);
+        }
+
         private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<INode> nodesInQuestion, IEnumerable<INode> whitelist)
         {
             var whitelistSet = new HashSet<INode>(whitelist);
@@ -213,14 +231,15 @@ namespace Prigitsk.Core.Simplification
 
                     // Remove edges that we got from cleaning up.
                     removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, tree);
-                    // We never remove the branch starting node.
-                    if (options.AggressivelyRemoveFirstBranchNodes || index > 0)
+
+                    bool canRemoveTheNode = index > 0 || options.FirstBranchNodeMayBeRemoved;
+                    if (canRemoveTheNode)
                     {
                         // Now, can we remove this node altogether?
                         removedAnything |= RemoveNodeIfItIsOnlyConnecting(
                             tree,
                             currentNode,
-                            options.LeaveNodesAfterLastMerge);
+                            options.LeaveTails);
                     }
                 }
             }
@@ -228,8 +247,9 @@ namespace Prigitsk.Core.Simplification
             return removedAnything;
         }
 
-        private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, bool optionsLeaveNodesAfterLastMerge)
+        private bool RemoveNodeIfItIsOnlyConnecting(ITree tree, INode currentNode, bool leaveTails)
         {
+            // No pointers?
             bool hasExplicitPointers =
                 tree.GetPointingBranches(currentNode).Any() || tree.GetPointingTags(currentNode).Any();
             if (hasExplicitPointers)
@@ -237,13 +257,14 @@ namespace Prigitsk.Core.Simplification
                 return false;
             }
 
+            // Only connects two nodes?
             bool canRemove = currentNode.Children.IsSingle() && currentNode.Parents.IsSingle();
             if (!canRemove)
             {
                 return false;
             }
 
-            if (optionsLeaveNodesAfterLastMerge)
+            if (leaveTails)
             {
                 // We leave nodes from whose there is a
                 // road to tip - to investigate them in the graph.
@@ -261,7 +282,7 @@ namespace Prigitsk.Core.Simplification
         /// <summary>
         ///     Removes orphaned nodes (i.e. not contained in branches) that don't have tags.
         /// </summary>
-        private void RemoveOrphans(ITree tree, bool removeOrphansEvenWithTags)
+        private void RemoveOrphans(ITree tree, bool keepOrphansWithTags)
         {
             INode[] nodes = tree.Nodes.ToArray();
 
@@ -279,7 +300,7 @@ namespace Prigitsk.Core.Simplification
                 ITag[] tags = tree.GetPointingTags(node).ToArray();
                 if (tags.Length != 0)
                 {
-                    if (!removeOrphansEvenWithTags)
+                    if (keepOrphansWithTags)
                     {
                         continue;
                     }
@@ -292,24 +313,6 @@ namespace Prigitsk.Core.Simplification
 
                 tree.RemoveNode(node);
             }
-        }
-
-        public void Simplify(ITree tree, ISimplificationOptions options)
-        {
-            // First, remove orphans, if applicable.
-            if (options.RemoveOrphans)
-            {
-                RemoveOrphans(tree, options.RemoveOrphansEvenWithTags);
-            }
-
-            int pass = 0;
-            bool removedAnything;
-            do
-            {
-                _log.Debug("Doing pass {0}.", pass + 1);
-                pass++;
-                removedAnything = MakePass(tree, options);
-            } while (removedAnything);
         }
 
         private bool TryFindRightSideOfARhombus(

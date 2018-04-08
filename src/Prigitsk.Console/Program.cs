@@ -27,7 +27,7 @@ namespace Prigitsk.Console
             //logger.Info("ABC");
             IContainer container = PrepareContainer();
 
-            IGeneralExecutor exec = ResolutionExtensions.Resolve<IGeneralExecutor>(container);
+            IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
             int exitCode = exec.RunSafe(args);
 
             return exitCode;
@@ -38,39 +38,39 @@ namespace Prigitsk.Console
             ContainerBuilder builder = new ContainerBuilder();
 
             // assemblies
-            RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, Assembly.GetExecutingAssembly()));
-            RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(GitBranchWrapped).Assembly));
-            RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(RepositoryData).Assembly));
-            RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(ProcessRunner).Assembly));
-            RegistrationExtensions.AsImplementedInterfaces(
-                RegistrationExtensions.RegisterAssemblyTypes(builder, typeof(Tree).Assembly));
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces(
+            );
+            builder.RegisterAssemblyTypes(typeof(GitBranchWrapped).Assembly).AsImplementedInterfaces(
+            );
+            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces(
+            );
+            builder.RegisterAssemblyTypes(typeof(ProcessRunner).Assembly).AsImplementedInterfaces(
+            );
+            builder.RegisterAssemblyTypes(typeof(Tree).Assembly).AsImplementedInterfaces(
+            );
 
             // external
-            ModuleRegistrationExtensions.RegisterModule<NLoggerModule>(builder);
-            RegistrationExtensions.RegisterType<FileSystem>(builder).As<IFileSystem>();
+            builder.RegisterModule<NLoggerModule>();
+            builder.RegisterType<FileSystem>().As<IFileSystem>();
 
-            RegistrationExtensions.AsSelf(RegistrationExtensions.RegisterInstance(builder, AppSettings.Default));
+            builder.RegisterInstance(AppSettings.Default).AsSelf();
 
             // converters
-            RegistrationExtensions.RegisterType<ConfigureRunnerFactory>(builder)
+            builder.RegisterType<ConfigureRunnerFactory>()
                 .Keyed<IVerbRunnerFactory>(Verb.Configure)
                 .InstancePerLifetimeScope();
-            RegistrationExtensions.RegisterType<DrawRunnerFactory>(builder).Keyed<IVerbRunnerFactory>(Verb.Draw)
+            builder.RegisterType<DrawRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Draw)
                 .InstancePerLifetimeScope();
-            RegistrationExtensions.RegisterType<FetchRunnerFactory>(builder).Keyed<IVerbRunnerFactory>(Verb.Fetch)
+            builder.RegisterType<FetchRunnerFactory>().Keyed<IVerbRunnerFactory>(Verb.Fetch)
                 .InstancePerLifetimeScope();
 
-            RegistrationExtensions.RegisterType<ConfigureVerbOptionsConverter>(builder)
+            builder.RegisterType<ConfigureVerbOptionsConverter>()
                 .Keyed<IVerbOptionsConverter>(Verb.Configure)
                 .InstancePerLifetimeScope();
-            RegistrationExtensions.RegisterType<DrawVerbOptionsConverter>(builder)
+            builder.RegisterType<DrawVerbOptionsConverter>()
                 .Keyed<IVerbOptionsConverter>(Verb.Draw)
                 .InstancePerLifetimeScope();
-            RegistrationExtensions.RegisterType<FetchVerbOptionsConverter>(builder)
+            builder.RegisterType<FetchVerbOptionsConverter>()
                 .Keyed<IVerbOptionsConverter>(Verb.Fetch)
                 .InstancePerLifetimeScope();
 

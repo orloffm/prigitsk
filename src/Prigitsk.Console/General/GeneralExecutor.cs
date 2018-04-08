@@ -22,30 +22,6 @@ namespace Prigitsk.Console.General
             _log = log;
         }
 
-        private IVerbRunner CreateVerbRunner(Verb verb, IVerbRunnerOptions options)
-        {
-            IVerbRunnerFactory factory = _factorySelector[verb];
-            IVerbRunner runner = factory.Create(options);
-            return runner;
-        }
-
-        private int RunInternal(string[] args)
-        {
-            _log.Trace("Application starting.");
-
-            CommandLineParseResult parseResult = _parser.Parse(args);
-            if (!parseResult.IsCorrect || !parseResult.Verb.HasValue)
-            {
-                _log.Error("Command line arguments incorrect.");
-                return 1;
-            }
-
-            IVerbRunner verbRunner = CreateVerbRunner(parseResult.Verb.Value, parseResult.VerbOptions);
-            verbRunner.Run();
-
-            return 0;
-        }
-
         public int RunSafe(string[] args)
         {
             try
@@ -62,6 +38,31 @@ namespace Prigitsk.Console.General
                 _log.Fatal(ex, "Unhandled exception occurred. Aborting execution.");
                 return 1;
             }
+        }
+
+        private IVerbRunner CreateVerbRunner(Verb verb, IVerbRunnerOptions options)
+        {
+            IVerbRunnerFactory factory = _factorySelector[verb];
+            IVerbRunner runner = factory.Create(options);
+            return runner;
+        }
+
+        private int RunInternal(string[] args)
+        {
+            _log.Trace("Application starting.");
+
+            // Parses command line without sanity checks.
+            CommandLineParseResult parseResult = _parser.Parse(args);
+            if (!parseResult.IsCorrect || !parseResult.Verb.HasValue)
+            {
+                _log.Error("Command line arguments incorrect.");
+                return 1;
+            }
+
+            IVerbRunner verbRunner = CreateVerbRunner(parseResult.Verb.Value, parseResult.VerbOptions);
+            verbRunner.Run();
+
+            return 0;
         }
     }
 }

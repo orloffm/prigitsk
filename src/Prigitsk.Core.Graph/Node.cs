@@ -8,7 +8,7 @@ namespace Prigitsk.Core.Graph
 {
     public class Node : INode, IEquatable<Node>
     {
-        private readonly List<ICommit> _absorbedCommitsList;
+        private readonly List<Node> _absorbedParentsList;
         private readonly int _initialHash;
 
         public Node(IHash initialCommitHash)
@@ -17,25 +17,20 @@ namespace Prigitsk.Core.Graph
 
             ParentsSet = new OrderedSet<Node>();
             ChildrenSet = new HashSet<Node>();
-            _absorbedCommitsList = new List<ICommit>();
+            _absorbedParentsList = new List<Node>();
         }
 
-        public IEnumerable<ICommit> AbsorbedCommits => _absorbedCommitsList.AsEnumerable();
+        public IEnumerable<ICommit> AbsorbedParentCommits => _absorbedParentsList.Select(n => n.Commit);
 
         public IEnumerable<INode> Children => ChildrenSet.WrapAsEnumerable();
-
-        internal ISet<Node> ChildrenSet { get; }
 
         public ICommit Commit { get; private set; }
 
         public IEnumerable<INode> Parents => ParentsSet.WrapAsEnumerable();
 
-        internal IOrderedSet<Node> ParentsSet { get; }
+        internal ISet<Node> ChildrenSet { get; }
 
-        internal void AddAbsorbedCommit(ICommit commit)
-        {
-            _absorbedCommitsList.Add(commit);
-        }
+        internal IOrderedSet<Node> ParentsSet { get; }
 
         public static bool AreEqual(INode a, INode b)
         {
@@ -62,14 +57,20 @@ namespace Prigitsk.Core.Graph
             return _initialHash;
         }
 
-        internal void SetCommit(ICommit commit)
-        {
-            Commit = commit;
-        }
-
         public override string ToString()
         {
             return Commit.ToString();
+        }
+
+        internal void AddAbsorbedParent(Node node)
+        {
+            _absorbedParentsList.AddRange(node._absorbedParentsList);
+            _absorbedParentsList.Add(node);
+        }
+
+        internal void SetCommit(ICommit commit)
+        {
+            Commit = commit;
         }
     }
 }

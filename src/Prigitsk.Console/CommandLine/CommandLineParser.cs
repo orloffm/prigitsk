@@ -21,14 +21,6 @@ namespace Prigitsk.Console.CommandLine
             _factories = factories;
         }
 
-        private Verb GetVerbFrom(IVerbOptions parsed)
-        {
-            VerbAttribute verbAttribute = parsed.GetType().GetCustomAttribute<VerbAttribute>();
-            string verbName = verbAttribute.Name;
-            Verb verb = VerbHelper.FromName(verbName);
-            return verb;
-        }
-
         public CommandLineParseResult Parse(string[] args)
         {
             ParserResult<object> result =
@@ -58,6 +50,14 @@ namespace Prigitsk.Console.CommandLine
             IVerbRunnerOptions runnerOptions = converter.ConvertOptions(options);
 
             return CommandLineParseResult.Correct(v, runnerOptions);
+        }
+
+        private Verb GetVerbFrom(IVerbOptions parsed)
+        {
+            VerbAttribute verbAttribute = parsed.GetType().GetCustomAttribute<VerbAttribute>();
+            string verbName = verbAttribute.Name;
+            Verb verb = VerbHelper.FromName(verbName);
+            return verb;
         }
     }
 }

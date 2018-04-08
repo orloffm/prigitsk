@@ -33,27 +33,6 @@ namespace Prigitsk.Core.Rendering
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
-        private string MakeNodeHandle(INode node)
-        {
-            return MakeNodeHandle(node.Commit.Hash);
-        }
-
-        private string MakeNodeHandle(IHash hash)
-        {
-            return hash.ToShortString();
-        }
-
-        private string MakePointerHandle(IPointer pointerObject)
-        {
-            string pointerLabel = pointerObject.Label
-                .Trim()
-                .Replace(".", "_")
-                .Replace("-", "_")
-                .Replace(" ", "_");
-
-            return pointerLabel;
-        }
-
         public void Render(
             ITree tree,
             IRemote usedRemote,
@@ -61,7 +40,7 @@ namespace Prigitsk.Core.Rendering
             ITreeRenderingOptions options)
         {
             IRemoteWebUrlProvider remoteUrlProvider =
-                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.TreatRepositoryAsGitHub);
+                _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.ForceTreatAsGitHub);
 
             WriteHeader();
 
@@ -85,6 +64,27 @@ namespace Prigitsk.Core.Rendering
             // Tags and orphaned branches
             WriteTagsAndOrphanedBranchesConnections(tags, orphanedBranches);
             WriteFooter();
+        }
+
+        private string MakeNodeHandle(INode node)
+        {
+            return MakeNodeHandle(node.Commit.Hash);
+        }
+
+        private string MakeNodeHandle(IHash hash)
+        {
+            return hash.ToShortString();
+        }
+
+        private string MakePointerHandle(IPointer pointerObject)
+        {
+            string pointerLabel = pointerObject.Label
+                .Trim()
+                .Replace(".", "_")
+                .Replace("-", "_")
+                .Replace(" ", "_");
+
+            return pointerLabel;
         }
 
         private void WriteCurrentBranchesLabels(
@@ -140,14 +140,13 @@ rank = sink;
 
         private void WriteInBranchEdge(
             INode parentNode,
-            INode childNote,
-            IRemoteWebUrlProvider remoteUrlProvider)
+            INode childNote)
         {
             const string edgeFormatSimple = @"""{0}"" -> ""{1}""; ";
             const string edgeFormatDotted = @"""{0}"" -> ""{1}"" [style=dashed];";
 
             // We draw it dotted.
-            string formatToUse = childNote.AbsorbedCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
+            string formatToUse = childNote.AbsorbedParentCommits.Any() ? edgeFormatDotted : edgeFormatSimple;
             _textWriter.AppendLine(string.Format(formatToUse, MakeNodeHandle(parentNode), MakeNodeHandle(childNote)));
         }
 
@@ -216,7 +215,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
 
                 foreach (Tuple<INode, INode> tuple in edgesInBranch.EnumerateItems())
                 {
-                    WriteInBranchEdge(tuple.Item1, tuple.Item2, remoteUrlProvider);
+                    WriteInBranchEdge(tuple.Item1, tuple.Item2);
                 }
 
                 _textWriter.AppendLine(branchNodesEnd);
@@ -233,7 +232,7 @@ node[width = 0.2, height = 0.2, fixedsize = true, label ="""", margin=""0.11, 0.
             if (allLeftOvers.Length > 0)
             {
                 // Left-overs, without branches.
-                _textWriter.AppendLine(string.Format(BranchNodesFormat, @"""""", "white", "black"));
+                _textWriter.AppendLine(string.Format(BranchNodesFormat, string.Empty, "white", "black"));
                 foreach (INode currentNode in allLeftOvers)
                 {
                     WriteNode(currentNode, remoteUrlProvider);

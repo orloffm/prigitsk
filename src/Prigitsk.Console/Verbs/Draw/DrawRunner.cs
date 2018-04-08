@@ -1,4 +1,5 @@
-﻿using System.IO.Abstractions;
+﻿using System;
+using System.IO.Abstractions;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.TextWriter;
@@ -27,6 +28,9 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IBranchingStrategyProvider _strategyProvider;
         private readonly ITreeBuilder _treeBuilder;
         private readonly ITreeRendererFactory _treeRendererFactory;
+        private string _outputFormat;
+
+        private DirectoryInfoBase _repositoryDir;
 
         public DrawRunner(
             IDrawRunnerOptions options,
@@ -55,26 +59,23 @@ namespace Prigitsk.Console.Verbs.Draw
             _strategyProvider = strategyProvider;
         }
 
-        private string PrepareTargetPath()
+        protected override void Initialise()
         {
-            string targetDirectory = Options.Target ?? Options.Repository;
-            string targetName = Options.Output;
-            if (string.IsNullOrWhiteSpace(targetName))
+            _repositoryDir = GetRepositoryToUse();
+            _outputFormat = Options.Format;
+
+            if (string.IsNullOrWhiteSpace(_outputFormat))
             {
-                DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(Options.Repository);
-                targetName = di.Name + "." + Options.Format;
+                Log.Info("Output format not specified. Will use SVG.");
+                _outputFormat = "svg";
             }
-
-            _fileSystem.Directory.CreateDirectory(targetDirectory);
-
-            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetName);
-            return targetPath;
         }
 
         protected override void RunInternal()
         {
             // Get the immutable repository information.
-            IRepositoryData repositoryData = _loader.LoadFrom(Options.Repository);
+
+            IRepositoryData repositoryData = _loader.LoadFrom(_repositoryDir.FullName);
 
             // Pick the remote to work on.
             IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
@@ -83,25 +84,25 @@ namespace Prigitsk.Console.Verbs.Draw
             IBranchingStrategy strategy = _strategyProvider.GetStrategy();
             ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
 
-            // Simplify the tree.
-            SimplificationOptions soptions = SimplificationOptions.Default;
-            soptions.AggressivelyRemoveFirstBranchNodes = false;
-
-            _simplifier.Simplify(tree, soptions);
+            SimplifyTree(tree);
 
             string tempPath = _fileSystem.Path.GetTempFileName();
             tempPath = _fileSystem.Path.ChangeExtension(tempPath, "dot");
 
+            // Rendering options.
+            TreeRenderingOptions renderingOptions = TreeRenderingOptions.Default;
+            renderingOptions.ForceTreatAsGitHub = Options.ForceTreatAsGitHub;
+
             using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(tempPath, Encoding.ASCII))
             {
                 ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
-                treeRenderer.Render(tree, remoteToUse, strategy, TreeRenderingOptions.Default);
+                treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
             }
 
             string targetPath = PrepareTargetPath();
 
             string graphVizCommand = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
-            string graphVizArgs = $@"""{tempPath}"" -Tsvg -o""{targetPath}""";
+            string graphVizArgs = $@"""{tempPath}"" -T{_outputFormat} -o""{targetPath}""";
             Log.Info($"Starting GraphViz with arguments: [{graphVizArgs}].");
             int code = _processRunner.Execute(graphVizCommand, graphVizArgs);
             if (code != 0)
@@ -111,6 +112,66 @@ namespace Prigitsk.Console.Verbs.Draw
             else
             {
                 Log.Info("GraphViz execution succeeded.");
+                Log.Info($"Saved to {targetPath}.");
+            }
+        }
+
+        private DirectoryInfoBase GetRepositoryToUse()
+        {
+            bool usingCurrentDir = false;
+            string repositoryDirectory = Options.Repository;
+            if (string.IsNullOrWhiteSpace(repositoryDirectory))
+            {
+                repositoryDirectory = _fileSystem.Directory.GetCurrentDirectory();
+                Log.Info($"Using current directory '{repositoryDirectory}' as repository path.");
+                usingCurrentDir = true;
+            }
+
+            DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(repositoryDirectory);
+            if (!usingCurrentDir && !di.Exists)
+            {
+                throw new Exception($"The specified repository directory {repositoryDirectory} does not exist.");
+            }
+
+            return di;
+        }
+
+        private string PrepareTargetPath()
+        {
+            string targetDirectory = Options.TargetDirectory;
+            if (string.IsNullOrWhiteSpace(targetDirectory))
+            {
+                targetDirectory = _repositoryDir.FullName;
+                Log.Info($"Target directory not specified, will use repository directory.");
+            }
+
+            string targetFileName = Options.OutputFileName;
+            if (string.IsNullOrWhiteSpace(targetFileName))
+            {
+                targetFileName = _repositoryDir.Name + "." + _outputFormat;
+                Log.Info($"Target file name not specified, will use {targetFileName} instead.");
+            }
+
+            _fileSystem.Directory.CreateDirectory(targetDirectory);
+
+            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetFileName);
+            Log.Debug($"Will save to {targetPath}.");
+            return targetPath;
+        }
+
+        private void SimplifyTree(ITree tree)
+        {
+            bool simplify = !Options.PreventSimplification;
+            if (simplify)
+            {
+                // Simplify the tree.
+                SimplificationOptions simplificationOptions = SimplificationOptions.Default;
+                simplificationOptions.LeaveTails = Options.LeaveHeads;
+                simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
+                simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
+                simplificationOptions.KeepOrphansWithTags = Options.KeepOrphansWithTags;
+
+                _simplifier.Simplify(tree, simplificationOptions);
             }
         }
     }

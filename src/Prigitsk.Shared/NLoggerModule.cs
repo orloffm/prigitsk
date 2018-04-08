@@ -30,6 +30,17 @@ namespace Prigitsk
         }
 
         /// <summary>
+        ///     Called when the module loads. As <see cref="CreateLogger" />
+        ///     returns an <see cref="ILogger" />, we are able to register
+        ///     this function as a creator if loggers.
+        /// </summary>
+        /// <param name="builder"></param>
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.Register(CreateLogger).AsImplementedInterfaces();
+        }
+
+        /// <summary>
         ///     Creates an instance of <see cref="ILogger" />
         /// </summary>
         /// <param name="c">Not used.</param>
@@ -48,17 +59,6 @@ namespace Prigitsk
         private bool IsLoggerArgumentPresent(ParameterInfo p, IComponentContext c)
         {
             return p.ParameterType == typeof(ILogger);
-        }
-
-        /// <summary>
-        ///     Called when the module loads. As <see cref="CreateLogger" />
-        ///     returns an <see cref="ILogger" />, we are able to register
-        ///     this function as a creator if loggers.
-        /// </summary>
-        /// <param name="builder"></param>
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.Register(CreateLogger).AsImplementedInterfaces();
         }
 
         private object LoggerCreator(IComponentContext c, Type forType)

@@ -55,19 +55,19 @@ namespace Prigitsk.Core.Git.LibGit2Sharp
             }
         }
 
-        private void AssertNotDisposed()
-        {
-            if (_disposed)
-            {
-            }
-        }
-
         public void Dispose()
         {
             if (!_disposed)
             {
                 _repository.Dispose();
                 _disposed = true;
+            }
+        }
+
+        private void AssertNotDisposed()
+        {
+            if (_disposed)
+            {
             }
         }
     }

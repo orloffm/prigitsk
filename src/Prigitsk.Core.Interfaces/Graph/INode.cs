@@ -5,7 +5,7 @@ namespace Prigitsk.Core.Graph
 {
     public interface INode
     {
-        IEnumerable<ICommit> AbsorbedCommits { get; }
+        IEnumerable<ICommit> AbsorbedParentCommits { get; }
 
         IEnumerable<INode> Children { get; }
 

@@ -14,11 +14,6 @@ namespace Prigitsk.Console.Abstractions.Console
             _log = log;
         }
 
-        private void LogWritten(string text)
-        {
-            _log.Log(_level, $"Console out: {text}");
-        }
-
         public string ReadLine()
         {
             _log.Log(_level, $"Console in starting...");
@@ -55,6 +50,11 @@ namespace Prigitsk.Console.Abstractions.Console
         {
             SysConsole.WriteLine(text);
             LogWritten(text);
+        }
+
+        private void LogWritten(string text)
+        {
+            _log.Log(_level, $"Console out: {text}");
         }
     }
 }

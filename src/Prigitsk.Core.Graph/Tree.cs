@@ -76,21 +76,6 @@ namespace Prigitsk.Core.Graph
             _pointingTags.Add(tagTip, tag);
         }
 
-        private void AssertNoBranchesOrTagsArePointing(INode node)
-        {
-            IBranch b = GetPointingBranches(node).FirstOrDefault();
-            if (b != null)
-            {
-                throw new InvalidOperationException($"Cannot remove node {node} as branch {b} points directly to it.");
-            }
-
-            ITag t = GetPointingTags(node).FirstOrDefault();
-            if (t != null)
-            {
-                throw new InvalidOperationException($"Cannot remove node {node} as tag {t} points directly to it.");
-            }
-        }
-
         public void DropTag(ITag tag)
         {
             IHash pointsTo = tag.Tip;
@@ -157,18 +142,6 @@ namespace Prigitsk.Core.Graph
             return value;
         }
 
-        private Node GetOrCreateNode(IHash hash)
-        {
-            Node node;
-            if (!_nodes.TryGetValue(hash, out node))
-            {
-                node = new Node(hash);
-                _nodes.Add(hash, node);
-            }
-
-            return node;
-        }
-
         public IEnumerable<IBranch> GetPointingBranches(INode node)
         {
             Node n = Unwrap(node);
@@ -185,6 +158,13 @@ namespace Prigitsk.Core.Graph
         {
             Node node = Unwrap(inode);
             IBranch b = GetContainingBranch(node);
+
+            if (b == null)
+            {
+                // No branch at all.
+                return false;
+            }
+
             return _branches[b].First == node;
         }
 
@@ -243,10 +223,10 @@ namespace Prigitsk.Core.Graph
                         child.ParentsSet.AddLast(nParent);
                     }
                 }
-            }
 
-            Node firstParent = n.ParentsSet.FirstOrDefault();
-            firstParent?.AddAbsorbedCommit(n.Commit);
+                // Add this node to the list of absorbed ones.
+                child.AddAbsorbedParent(n);
+            }
 
             // Clear references.
             n.ParentsSet.Clear();
@@ -265,6 +245,33 @@ namespace Prigitsk.Core.Graph
 
             // Remove node from the list of all nodes.
             _nodes.Remove(n.Commit.Hash);
+        }
+
+        private void AssertNoBranchesOrTagsArePointing(INode node)
+        {
+            IBranch b = GetPointingBranches(node).FirstOrDefault();
+            if (b != null)
+            {
+                throw new InvalidOperationException($"Cannot remove node {node} as branch {b} points directly to it.");
+            }
+
+            ITag t = GetPointingTags(node).FirstOrDefault();
+            if (t != null)
+            {
+                throw new InvalidOperationException($"Cannot remove node {node} as tag {t} points directly to it.");
+            }
+        }
+
+        private Node GetOrCreateNode(IHash hash)
+        {
+            Node node;
+            if (!_nodes.TryGetValue(hash, out node))
+            {
+                node = new Node(hash);
+                _nodes.Add(hash, node);
+            }
+
+            return node;
         }
 
         private Node Unwrap(IHash ihash)

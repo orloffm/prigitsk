@@ -3,27 +3,51 @@
     public class DrawRunnerOptions : IDrawRunnerOptions
     {
         public DrawRunnerOptions(
-            string repository = null,
-            string target = null,
-            string output = null,
-            string format = null,
-            string remoteToUse = null)
+            string repository,
+            string target,
+            string output,
+            string format,
+            string remoteToUse,
+            bool forceTreatAsGitHub,
+            bool leaveTails,
+            bool removeTails,
+            bool preventSimplification,
+            bool keepAllOrphans,
+            bool keepOrphansWithTags)
         {
             Repository = repository;
-            Target = target;
-            Output = output;
+            TargetDirectory = target;
+            OutputFileName = output;
             Format = format;
             RemoteToUse = remoteToUse;
+            ForceTreatAsGitHub = forceTreatAsGitHub;
+            LeaveHeads = leaveTails;
+            RemoveTails = removeTails;
+            PreventSimplification = preventSimplification;
+            KeepAllOrphans = keepAllOrphans;
+            KeepOrphansWithTags = keepOrphansWithTags;
         }
+
+        public bool ForceTreatAsGitHub { get; }
 
         public string Format { get; }
 
-        public string Output { get; }
+        public bool KeepAllOrphans { get; }
+
+        public bool KeepOrphansWithTags { get; }
+
+        public bool LeaveHeads { get; }
+
+        public string OutputFileName { get; }
+
+        public bool PreventSimplification { get; }
 
         public string RemoteToUse { get; }
 
+        public bool RemoveTails { get; }
+
         public string Repository { get; }
 
-        public string Target { get; }
+        public string TargetDirectory { get; }
     }
 }

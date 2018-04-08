@@ -39,11 +39,6 @@ namespace Prigitsk.Core.Tools
             return valueSet.Add(value);
         }
 
-        void ICollection<KeyValuePair<TKey, ISet<TValue>>>.Add(KeyValuePair<TKey, ISet<TValue>> item)
-        {
-            ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Add(item);
-        }
-
         public void Add(TKey key, ISet<TValue> value)
         {
             _dic.Add(key, value);
@@ -54,31 +49,9 @@ namespace Prigitsk.Core.Tools
             _dic.Clear();
         }
 
-        bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Contains(KeyValuePair<TKey, ISet<TValue>> item)
-        {
-            return ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Contains(item);
-        }
-
         public bool ContainsKey(TKey key)
         {
             return _dic.ContainsKey(key);
-        }
-
-        void ICollection<KeyValuePair<TKey, ISet<TValue>>>.CopyTo(
-            KeyValuePair<TKey, ISet<TValue>>[] array,
-            int arrayIndex)
-        {
-            ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).CopyTo(array, arrayIndex);
-        }
-
-        IEnumerator<KeyValuePair<TKey, ISet<TValue>>> IEnumerable<KeyValuePair<TKey, ISet<TValue>>>.GetEnumerator()
-        {
-            return _dic.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _dic.GetEnumerator();
         }
 
         public bool Remove(TKey key, TValue value)
@@ -96,11 +69,6 @@ namespace Prigitsk.Core.Tools
             }
 
             return removed;
-        }
-
-        bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Remove(KeyValuePair<TKey, ISet<TValue>> item)
-        {
-            return ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Remove(item);
         }
 
         public bool Remove(TKey key)
@@ -125,6 +93,38 @@ namespace Prigitsk.Core.Tools
         public bool TryGetValue(TKey key, out ISet<TValue> value)
         {
             return _dic.TryGetValue(key, out value);
+        }
+
+        void ICollection<KeyValuePair<TKey, ISet<TValue>>>.Add(KeyValuePair<TKey, ISet<TValue>> item)
+        {
+            ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Add(item);
+        }
+
+        bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Contains(KeyValuePair<TKey, ISet<TValue>> item)
+        {
+            return ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Contains(item);
+        }
+
+        void ICollection<KeyValuePair<TKey, ISet<TValue>>>.CopyTo(
+            KeyValuePair<TKey, ISet<TValue>>[] array,
+            int arrayIndex)
+        {
+            ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).CopyTo(array, arrayIndex);
+        }
+
+        IEnumerator<KeyValuePair<TKey, ISet<TValue>>> IEnumerable<KeyValuePair<TKey, ISet<TValue>>>.GetEnumerator()
+        {
+            return _dic.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return _dic.GetEnumerator();
+        }
+
+        bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Remove(KeyValuePair<TKey, ISet<TValue>> item)
+        {
+            return ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Remove(item);
         }
     }
 }

@@ -29,11 +29,6 @@ namespace Prigitsk.Core.Tools
 
         public T Last => _linkedList.Last.Value;
 
-        void ICollection<T>.Add(T item)
-        {
-            Add(item);
-        }
-
         public bool Add(T item)
         {
             return AddLast(item);
@@ -42,18 +37,6 @@ namespace Prigitsk.Core.Tools
         public bool AddFirst(T item)
         {
             return AddInternal(item, _linkedList.AddFirst);
-        }
-
-        private bool AddInternal(T item, Func<T, LinkedListNode<T>> adder)
-        {
-            if (_dictionary.ContainsKey(item))
-            {
-                return false;
-            }
-
-            LinkedListNode<T> node = adder(item);
-            _dictionary.Add(item, node);
-            return true;
         }
 
         public bool AddLast(T item)
@@ -132,11 +115,6 @@ namespace Prigitsk.Core.Tools
         public IEnumerator<T> GetEnumerator()
         {
             return _linkedList.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         public void IntersectWith(IEnumerable<T> other)
@@ -237,6 +215,28 @@ namespace Prigitsk.Core.Tools
             {
                 Add(item);
             }
+        }
+
+        void ICollection<T>.Add(T item)
+        {
+            Add(item);
+        }
+
+        private bool AddInternal(T item, Func<T, LinkedListNode<T>> adder)
+        {
+            if (_dictionary.ContainsKey(item))
+            {
+                return false;
+            }
+
+            LinkedListNode<T> node = adder(item);
+            _dictionary.Add(item, node);
+            return true;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
