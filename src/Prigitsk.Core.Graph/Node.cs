@@ -24,18 +24,13 @@ namespace Prigitsk.Core.Graph
 
         public IEnumerable<INode> Children => ChildrenSet.WrapAsEnumerable();
 
-        internal ISet<Node> ChildrenSet { get; }
-
         public ICommit Commit { get; private set; }
 
         public IEnumerable<INode> Parents => ParentsSet.WrapAsEnumerable();
 
-        internal IOrderedSet<Node> ParentsSet { get; }
+        internal ISet<Node> ChildrenSet { get; }
 
-        internal void AddAbsorbedCommit(ICommit commit)
-        {
-            _absorbedCommitsList.Add(commit);
-        }
+        internal IOrderedSet<Node> ParentsSet { get; }
 
         public static bool AreEqual(INode a, INode b)
         {
@@ -62,14 +57,19 @@ namespace Prigitsk.Core.Graph
             return _initialHash;
         }
 
-        internal void SetCommit(ICommit commit)
-        {
-            Commit = commit;
-        }
-
         public override string ToString()
         {
             return Commit.ToString();
+        }
+
+        internal void AddAbsorbedCommit(ICommit commit)
+        {
+            _absorbedCommitsList.Add(commit);
+        }
+
+        internal void SetCommit(ICommit commit)
+        {
+            Commit = commit;
         }
     }
 }

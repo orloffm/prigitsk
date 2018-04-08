@@ -33,27 +33,6 @@ namespace Prigitsk.Core.Rendering
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
-        private string MakeNodeHandle(INode node)
-        {
-            return MakeNodeHandle(node.Commit.Hash);
-        }
-
-        private string MakeNodeHandle(IHash hash)
-        {
-            return hash.ToShortString();
-        }
-
-        private string MakePointerHandle(IPointer pointerObject)
-        {
-            string pointerLabel = pointerObject.Label
-                .Trim()
-                .Replace(".", "_")
-                .Replace("-", "_")
-                .Replace(" ", "_");
-
-            return pointerLabel;
-        }
-
         public void Render(
             ITree tree,
             IRemote usedRemote,
@@ -85,6 +64,27 @@ namespace Prigitsk.Core.Rendering
             // Tags and orphaned branches
             WriteTagsAndOrphanedBranchesConnections(tags, orphanedBranches);
             WriteFooter();
+        }
+
+        private string MakeNodeHandle(INode node)
+        {
+            return MakeNodeHandle(node.Commit.Hash);
+        }
+
+        private string MakeNodeHandle(IHash hash)
+        {
+            return hash.ToShortString();
+        }
+
+        private string MakePointerHandle(IPointer pointerObject)
+        {
+            string pointerLabel = pointerObject.Label
+                .Trim()
+                .Replace(".", "_")
+                .Replace("-", "_")
+                .Replace(" ", "_");
+
+            return pointerLabel;
         }
 
         private void WriteCurrentBranchesLabels(

@@ -18,6 +18,24 @@ namespace Prigitsk.Core.Simplification
             _walker = walker;
         }
 
+        public void Simplify(ITree tree, ISimplificationOptions options)
+        {
+            // First, remove orphans, if applicable.
+            if (options.RemoveOrphans)
+            {
+                RemoveOrphans(tree, options.RemoveOrphansEvenWithTags);
+            }
+
+            int pass = 0;
+            bool removedAnything;
+            do
+            {
+                _log.Debug("Doing pass {0}.", pass + 1);
+                pass++;
+                removedAnything = MakePass(tree, options);
+            } while (removedAnything);
+        }
+
         private bool CheckAllNonPrimaryChildrenAreFrom(IEnumerable<INode> nodesInQuestion, IEnumerable<INode> whitelist)
         {
             var whitelistSet = new HashSet<INode>(whitelist);
@@ -292,24 +310,6 @@ namespace Prigitsk.Core.Simplification
 
                 tree.RemoveNode(node);
             }
-        }
-
-        public void Simplify(ITree tree, ISimplificationOptions options)
-        {
-            // First, remove orphans, if applicable.
-            if (options.RemoveOrphans)
-            {
-                RemoveOrphans(tree, options.RemoveOrphansEvenWithTags);
-            }
-
-            int pass = 0;
-            bool removedAnything;
-            do
-            {
-                _log.Debug("Doing pass {0}.", pass + 1);
-                pass++;
-                removedAnything = MakePass(tree, options);
-            } while (removedAnything);
         }
 
         private bool TryFindRightSideOfARhombus(

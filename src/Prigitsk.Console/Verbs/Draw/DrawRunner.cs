@@ -28,9 +28,9 @@ namespace Prigitsk.Console.Verbs.Draw
         private readonly IBranchingStrategyProvider _strategyProvider;
         private readonly ITreeBuilder _treeBuilder;
         private readonly ITreeRendererFactory _treeRendererFactory;
+        private string _outputFormat;
 
         private DirectoryInfoBase _repositoryDir;
-        private string _outputFormat;
 
         public DrawRunner(
             IDrawRunnerOptions options,
@@ -59,26 +59,6 @@ namespace Prigitsk.Console.Verbs.Draw
             _strategyProvider = strategyProvider;
         }
 
-        private DirectoryInfoBase GetRepositoryToUse()
-        {
-            bool usingCurrentDir = false;
-            string repositoryDirectory = Options.Repository;
-            if (string.IsNullOrWhiteSpace(repositoryDirectory))
-            {
-                repositoryDirectory = _fileSystem.Directory.GetCurrentDirectory();
-                Log.Info($"Using current directory '{repositoryDirectory}' as repository path.");
-                usingCurrentDir = true;
-            }
-
-            DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(repositoryDirectory);
-            if (!usingCurrentDir && !di.Exists)
-            {
-                throw new Exception($"The specified repository directory {repositoryDirectory} does not exist.");
-            }
-
-            return di;
-        }
-
         protected override void Initialise()
         {
             _repositoryDir = GetRepositoryToUse();
@@ -89,31 +69,6 @@ namespace Prigitsk.Console.Verbs.Draw
                 Log.Info("Output format not specified. Will use SVG.");
                 _outputFormat = "svg";
             }
-        }
-
-        private string PrepareTargetPath()
-        {
-            string targetDirectory = Options.TargetDirectory;
-            if (string.IsNullOrWhiteSpace(targetDirectory))
-            {
-                targetDirectory = _repositoryDir.FullName;
-                Log.Info($"Target directory not specified, will use repository directory.");
-            }
-
-            string targetFileName = Options.OutputFileName;
-            if (string.IsNullOrWhiteSpace(targetFileName))
-            {
-         
-
-                targetFileName = _repositoryDir.Name + "." + _outputFormat;
-                Log.Info($"Target file name not specified, will use {targetFileName} instead.");
-            }
-
-            _fileSystem.Directory.CreateDirectory(targetDirectory);
-
-            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetFileName);
-            Log.Debug($"Will save to {targetPath}.");
-            return targetPath;
         }
 
         protected override void RunInternal()
@@ -159,6 +114,49 @@ namespace Prigitsk.Console.Verbs.Draw
                 Log.Info("GraphViz execution succeeded.");
                 Log.Info($"Saved to {targetPath}.");
             }
+        }
+
+        private DirectoryInfoBase GetRepositoryToUse()
+        {
+            bool usingCurrentDir = false;
+            string repositoryDirectory = Options.Repository;
+            if (string.IsNullOrWhiteSpace(repositoryDirectory))
+            {
+                repositoryDirectory = _fileSystem.Directory.GetCurrentDirectory();
+                Log.Info($"Using current directory '{repositoryDirectory}' as repository path.");
+                usingCurrentDir = true;
+            }
+
+            DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(repositoryDirectory);
+            if (!usingCurrentDir && !di.Exists)
+            {
+                throw new Exception($"The specified repository directory {repositoryDirectory} does not exist.");
+            }
+
+            return di;
+        }
+
+        private string PrepareTargetPath()
+        {
+            string targetDirectory = Options.TargetDirectory;
+            if (string.IsNullOrWhiteSpace(targetDirectory))
+            {
+                targetDirectory = _repositoryDir.FullName;
+                Log.Info($"Target directory not specified, will use repository directory.");
+            }
+
+            string targetFileName = Options.OutputFileName;
+            if (string.IsNullOrWhiteSpace(targetFileName))
+            {
+                targetFileName = _repositoryDir.Name + "." + _outputFormat;
+                Log.Info($"Target file name not specified, will use {targetFileName} instead.");
+            }
+
+            _fileSystem.Directory.CreateDirectory(targetDirectory);
+
+            string targetPath = _fileSystem.Path.Combine(targetDirectory, targetFileName);
+            Log.Debug($"Will save to {targetPath}.");
+            return targetPath;
         }
     }
 }

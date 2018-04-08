@@ -107,19 +107,19 @@ namespace Prigitsk.Console.General.Programs
             throw new Exception(message);
         }
 
-        private static PropertyInfo GetPropertyInfo(ExternalApp app)
-        {
-            MemberExpression memberExpression = (MemberExpression) SettingsProps[app].Body;
-            PropertyInfo propertyInfo = (PropertyInfo) memberExpression.Member;
-            return propertyInfo;
-        }
-
         public void SetSettingsPathFor(ExternalApp app, string fullPath)
         {
             PropertyInfo propertyInfo = GetPropertyInfo(app);
 
             propertyInfo.SetValue(_settings, fullPath);
             _settings.Save();
+        }
+
+        private static PropertyInfo GetPropertyInfo(ExternalApp app)
+        {
+            MemberExpression memberExpression = (MemberExpression) SettingsProps[app].Body;
+            PropertyInfo propertyInfo = (PropertyInfo) memberExpression.Member;
+            return propertyInfo;
         }
     }
 }

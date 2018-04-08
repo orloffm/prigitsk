@@ -38,6 +38,7 @@ namespace Prigitsk.Console.Tools
             {
                 _log.Info(outResult);
             }
+
             if (!string.IsNullOrWhiteSpace(errorResult))
             {
                 _log.Error(errorResult);

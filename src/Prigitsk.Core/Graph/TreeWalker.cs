@@ -14,6 +14,21 @@ namespace Prigitsk.Core.Graph
             return EnumerateAllParentsBreadthFirstInternal(source, minimum, returned);
         }
 
+        public IEnumerable<INode> EnumerateFirstParentsUpTheTreeBranchAgnostic(INode source, bool includeSelf = false)
+        {
+            if (includeSelf)
+            {
+                yield return source;
+            }
+
+            INode n = source.Parents.FirstOrDefault();
+            while (n != null)
+            {
+                yield return n;
+                n = n.Parents.FirstOrDefault();
+            }
+        }
+
         private IEnumerable<INode> EnumerateAllParentsBreadthFirstInternal(
             INode source,
             DateTimeOffset? minimum,
@@ -39,21 +54,6 @@ namespace Prigitsk.Core.Graph
                 {
                     yield return grandParent;
                 }
-            }
-        }
-
-        public IEnumerable<INode> EnumerateFirstParentsUpTheTreeBranchAgnostic(INode source, bool includeSelf = false)
-        {
-            if (includeSelf)
-            {
-                yield return source;
-            }
-
-            INode n = source.Parents.FirstOrDefault();
-            while (n != null)
-            {
-                yield return n;
-                n = n.Parents.FirstOrDefault();
             }
         }
     }
