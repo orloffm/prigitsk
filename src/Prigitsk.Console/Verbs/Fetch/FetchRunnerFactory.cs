@@ -7,7 +7,9 @@ namespace Prigitsk.Console.Verbs.Fetch
     {
         private readonly Func<IFetchRunnerOptions, IFetchRunner> _maker;
 
-        public FetchRunnerFactory(ILogger<FetchRunnerFactory> log, Func<IFetchRunnerOptions, IFetchRunner> maker) : base(log)
+        public FetchRunnerFactory(
+            ILogger<FetchRunnerFactory> log,
+            Func<IFetchRunnerOptions, IFetchRunner> maker) : base(log)
         {
             _maker = maker;
         }

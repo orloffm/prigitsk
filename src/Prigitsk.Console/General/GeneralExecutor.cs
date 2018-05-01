@@ -15,7 +15,10 @@ namespace Prigitsk.Console.General
         private readonly ILogger _log;
         private readonly ICommandLineParser _parser;
 
-        public GeneralExecutor(ICommandLineParser parser, IIndex<Verb, IVerbRunnerFactory> factorySelector, ILogger<GeneralExecutor> log)
+        public GeneralExecutor(
+            ICommandLineParser parser,
+            IIndex<Verb, IVerbRunnerFactory> factorySelector,
+            ILogger<GeneralExecutor> log)
         {
             _parser = parser;
             _factorySelector = factorySelector;

@@ -7,7 +7,8 @@ namespace Prigitsk.Console.Verbs.Draw
     {
         private readonly Func<IDrawRunnerOptions, IDrawRunner> _maker;
 
-        public DrawRunnerFactory(ILogger<DrawRunnerFactory> log, Func<IDrawRunnerOptions, IDrawRunner> maker) : base(log)
+        public DrawRunnerFactory(ILogger<DrawRunnerFactory> log, Func<IDrawRunnerOptions, IDrawRunner> maker) : base(
+            log)
         {
             _maker = maker;
         }

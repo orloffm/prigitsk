@@ -36,7 +36,6 @@ namespace Prigitsk.Console
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-
             // Create Logger<T> when ILogger<T> is required.
             builder.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>));
 
