@@ -25,7 +25,7 @@ namespace Prigitsk.Console.Abstractions.TextWriter
             _sw.WriteLine();
         }
 
-        public void AppendLine(string line = null)
+        public void AppendLine(string line)
         {
             _sw.WriteLine(line);
         }
