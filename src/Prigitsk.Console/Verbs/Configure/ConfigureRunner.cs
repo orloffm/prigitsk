@@ -6,7 +6,7 @@ using Prigitsk.Console.General.Programs;
 
 namespace Prigitsk.Console.Verbs.Configure
 {
-    public class ConfigureRunner : VerbRunnerBase<IConfigureRunnerOptions>, IConfigureRunner
+    public sealed class ConfigureRunner : VerbRunnerBase<IConfigureRunnerOptions>, IConfigureRunner
     {
         private const string CleanSettingString = ".";
         private readonly IExternalAppPathProvider _appPathProvider;
@@ -18,7 +18,7 @@ namespace Prigitsk.Console.Verbs.Configure
             IExternalAppPathProvider appPathProvider,
             IFileSystem fileSystem,
             IConsoleFactory consoleFactory,
-            ILogger log) : base(
+            ILogger<ConfigureRunner> log) : base(
             options,
             log)
         {

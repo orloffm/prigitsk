@@ -8,7 +8,7 @@ namespace Prigitsk.Console.Abstractions.Console
         private readonly LogLevel? _level;
         private readonly ILogger _log;
 
-        public Console(LogLevel? level, ILogger log)
+        public Console(LogLevel? level, ILogger<Console> log)
         {
             _level = level;
             _log = log;

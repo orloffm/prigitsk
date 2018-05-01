@@ -7,7 +7,7 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
     public class DrawVerbOptionsConverter
         : VerbOptionsConverterBase<DrawOptions, IDrawRunnerOptions>, IDrawVerbOptionsConverter
     {
-        public DrawVerbOptionsConverter(ILogger log) : base(log)
+        public DrawVerbOptionsConverter(ILogger<DrawVerbOptionsConverter> log) : base(log)
         {
         }
 

@@ -7,7 +7,7 @@ namespace Prigitsk.Console.CommandLine.Conversion.Fetch
     public class FetchVerbOptionsConverter
         : VerbOptionsConverterBase<FetchOptions, IFetchRunnerOptions>, IFetchVerbOptionsConverter
     {
-        public FetchVerbOptionsConverter(ILogger log) : base(log)
+        public FetchVerbOptionsConverter(ILogger<FetchVerbOptionsConverter> log) : base(log)
         {
         }
 

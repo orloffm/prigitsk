@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
-    public class DrawRunnerFactory : VerbRunnerFactoryBase<IDrawRunnerOptions>
+    public sealed class DrawRunnerFactory : VerbRunnerFactoryBase<IDrawRunnerOptions>
     {
         private readonly Func<IDrawRunnerOptions, IDrawRunner> _maker;
 
-        public DrawRunnerFactory(ILogger log, Func<IDrawRunnerOptions, IDrawRunner> maker) : base(log)
+        public DrawRunnerFactory(ILogger<DrawRunnerFactory> log, Func<IDrawRunnerOptions, IDrawRunner> maker) : base(log)
         {
             _maker = maker;
         }

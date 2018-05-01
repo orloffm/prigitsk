@@ -1,6 +1,8 @@
 ﻿using System.IO.Abstractions;
 using System.Reflection;
 using Autofac;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using Prigitsk.Console.CommandLine.Conversion;
 using Prigitsk.Console.CommandLine.Conversion.Configure;
 using Prigitsk.Console.CommandLine.Conversion.Draw;
@@ -22,9 +24,6 @@ namespace Prigitsk.Console
     {
         private static int Main(string[] args)
         {
-            //LogManager.LoadConfiguration("nlog.config");
-            //Logger logger = LogManager.GetCurrentClassLogger();
-            //logger.Info("ABC");
             IContainer container = PrepareContainer();
 
             IGeneralExecutor exec = container.Resolve<IGeneralExecutor>();
@@ -36,6 +35,13 @@ namespace Prigitsk.Console
         private static IContainer PrepareContainer()
         {
             ContainerBuilder builder = new ContainerBuilder();
+
+
+            // Create Logger<T> when ILogger<T> is required.
+            builder.RegisterGeneric(typeof(Logger<>)).As(typeof(ILogger<>));
+
+            // Use NLogLoggerFactory as a factory required by Logger<T>.
+            builder.RegisterType<NLogLoggerFactory>().AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // assemblies
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces(
@@ -50,9 +56,7 @@ namespace Prigitsk.Console
             );
 
             // external
-            builder.RegisterModule<NLoggerModule>();
             builder.RegisterType<FileSystem>().As<IFileSystem>();
-
             builder.RegisterInstance(AppSettings.Default).AsSelf();
 
             // converters

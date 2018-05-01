@@ -12,7 +12,7 @@ namespace Prigitsk.Core.Simplification
         private readonly ILogger _log;
         private readonly ITreeWalker _walker;
 
-        public Simplifier(ILogger log, ITreeWalker walker)
+        public Simplifier(ILogger<Simplifier> log, ITreeWalker walker)
         {
             _log = log;
             _walker = walker;

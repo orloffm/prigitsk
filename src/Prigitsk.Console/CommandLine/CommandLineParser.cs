@@ -15,7 +15,7 @@ namespace Prigitsk.Console.CommandLine
         private readonly IIndex<Verb, IVerbOptionsConverter> _factories;
         private readonly ILogger _log;
 
-        public CommandLineParser(ILogger log, IIndex<Verb, IVerbOptionsConverter> factories)
+        public CommandLineParser(ILogger<CommandLineParser> log, IIndex<Verb, IVerbOptionsConverter> factories)
         {
             _log = log;
             _factories = factories;

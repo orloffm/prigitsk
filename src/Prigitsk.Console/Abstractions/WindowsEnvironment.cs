@@ -7,7 +7,7 @@ namespace Prigitsk.Console.Abstractions
     {
         private readonly ILogger _log;
 
-        public WindowsEnvironment(ILogger log)
+        public WindowsEnvironment(ILogger<WindowsEnvironment> log)
         {
             _log = log;
         }

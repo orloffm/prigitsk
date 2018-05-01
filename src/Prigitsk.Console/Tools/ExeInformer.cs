@@ -5,13 +5,13 @@ using Prigitsk.Console.Abstractions.Registry;
 
 namespace Prigitsk.Console.Tools
 {
-    public class ExeInformer : IExeInformer
+    public sealed class ExeInformer : IExeInformer
     {
         private readonly IFileSystem _fileSystem;
         private readonly ILogger _log;
         private readonly IRegistry _registry;
 
-        public ExeInformer(IFileSystem fileSystem, IRegistry registry, ILogger log)
+        public ExeInformer(IFileSystem fileSystem, IRegistry registry, ILogger<ExeInformer> log)
         {
             _fileSystem = fileSystem;
             _registry = registry;

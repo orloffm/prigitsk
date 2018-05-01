@@ -3,12 +3,12 @@ using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Remotes
 {
-    public class GitHubRemoteWebUrlProvider : IGitHubRemoteWebUrlProvider
+    public sealed class GitHubRemoteWebUrlProvider : IGitHubRemoteWebUrlProvider
     {
         private readonly string _baseUrl;
         private readonly ILogger _log;
 
-        public GitHubRemoteWebUrlProvider(IGitHubRemoteParameters parameters, ILogger log)
+        public GitHubRemoteWebUrlProvider(IGitHubRemoteParameters parameters, ILogger<GitHubRemoteWebUrlProvider> log)
         {
             _baseUrl = string.Format(@"https://{0}/{1}/{2}", parameters.Server, parameters.User, parameters.Repository);
             _log = log;

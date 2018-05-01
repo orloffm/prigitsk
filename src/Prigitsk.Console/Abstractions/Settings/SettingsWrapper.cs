@@ -8,7 +8,7 @@ namespace Prigitsk.Console.Abstractions.Settings
         private readonly AppSettings _appSettings;
         private readonly ILogger _log;
 
-        public SettingsWrapper(AppSettings appSettings, ILogger log)
+        public SettingsWrapper(AppSettings appSettings, ILogger<SettingsWrapper> log)
         {
             _appSettings = appSettings;
             _log = log;

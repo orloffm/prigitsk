@@ -44,7 +44,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IFileTextWriterFactory fileWriterFactory,
             IExternalAppPathProvider appPathProvider,
             IBranchingStrategyProvider strategyProvider,
-            ILogger log)
+            ILogger<DrawRunner> log)
             : base(options, log)
         {
             _processRunner = processRunner;

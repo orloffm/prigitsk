@@ -10,7 +10,7 @@ using Prigitsk.Console.Tools;
 
 namespace Prigitsk.Console.General.Programs
 {
-    public class ExternalAppPathProvider : IExternalAppPathProvider
+    public sealed class ExternalAppPathProvider : IExternalAppPathProvider
     {
         private static readonly Dictionary<ExternalApp, string> ExeNames;
         private static readonly Dictionary<ExternalApp, Expression<Func<ISettingsWrapper, string>>> SettingsProps;
@@ -40,7 +40,7 @@ namespace Prigitsk.Console.General.Programs
             IFileSystem fileSystem,
             IExeInformer exeInformer,
             ISettingsWrapper settings,
-            ILogger log)
+            ILogger<ExternalAppPathProvider> log)
         {
             _fileSystem = fileSystem;
             _exeInformer = exeInformer;

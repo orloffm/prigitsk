@@ -2,9 +2,9 @@
 
 namespace Prigitsk.Console.Verbs.Fetch
 {
-    public class FetchRunner : VerbRunnerBase<IFetchRunnerOptions>, IFetchRunner
+    public sealed class FetchRunner : VerbRunnerBase<IFetchRunnerOptions>, IFetchRunner
     {
-        public FetchRunner(IFetchRunnerOptions options, ILogger log) : base(options, log)
+        public FetchRunner(IFetchRunnerOptions options, ILogger<FetchRunner> log) : base(options, log)
         {
         }
 

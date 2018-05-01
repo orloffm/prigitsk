@@ -24,7 +24,7 @@ namespace Prigitsk.Core.Rendering
         private readonly ITextWriter _textWriter;
 
         public TreeRenderer(
-            ILogger log,
+            ILogger<TreeRenderer> log,
             ITextWriter textWriter,
             IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {

@@ -4,11 +4,11 @@ using Prigitsk.Core.Tools;
 
 namespace Prigitsk.Console.Tools
 {
-    public class ProcessRunner : IProcessRunner
+    public sealed class ProcessRunner : IProcessRunner
     {
         private readonly ILogger _log;
 
-        public ProcessRunner(ILogger log)
+        public ProcessRunner(ILogger<ProcessRunner> log)
         {
             _log = log;
         }

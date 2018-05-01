@@ -14,7 +14,7 @@ namespace Prigitsk.Core.RepoData
         private readonly List<Remote> _remotes;
         private readonly List<Tag> _tags;
 
-        public RepositoryDataBuilder(ILogger logger)
+        public RepositoryDataBuilder(ILogger<RepositoryDataBuilder> logger)
         {
             _logger = logger;
 

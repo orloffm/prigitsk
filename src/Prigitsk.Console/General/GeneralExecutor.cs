@@ -9,13 +9,13 @@ namespace Prigitsk.Console.General
     /// <summary>
     ///     General class that handles execution.
     /// </summary>
-    public class GeneralExecutor : IGeneralExecutor
+    public sealed class GeneralExecutor : IGeneralExecutor
     {
         private readonly IIndex<Verb, IVerbRunnerFactory> _factorySelector;
         private readonly ILogger _log;
         private readonly ICommandLineParser _parser;
 
-        public GeneralExecutor(ICommandLineParser parser, IIndex<Verb, IVerbRunnerFactory> factorySelector, ILogger log)
+        public GeneralExecutor(ICommandLineParser parser, IIndex<Verb, IVerbRunnerFactory> factorySelector, ILogger<GeneralExecutor> log)
         {
             _parser = parser;
             _factorySelector = factorySelector;

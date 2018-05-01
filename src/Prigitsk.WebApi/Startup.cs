@@ -34,7 +34,6 @@ namespace Prigitsk.WebApi
             services.AddMvc().AddControllersAsServices();
 
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterModule<NLoggerModule>();
             builder.Populate(services);
             IContainer container = builder.Build();
 
