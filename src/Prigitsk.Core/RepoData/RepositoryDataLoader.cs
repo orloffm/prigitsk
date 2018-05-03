@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Prigitsk.Core.Git;
+using OrlovMikhail.Git;
 
 namespace Prigitsk.Core.RepoData
 {

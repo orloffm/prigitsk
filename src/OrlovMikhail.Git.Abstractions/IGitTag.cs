@@ -1,4 +1,4 @@
-﻿namespace Prigitsk.Core.Git
+﻿namespace OrlovMikhail.Git
 {
     public interface IGitTag : IGitRef
     {

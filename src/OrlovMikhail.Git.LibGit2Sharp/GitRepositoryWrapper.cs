@@ -2,7 +2,7 @@
 using System.Linq;
 using LibGit2Sharp;
 
-namespace Prigitsk.Core.Git.LibGit2Sharp
+namespace OrlovMikhail.Git.LibGit2Sharp
 {
     public class GitRepositoryWrapper : IGitRepository
     {

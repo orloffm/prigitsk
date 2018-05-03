@@ -1,6 +1,6 @@
 ﻿using LibGit2Sharp;
 
-namespace Prigitsk.Core.Git.LibGit2Sharp
+namespace OrlovMikhail.Git.LibGit2Sharp
 {
     public abstract class GitRefWrapped<T> : IGitRef where T : GitObject
     {

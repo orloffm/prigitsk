@@ -1,7 +1,7 @@
 ﻿using System;
 using LibGit2Sharp;
 
-namespace Prigitsk.Core.Git.LibGit2Sharp
+namespace OrlovMikhail.Git.LibGit2Sharp
 {
     public class GitSignatureWrapped
         : IGitSignature

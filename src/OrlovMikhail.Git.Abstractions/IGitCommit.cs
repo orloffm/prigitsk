@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Prigitsk.Core.Git
+namespace OrlovMikhail.Git
 {
     public interface IGitCommit : IGitObject
     {

@@ -2,19 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Prigitsk.Core</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Thinktecture.IO.Abstractions" Version="2.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Git\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\OrlovMikhail.Git.Abstractions\OrlovMikhail.Git.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

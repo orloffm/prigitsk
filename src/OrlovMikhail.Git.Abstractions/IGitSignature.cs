@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Prigitsk.Core.Git
+namespace OrlovMikhail.Git
 {
     public interface IGitSignature
     {

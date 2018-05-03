@@ -127,9 +127,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj">
-      <Project>{B5E97E64-CBA2-43D0-9476-E28831A5D476}</Project>
-      <Name>Prigitsk.Core.Git.LibGit2Sharp</Name>
+    <ProjectReference Include="..\OrlovMikhail.Git.Abstractions\OrlovMikhail.Git.Abstractions.csproj">
+      <Project>{b6ee367c-eaf4-41ea-80f8-e557615bf763}</Project>
+      <Name>OrlovMikhail.Git.Abstractions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OrlovMikhail.Git.LibGit2Sharp\OrlovMikhail.Git.LibGit2Sharp.csproj">
+      <Project>{ff726c95-f2de-4eff-aafc-8a968f7dbe7c}</Project>
+      <Name>OrlovMikhail.Git.LibGit2Sharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OrlovMikhail.GraphViz.Writing\OrlovMikhail.GraphViz.Writing.csproj">
+      <Project>{9660dbb4-5201-4fc3-a018-8e473f55b172}</Project>
+      <Name>OrlovMikhail.GraphViz.Writing</Name>
     </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj">
       <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>

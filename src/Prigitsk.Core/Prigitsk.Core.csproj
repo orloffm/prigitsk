@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OrlovMikhail.GraphViz.Writing\OrlovMikhail.GraphViz.Writing.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
-    <ProjectReference Include="..\Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj" />
     <ProjectReference Include="..\Prigitsk.Framework\Prigitsk.Framework.csproj" />
     <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj" />
