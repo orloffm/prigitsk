@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Framework
 {
     public class PairList<T, TU>
     {

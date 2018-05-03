@@ -5,4 +5,8 @@
     <RootNamespace>Prigitsk.Core</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Thinktecture.IO.Abstractions" Version="2.3.0" />
+  </ItemGroup>
+
 </Project>

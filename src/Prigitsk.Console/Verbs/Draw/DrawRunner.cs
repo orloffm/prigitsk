@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO.Abstractions;
-using System.Text;
+﻿using System.IO;
+using System.Linq;
 using Microsoft.Extensions.Logging;
-using Prigitsk.Console.Abstractions.TextWriter;
 using Prigitsk.Console.General;
 using Prigitsk.Console.General.Programs;
 using Prigitsk.Core.Entities;
@@ -12,7 +10,9 @@ using Prigitsk.Core.Rendering;
 using Prigitsk.Core.RepoData;
 using Prigitsk.Core.Simplification;
 using Prigitsk.Core.Strategy;
-using Prigitsk.Core.Tools;
+using Prigitsk.Framework;
+using Prigitsk.Framework.IO;
+using Thinktecture.IO;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
@@ -20,17 +20,17 @@ namespace Prigitsk.Console.Verbs.Draw
     {
         private readonly IExternalAppPathProvider _appPathProvider;
         private readonly IFileSystem _fileSystem;
-        private readonly IFileTextWriterFactory _fileWriterFactory;
         private readonly IRepositoryDataLoader _loader;
         private readonly IProcessRunner _processRunner;
         private readonly IRemoteHelper _remoteHelper;
         private readonly ISimplifier _simplifier;
         private readonly IBranchingStrategyProvider _strategyProvider;
+        private readonly ITextWriterFactory _textWriterFactory;
         private readonly ITreeBuilder _treeBuilder;
         private readonly ITreeRendererFactory _treeRendererFactory;
         private string _outputFormat;
 
-        private DirectoryInfoBase _repositoryDir;
+        private IDirectoryInfo _repositoryDir;
 
         public DrawRunner(
             IDrawRunnerOptions options,
@@ -41,7 +41,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IFileSystem fileSystem,
             ITreeRendererFactory treeRendererFactory,
             IRemoteHelper remoteHelper,
-            IFileTextWriterFactory fileWriterFactory,
+            ITextWriterFactory textWriterFactory,
             IExternalAppPathProvider appPathProvider,
             IBranchingStrategyProvider strategyProvider,
             ILogger<DrawRunner> log)
@@ -54,7 +54,7 @@ namespace Prigitsk.Console.Verbs.Draw
             _fileSystem = fileSystem;
             _treeRendererFactory = treeRendererFactory;
             _remoteHelper = remoteHelper;
-            _fileWriterFactory = fileWriterFactory;
+            _textWriterFactory = textWriterFactory;
             _appPathProvider = appPathProvider;
             _strategyProvider = strategyProvider;
         }
@@ -93,21 +93,24 @@ namespace Prigitsk.Console.Verbs.Draw
             TreeRenderingOptions renderingOptions = TreeRenderingOptions.Default;
             renderingOptions.ForceTreatAsGitHub = Options.ForceTreatAsGitHub;
 
-            using (ITextWriter textWriter = _fileWriterFactory.OpenForWriting(tempPath, Encoding.ASCII))
+            using (IFileStream fileStream = _fileSystem.File.OpenWrite(tempPath))
             {
-                ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
-                treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
+                using (IStreamWriter textWriter = _textWriterFactory.CreateStreamWriter(fileStream))
+                {
+                    ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
+                    treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
+                }
             }
 
             string targetPath = PrepareTargetPath();
 
             string graphVizCommand = _appPathProvider.GetProperAppPath(ExternalApp.GraphViz);
             string graphVizArgs = $@"""{tempPath}"" -T{_outputFormat} -o""{targetPath}""";
-            Log.Info($"Starting GraphViz with arguments: [{graphVizArgs}].");
+            Log.Debug($"Starting GraphViz with arguments: [{graphVizArgs}].");
             int code = _processRunner.Execute(graphVizCommand, graphVizArgs);
             if (code != 0)
             {
-                Log.Error("GraphViz execution failed.");
+                Log.Fatal("GraphViz execution failed.");
             }
             else
             {
@@ -116,22 +119,38 @@ namespace Prigitsk.Console.Verbs.Draw
             }
         }
 
-        private DirectoryInfoBase GetRepositoryToUse()
+        private IDirectoryInfo GetRepositoryToUse()
         {
-            bool usingCurrentDir = false;
-            string repositoryDirectory = Options.Repository;
-            if (string.IsNullOrWhiteSpace(repositoryDirectory))
+            string directoryToSearchFrom = null;
+
+            if (!string.IsNullOrWhiteSpace(Options.Repository))
             {
-                repositoryDirectory = _fileSystem.Directory.GetCurrentDirectory();
-                Log.Info($"Using current directory '{repositoryDirectory}' as repository path.");
-                usingCurrentDir = true;
+                directoryToSearchFrom = Options.Repository;
+
+                if (!_fileSystem.Directory.Exists(directoryToSearchFrom))
+                {
+                    string message =
+                        $"The specified repository directory {directoryToSearchFrom} does not exist.";
+                    Log.Fatal(message);
+                    throw new LoggedAsFatalException(message);
+                }
+            }
+            else
+            {
+                directoryToSearchFrom = _fileSystem.Directory.GetCurrentDirectory();
+                Log.Info($"Will look for a Git repository in current directory '{directoryToSearchFrom}'.");
             }
 
-            DirectoryInfoBase di = _fileSystem.DirectoryInfo.FromDirectoryName(repositoryDirectory);
-            if (!usingCurrentDir && !di.Exists)
+            IDirectoryInfo di = TryFindGitRepositoryDirectory(directoryToSearchFrom);
+            if (di == null)
             {
-                throw new Exception($"The specified repository directory {repositoryDirectory} does not exist.");
+                string message =
+                    "No Git directory found.";
+                Log.Fatal(message);
+                throw new LoggedAsFatalException(message);
             }
+
+            Log.Debug("Using Git repository from {di.FullName}.");
 
             return di;
         }
@@ -173,6 +192,28 @@ namespace Prigitsk.Console.Verbs.Draw
 
                 _simplifier.Simplify(tree, simplificationOptions);
             }
+        }
+
+        /// <summary>
+        ///     Searches for a directory containing a ".git" directory
+        ///     up from the current one.
+        /// </summary>
+        private IDirectoryInfo TryFindGitRepositoryDirectory(string source)
+        {
+            IDirectoryInfo di = _fileSystem.DirectoryInfo.Create(source);
+
+            do
+            {
+                bool containsGitFolder = di.GetDirectories(".git", SearchOption.TopDirectoryOnly).Any();
+                if (containsGitFolder)
+                {
+                    break;
+                }
+
+                di = di.Parent;
+            } while (di != null);
+
+            return di;
         }
     }
 }

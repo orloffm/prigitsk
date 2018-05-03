@@ -53,10 +53,6 @@
     <Compile Include="Abstractions\Console\ConsoleFactory.cs" />
     <Compile Include="Abstractions\Console\IConsole.cs" />
     <Compile Include="Abstractions\Console\IConsoleFactory.cs" />
-    <Compile Include="Abstractions\TextWriter\FileTextWriter.cs" />
-    <Compile Include="Abstractions\TextWriter\FileTextWriterFactory.cs" />
-    <Compile Include="Abstractions\TextWriter\IFileTextWriter.cs" />
-    <Compile Include="Abstractions\TextWriter\IFileTextWriterFactory.cs" />
     <Compile Include="CommandLine\CommandLineParser.cs" />
     <Compile Include="CommandLine\CommandLineParseResult.cs" />
     <Compile Include="CommandLine\Parsing\ConfigureOptions.cs" />
@@ -75,7 +71,6 @@
     <Compile Include="General\Programs\IExternalAppPathProvider.cs" />
     <Compile Include="Tools\ExeInformer.cs" />
     <Compile Include="Abstractions\IWindowsEnvironment.cs" />
-    <Compile Include="Tools\IExeInformer.cs" />
     <Compile Include="Abstractions\Registry\IRegistry.cs" />
     <Compile Include="Abstractions\Registry\IRegistryKey.cs" />
     <Compile Include="Abstractions\Registry\Registry.cs" />
@@ -90,6 +85,7 @@
     </Compile>
     <Compile Include="Abstractions\Settings\ISettingsWrapper.cs" />
     <Compile Include="Abstractions\Settings\SettingsWrapper.cs" />
+    <Compile Include="Tools\IExeInformer.cs" />
     <Compile Include="Tools\ProcessRunner.cs" />
     <Compile Include="Verbs\Configure\ConfigureRunnerFactory.cs" />
     <Compile Include="Verbs\Configure\IConfigureRunner.cs" />
@@ -139,9 +135,13 @@
       <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>
       <Name>Prigitsk.Core.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj">
+    <ProjectReference Include="..\Prigitsk.Framework.Interfaces\Prigitsk.Framework.Interfaces.csproj">
+      <Project>{173E192B-5555-46F3-A205-DBF51E540687}</Project>
+      <Name>Prigitsk.Framework.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Framework\Prigitsk.Framework.csproj">
       <Project>{EF57B264-073F-4535-B996-877B2110794C}</Project>
-      <Name>Prigitsk.Core.Tools</Name>
+      <Name>Prigitsk.Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj">
       <Project>{FB765E3C-97C2-49D6-9E28-02E301CB4AD4}</Project>
@@ -172,8 +172,8 @@
     <PackageReference Include="NLog.Extensions.Logging">
       <Version>1.0.0-rtm-rc6</Version>
     </PackageReference>
-    <PackageReference Include="System.IO.Abstractions">
-      <Version>2.1.0.178</Version>
+    <PackageReference Include="Thinktecture.Console.Abstractions">
+      <Version>2.3.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Prigitsk.Core.Tools;
+using Prigitsk.Framework;
 
 namespace Prigitsk.Console.Tools
 {

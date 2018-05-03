@@ -1,10 +1,9 @@
 ﻿namespace Prigitsk.Core.Rendering
 {
-    public class DotWriter
+    public class DotWriter : IDotWriter
     {
-    }
-
-    public interface IDotWriter
-    {
+        public void Dispose()
+        {
+        }
     }
 }

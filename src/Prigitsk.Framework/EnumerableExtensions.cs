@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Framework
 {
     public static class EnumerableExtensions
     {

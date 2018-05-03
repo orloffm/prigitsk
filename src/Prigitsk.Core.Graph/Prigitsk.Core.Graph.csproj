@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
-    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj" />
+    <ProjectReference Include="..\Prigitsk.Framework\Prigitsk.Framework.csproj" />
   </ItemGroup>
 
 </Project>

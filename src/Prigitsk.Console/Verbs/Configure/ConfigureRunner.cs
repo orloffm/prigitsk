@@ -1,8 +1,8 @@
-﻿using System.IO.Abstractions;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Prigitsk.Console.Abstractions.Console;
 using Prigitsk.Console.General;
 using Prigitsk.Console.General.Programs;
+using Prigitsk.Framework.IO;
 
 namespace Prigitsk.Console.Verbs.Configure
 {

@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Framework
 {
+    /// <summary>
+    ///     A dictionary that keeps a set of values per key.
+    /// </summary>
     public interface IMultipleDictionary<TKey, TValue> : IDictionary<TKey, ISet<TValue>>
     {
         bool Add(TKey key, TValue value);

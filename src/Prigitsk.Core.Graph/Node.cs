@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
-using Prigitsk.Core.Tools;
+using Prigitsk.Framework;
 
 namespace Prigitsk.Core.Graph
 {

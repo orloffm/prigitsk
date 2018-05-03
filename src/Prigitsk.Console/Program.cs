@@ -1,5 +1,4 @@
-﻿using System.IO.Abstractions;
-using System.Reflection;
+﻿using System.Reflection;
 using Autofac;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -17,6 +16,7 @@ using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Git.LibGit2Sharp;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.RepoData;
+using Prigitsk.Framework.IO;
 
 namespace Prigitsk.Console
 {
@@ -50,6 +50,8 @@ namespace Prigitsk.Console
             builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces(
             );
             builder.RegisterAssemblyTypes(typeof(ProcessRunner).Assembly).AsImplementedInterfaces(
+            );
+            builder.RegisterAssemblyTypes(typeof(TextWriterFactory).Assembly).AsImplementedInterfaces(
             );
             builder.RegisterAssemblyTypes(typeof(Tree).Assembly).AsImplementedInterfaces(
             );

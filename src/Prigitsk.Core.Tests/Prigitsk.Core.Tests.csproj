@@ -90,9 +90,9 @@
       <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>
       <Name>Prigitsk.Core.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj">
+    <ProjectReference Include="..\Prigitsk.Framework\Prigitsk.Framework.csproj">
       <Project>{ef57b264-073f-4535-b996-877b2110794c}</Project>
-      <Name>Prigitsk.Core.Tools</Name>
+      <Name>Prigitsk.Framework</Name>
     </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Core\Prigitsk.Core.csproj">
       <Project>{b6a51ab9-2b61-49c7-b3d8-4afede30220c}</Project>

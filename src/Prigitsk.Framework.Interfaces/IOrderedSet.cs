@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Framework
 {
     /// <summary>
     ///     A set of different objects that are stored in addition order.

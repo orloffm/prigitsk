@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Graph;
-using Prigitsk.Core.Tools;
+using Prigitsk.Framework;
 
 namespace Prigitsk.Core.Simplification
 {

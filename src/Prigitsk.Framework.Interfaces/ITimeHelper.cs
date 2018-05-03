@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Framework
 {
     public interface ITimeHelper
     {

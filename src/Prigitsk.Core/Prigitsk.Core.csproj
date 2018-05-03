@@ -13,8 +13,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Git.LibGit2Sharp\Prigitsk.Core.Git.LibGit2Sharp.csproj" />
-    <ProjectReference Include="..\Prigitsk.Core.Tools\Prigitsk.Core.Tools.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj" />
+    <ProjectReference Include="..\Prigitsk.Framework\Prigitsk.Framework.csproj" />
     <ProjectReference Include="..\Prigitsk.Shared\Prigitsk.Shared.csproj" />
   </ItemGroup>
 

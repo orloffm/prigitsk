@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace Prigitsk.Core.Tools
+namespace Prigitsk.Framework
 {
     public class MultipleDictionary<TKey, TValue>
         : IMultipleDictionary<TKey, TValue>

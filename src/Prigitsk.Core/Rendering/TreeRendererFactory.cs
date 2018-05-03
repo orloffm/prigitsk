@@ -1,5 +1,5 @@
 ﻿using System;
-using Prigitsk.Core.Tools;
+using Thinktecture.IO;
 
 namespace Prigitsk.Core.Rendering
 {
