@@ -7,7 +7,7 @@ namespace Prigitsk.Console.Verbs.Configure
     {
         private readonly Func<IConfigureRunnerOptions, IConfigureRunner> _maker;
 
-        public ConfigureRunnerFactory(ILogger log, Func<IConfigureRunnerOptions, IConfigureRunner> maker) : base(
+        public ConfigureRunnerFactory(ILogger<ConfigureRunnerFactory> log, Func<IConfigureRunnerOptions, IConfigureRunner> maker) : base(
             log)
         {
             _maker = maker;

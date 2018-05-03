@@ -87,12 +87,13 @@ namespace Prigitsk.Console.Verbs.Draw
             SimplifyTree(tree);
 
             string tempPath = _fileSystem.Path.GetTempFileName();
-            tempPath = _fileSystem.Path.ChangeExtension(tempPath, "dot");
+            tempPath = _fileSystem.Path.ChangeExtension(tempPath, "gv");
 
             // Rendering options.
             TreeRenderingOptions renderingOptions = TreeRenderingOptions.Default;
             renderingOptions.ForceTreatAsGitHub = Options.ForceTreatAsGitHub;
 
+            // ReSharper disable once AssignNullToNotNullAttribute
             using (IFileStream fileStream = _fileSystem.File.OpenWrite(tempPath))
             {
                 using (IStreamWriter textWriter = _textWriterFactory.CreateStreamWriter(fileStream))
