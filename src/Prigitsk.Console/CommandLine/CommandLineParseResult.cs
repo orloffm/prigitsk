@@ -5,10 +5,6 @@ namespace Prigitsk.Console.CommandLine
 {
     public sealed class CommandLineParseResult
     {
-        protected CommandLineParseResult()
-        {
-        }
-
         public static CommandLineParseResult Failed => new CommandLineParseResult {IsCorrect = false};
 
         public bool IsCorrect { get; private set; }
