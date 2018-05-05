@@ -17,6 +17,11 @@ namespace Prigitsk.Core.Entities
 
         public IHash Tip { get; }
 
+        /// <summary>
+        ///     The name by which this is referred to. Branch or tag name.
+        /// </summary>
+        public string Treeish => Label;
+
         public override int GetHashCode()
         {
             return FullName.GetHashCode();

@@ -13,7 +13,7 @@ namespace OrlovMikhail.GraphViz.Writing
         {
         }
 
-        protected override string ValueToString()
+        protected override string GetStringValueRaw()
         {
             decimal x = Value.Item1;
             decimal y = Value.Item2;

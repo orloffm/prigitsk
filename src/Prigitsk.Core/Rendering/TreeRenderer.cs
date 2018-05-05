@@ -110,8 +110,8 @@ namespace Prigitsk.Core.Rendering
             _gvWriter.SetGraphAttributes(
                 AttrSet.Empty
                     .Rankdir(Rankdir.LR)
-                    .NodeSep(0.2)
-                    .RankSep(0.1)
+                    .NodeSep(0.2m)
+                    .RankSep(0.1m)
                     .ForceLabels(false));
         }
 

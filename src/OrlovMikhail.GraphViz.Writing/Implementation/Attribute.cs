@@ -1,4 +1,9 @@
-﻿namespace OrlovMikhail.GraphViz.Writing
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+
+namespace OrlovMikhail.GraphViz.Writing
 {
     public abstract class Attribute<T> : IAttribute
     {
@@ -7,7 +12,9 @@
             Value = value;
         }
 
-        public string StringValue => ValueToString();
+        public abstract string Key { get; }
+
+        public string StringValue => GetStringValueRaw();
 
         protected T Value { get; }
 
@@ -21,7 +28,7 @@
             return string.Equals(StringValue, otherTyped.StringValue);
         }
 
-        protected virtual string ValueToString()
+        protected virtual string GetStringValueRaw()
         {
             return Value.ToString();
         }

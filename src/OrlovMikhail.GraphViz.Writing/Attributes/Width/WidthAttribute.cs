@@ -5,5 +5,7 @@
         public WidthAttribute(decimal value) : base(value)
         {
         }
+        public override string Key => "width";
+
     }
 }

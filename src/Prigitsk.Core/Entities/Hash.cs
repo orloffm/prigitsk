@@ -62,5 +62,7 @@ namespace Prigitsk.Core.Entities
         {
             return ToShortString();
         }
+
+        public string Treeish => ToShortString();
     }
 }

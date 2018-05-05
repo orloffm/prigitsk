@@ -5,5 +5,7 @@
         public ForceLabelsAttribute(bool value) : base(value)
         {
         }
+        public override string Key => "forceLabels";
+
     }
 }

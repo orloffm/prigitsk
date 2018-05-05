@@ -2,14 +2,11 @@
 {
     public abstract class GraphVizColorAttribute : Attribute<IGraphVizColor>
     {
-        protected GraphVizColorAttribute(IGraphVizColor color)
+        protected GraphVizColorAttribute(IGraphVizColor color):base(color)
         {
-            Value = color;
         }
 
-        protected override IGraphVizColor Value { get; }
-
-        protected override string ValueToString()
+        protected override string GetStringValueRaw()
         {
             return Value.ToGraphVizColorString();
         }

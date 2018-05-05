@@ -8,7 +8,7 @@ namespace OrlovMikhail.GraphViz.Writing
         {
         }
 
-        protected override string ValueToString()
+        protected override string GetStringValueRaw()
         {
             return Value.ToString(CultureInfo.InvariantCulture);
         }

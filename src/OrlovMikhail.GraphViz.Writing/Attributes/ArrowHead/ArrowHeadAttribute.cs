@@ -6,9 +6,11 @@
         {
         }
 
-        protected override string ValueToString()
+        public override string Key => "arrowHead";
+
+        protected override string GetStringValueRaw()
         {
-            return base.ValueToString().ToLower();
+            return base.GetStringValueRaw().ToLower();
         }
     }
 }

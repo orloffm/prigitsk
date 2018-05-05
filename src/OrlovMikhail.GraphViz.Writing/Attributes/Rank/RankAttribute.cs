@@ -5,6 +5,7 @@
         public RankAttribute(RankType value) : base(value)
         {
         }
+        public override string Key => "rank";
 
     }
 }

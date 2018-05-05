@@ -5,5 +5,7 @@
         public LabelAttribute(string value) : base(value)
         {
         }
+        public override string Key => "label";
+
     }
 }

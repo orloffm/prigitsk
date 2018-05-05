@@ -6,7 +6,7 @@
         {
         }
 
-        protected override string ValueToString()
+        protected override string GetStringValueRaw()
         {
             return Value ? "true" : "false";
         }

@@ -57,5 +57,7 @@ namespace Prigitsk.Core.Entities
         {
             return Hash.ToString();
         }
+
+        public string Treeish => Hash.ToShortString();
     }
 }

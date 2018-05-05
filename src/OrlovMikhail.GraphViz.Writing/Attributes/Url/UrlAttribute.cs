@@ -5,5 +5,7 @@
         public UrlAttribute(string value) : base(value)
         {
         }
+        public override string Key => "URL";
+
     }
 }

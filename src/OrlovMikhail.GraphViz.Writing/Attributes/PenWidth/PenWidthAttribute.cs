@@ -5,5 +5,6 @@
         public PenWidthAttribute(decimal value) : base(value)
         {
         }
+        public override string Key => "penWidth";
     }
 }

@@ -2,7 +2,7 @@
 {
     public static class RankSepAttributeExtensions
     {
-        public static IAttrSet RankSep(this IAttrSet attrSet, double value)
+        public static IAttrSet RankSep(this IAttrSet attrSet, decimal value)
         {
             RankSepAttribute a = new RankSepAttribute(value);
             attrSet.Add(a);

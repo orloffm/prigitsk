@@ -5,5 +5,7 @@
         public FillColorAttribute(IGraphVizColor value) : base(value)
         {
         }
+        public override string Key => "fillColor";
+
     }
 }

@@ -5,5 +5,7 @@
         public NodeSepAttribute(decimal value) : base(value)
         {
         }
+        public override string Key => "nodeSep";
+
     }
 }

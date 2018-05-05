@@ -8,12 +8,14 @@ namespace Prigitsk.Core.Graph
 {
     public class Node : INode, IEquatable<Node>
     {
+        private readonly IHash _initialCommitHash;
         private readonly List<Node> _absorbedParentsList;
-        private readonly int _initialHash;
+        private readonly int _hashCode;
 
         public Node(IHash initialCommitHash)
         {
-            _initialHash = initialCommitHash.GetHashCode();
+            _initialCommitHash = initialCommitHash;
+            _hashCode = initialCommitHash.GetHashCode();
 
             ParentsSet = new OrderedSet<Node>();
             ChildrenSet = new HashSet<Node>();
@@ -54,7 +56,7 @@ namespace Prigitsk.Core.Graph
 
         public override int GetHashCode()
         {
-            return _initialHash;
+            return _hashCode;
         }
 
         public override string ToString()
@@ -72,5 +74,7 @@ namespace Prigitsk.Core.Graph
         {
             Commit = commit;
         }
+
+        public string Treeish => _initialCommitHash.ToShortString();
     }
 }

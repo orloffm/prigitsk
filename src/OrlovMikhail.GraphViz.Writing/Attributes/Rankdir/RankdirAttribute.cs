@@ -5,5 +5,7 @@
         public RankdirAttribute(Rankdir value) : base(value)
         {
         }
+        public override string Key => "rankDir";
+
     }
 }

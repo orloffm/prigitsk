@@ -9,5 +9,7 @@
         public MarginAttribute(decimal x, decimal y) : base(x, y)
         {
         }
+
+        public override string Key => "margin";
     }
 }

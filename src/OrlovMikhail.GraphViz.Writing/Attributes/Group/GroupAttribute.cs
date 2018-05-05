@@ -5,5 +5,7 @@
         public GroupAttribute(string value) : base(value)
         {
         }
+        public override string Key => "group";
+
     }
 }

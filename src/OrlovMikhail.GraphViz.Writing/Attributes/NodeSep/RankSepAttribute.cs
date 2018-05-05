@@ -5,5 +5,6 @@
         public RankSepAttribute(decimal value) : base(value)
         {
         }
+        public override string Key => "rankSep";
     }
 }
