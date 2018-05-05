@@ -10,11 +10,22 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
         [InlineData("\"a\"", true)]
         [InlineData(@"""a\""", false)]
         [InlineData(@"""a\""""", true)]
-        public void GivenString_WhenCheckedQuoted_ReturnsProperValues(string input, bool isQuotedProperly)
+        public void GivenString_WhenCheckedQuoted_ThenReturnsProperValues(string input, bool isQuotedProperly)
         {
             DotHelper dh = new DotHelper();
             bool result = dh.IsProperlyQuoted(input);
             Assert.Equal(isQuotedProperly, result);
+        }
+
+        [Fact]
+        public void GivenStringAttribute_ThenReturnsProperRecordForIt()
+        {
+            LabelAttribute la = new LabelAttribute("b");
+            DotHelper dh = new DotHelper();
+            string record = dh.GetRecordFromAttribute(la);
+            string expected = la.Key + "=b";
+
+            Assert.Equal(expected, record);
         }
     }
 }

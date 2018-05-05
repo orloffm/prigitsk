@@ -7,5 +7,10 @@
         }
 
         public override string Key => "rank";
+
+        protected override string GetStringValueRaw()
+        {
+            return base.GetStringValueRaw().ToLower();
+        }
     }
 }

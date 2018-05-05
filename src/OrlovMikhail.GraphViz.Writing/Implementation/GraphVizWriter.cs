@@ -102,7 +102,7 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public void RawAttributes(IAttrSet attributesSet)
         {
-            foreach (var attr in attributesSet)
+            foreach (IAttribute attr in attributesSet)
             {
                 string record = _dotHelper.GetRecordFromAttribute(attr);
                 Line($"{record};");
@@ -114,6 +114,7 @@ namespace OrlovMikhail.GraphViz.Writing
             StringBuilder sb = new StringBuilder();
             sb.Append("edge");
             AppendAttributeSet(attributesSet, sb);
+            sb.Append(";");
             Line(sb.ToString());
         }
 
@@ -122,6 +123,7 @@ namespace OrlovMikhail.GraphViz.Writing
             StringBuilder sb = new StringBuilder();
             sb.Append("graph");
             AppendAttributeSet(attributesSet, sb);
+            sb.Append(";");
             Line(sb.ToString());
         }
 
@@ -130,12 +132,13 @@ namespace OrlovMikhail.GraphViz.Writing
             StringBuilder sb = new StringBuilder();
             sb.Append("node");
             AppendAttributeSet(attributesSet, sb);
+            sb.Append(";");
             Line(sb.ToString());
         }
 
         public IGraphHandle StartGraph(GraphMode graphMode, bool strict)
         {
-            this._graphMode = graphMode;
+            _graphMode = graphMode;
             if (_subGraphs.Count != 0)
             {
                 throw new InvalidOperationException();
@@ -196,9 +199,9 @@ namespace OrlovMikhail.GraphViz.Writing
 
             sb.Append(" [");
             bool wroteFirst = false;
-            foreach (var attribute in attrSet)
+            foreach (IAttribute attribute in attrSet)
             {
-                if (!wroteFirst)
+                if (wroteFirst)
                 {
                     sb.Append(", ");
                 }

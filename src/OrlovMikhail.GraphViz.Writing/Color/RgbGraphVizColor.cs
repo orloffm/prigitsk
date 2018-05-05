@@ -30,7 +30,7 @@ namespace OrlovMikhail.GraphViz.Writing
 
             hex = hex.Trim();
 
-            if (!Regex.IsMatch(hex, HexRegexPattern))
+            if (!Regex.IsMatch(hex, HexRegexPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
             {
                 throw new InvalidOperationException($"The '{hex}' value is not a proper hex color specification.");
             }

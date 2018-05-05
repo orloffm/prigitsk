@@ -49,12 +49,17 @@ namespace OrlovMikhail.GraphViz.Writing
         public string GetRecordFromAttribute(IAttribute attribute)
         {
             string escapedValue = EscapeId(attribute.StringValue);
-            string record = $"{attribute.Key}=${escapedValue}";
+            string record = $"{attribute.Key}={escapedValue}";
             return record;
         }
 
         public bool IsProperlyQuoted(string s)
         {
+            if (s.Length < 2)
+            {
+                return false;
+            }
+
             // Should start and end with quotes.
             if (!(s[0] == '"' && s[s.Length - 1] == '"'))
             {

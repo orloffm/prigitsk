@@ -20,7 +20,7 @@ namespace OrlovMikhail.GraphViz.Writing
         {
             if (color.IsNamedColor)
             {
-                return new NamedGraphVizColor(color.Name);
+                return new NamedGraphVizColor(color.Name.ToLower());
             }
 
             return RgbGraphVizColor.CreateFromRgb(color);

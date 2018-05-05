@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace OrlovMikhail.GraphViz.Writing
 {
-    public class AttrSet : IAttrSet
+    public sealed class AttrSet : IAttrSet
     {
         private readonly Dictionary<string, IAttribute> _set;
 
