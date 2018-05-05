@@ -3,6 +3,7 @@ using Autofac;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using OrlovMikhail.Git.LibGit2Sharp;
+using OrlovMikhail.GraphViz.Writing;
 using Prigitsk.Console.CommandLine.Conversion;
 using Prigitsk.Console.CommandLine.Conversion.Configure;
 using Prigitsk.Console.CommandLine.Conversion.Draw;
@@ -43,21 +44,16 @@ namespace Prigitsk.Console
             builder.RegisterType<NLogLoggerFactory>().AsImplementedInterfaces().InstancePerLifetimeScope();
 
             // assemblies
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces(
-            );
-            builder.RegisterAssemblyTypes(typeof(GitBranchWrapped).Assembly).AsImplementedInterfaces(
-            );
-            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces(
-            );
-            builder.RegisterAssemblyTypes(typeof(ProcessRunner).Assembly).AsImplementedInterfaces(
-            );
-            builder.RegisterAssemblyTypes(typeof(TextWriterFactory).Assembly).AsImplementedInterfaces(
-            );
-            builder.RegisterAssemblyTypes(typeof(Tree).Assembly).AsImplementedInterfaces(
-            );
+            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(GitBranchWrapped).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(ProcessRunner).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(TextWriterFactory).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(Tree).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(PenWidthAttribute).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(FileSystem).Assembly).AsImplementedInterfaces();
 
             // external
-            builder.RegisterType<FileSystem>().As<IFileSystem>();
             builder.RegisterInstance(AppSettings.Default).AsSelf();
 
             // converters
