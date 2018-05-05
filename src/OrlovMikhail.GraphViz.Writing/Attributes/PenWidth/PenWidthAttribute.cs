@@ -2,7 +2,7 @@
 {
     public class PenWidthAttribute : DoubleAttribute
     {
-        public PenWidthAttribute(double value) : base(value)
+        public PenWidthAttribute(decimal value) : base(value)
         {
         }
     }

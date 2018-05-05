@@ -2,7 +2,7 @@
 {
     public class HeightAttribute : DoubleAttribute
     {
-        public HeightAttribute(double value) : base(value)
+        public HeightAttribute(decimal value) : base(value)
         {
         }
     }

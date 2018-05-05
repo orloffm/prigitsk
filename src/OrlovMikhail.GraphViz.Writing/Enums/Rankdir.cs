@@ -3,6 +3,8 @@
     public enum Rankdir
     {
         TB,
-        LR
+        LR,
+        BT,
+        RL
     }
 }

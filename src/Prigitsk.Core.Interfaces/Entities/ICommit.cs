@@ -6,7 +6,7 @@ namespace Prigitsk.Core.Entities
     /// <summary>
     ///     Immutable representation of a Git commit.
     /// </summary>
-    public interface ICommit
+    public interface ICommit : ITreeish
     {
         DateTimeOffset? CommittedWhen { get; }
 

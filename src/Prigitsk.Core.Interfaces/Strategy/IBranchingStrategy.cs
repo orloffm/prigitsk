@@ -12,7 +12,7 @@ namespace Prigitsk.Core.Strategy
         /// <summary>
         ///     Returns HTML color for the branch. TODO: return an enum.
         /// </summary>
-        string GetHtmlColorFor(IBranch branch);
+        string GetHexColorFor(IBranch branch);
 
         /// <summary>
         ///     Orders branches by their logical creation priority.

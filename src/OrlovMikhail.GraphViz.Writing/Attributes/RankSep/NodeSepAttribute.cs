@@ -2,7 +2,7 @@
 {
     public class NodeSepAttribute : DoubleAttribute
     {
-        public NodeSepAttribute(double value) : base(value)
+        public NodeSepAttribute(decimal value) : base(value)
         {
         }
     }

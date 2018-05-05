@@ -1,6 +1,6 @@
 ﻿namespace Prigitsk.Core.Entities
 {
-    public interface IHash
+    public interface IHash : ITreeish
     {
         string Value { get; }
 

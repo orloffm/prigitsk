@@ -2,7 +2,7 @@
 {
     public class WidthAttribute : DoubleAttribute
     {
-        public WidthAttribute(double value) : base(value)
+        public WidthAttribute(decimal value) : base(value)
         {
         }
     }

@@ -2,7 +2,7 @@
 {
     public static class WidthAttributeExtensions
     {
-        public static IAttrSet Width(this IAttrSet attrSet, double value)
+        public static IAttrSet Width(this IAttrSet attrSet, decimal value)
         {
             WidthAttribute a = new WidthAttribute(value);
             attrSet.Add(a);

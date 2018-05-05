@@ -4,6 +4,7 @@
     {
         None,
         Box,
+        Cds,
         Circle,
         Ellipse,
         Point,

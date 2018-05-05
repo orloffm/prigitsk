@@ -2,14 +2,11 @@
 
 namespace OrlovMikhail.GraphViz.Writing
 {
-    public abstract class DoubleAttribute : Attribute<double>
+    public abstract class DoubleAttribute : Attribute<decimal>
     {
-        protected DoubleAttribute(double value)
+        protected DoubleAttribute(decimal value) : base(value)
         {
-            Value = value;
         }
-
-        protected override double Value { get; }
 
         protected override string ValueToString()
         {

@@ -1,8 +1,12 @@
 ﻿namespace OrlovMikhail.GraphViz.Writing
 {
-    public class MarginAttribute : DoubleAttribute
+    public sealed class MarginAttribute : PointAttribute
     {
-        public MarginAttribute(double value) : base(value)
+        public MarginAttribute(decimal value) : base(value)
+        {
+        }
+
+        public MarginAttribute(decimal x, decimal y) : base(x, y)
         {
         }
     }

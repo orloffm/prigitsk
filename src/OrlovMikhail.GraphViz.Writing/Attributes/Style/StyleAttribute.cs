@@ -1,8 +1,8 @@
 ﻿namespace OrlovMikhail.GraphViz.Writing
 {
-    public class ShapeAttribute : EnumAttribute<Shape>
+    public class StyleAttribute : EnumAttribute<Style>
     {
-        public ShapeAttribute(Shape value) : base(value)
+        public StyleAttribute(Style value) : base(value)
         {
         }
 

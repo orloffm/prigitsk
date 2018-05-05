@@ -1,8 +1,8 @@
 ﻿namespace OrlovMikhail.GraphViz.Writing
 {
-    public abstract class ColorAttribute : Attribute<IGraphVizColor>
+    public abstract class GraphVizColorAttribute : Attribute<IGraphVizColor>
     {
-        protected ColorAttribute(IGraphVizColor color)
+        protected GraphVizColorAttribute(IGraphVizColor color)
         {
             Value = color;
         }

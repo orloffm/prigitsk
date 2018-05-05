@@ -3,7 +3,7 @@ using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Graph
 {
-    public interface INode
+    public interface INode : ITreeish
     {
         IEnumerable<ICommit> AbsorbedParentCommits { get; }
 

@@ -2,12 +2,9 @@
 {
     public abstract class BooleanAttribute : Attribute<bool>
     {
-        protected BooleanAttribute(bool value)
+        protected BooleanAttribute(bool value):base(value)
         {
-            Value = value;
         }
-
-        protected override bool Value { get; }
 
         protected override string ValueToString()
         {

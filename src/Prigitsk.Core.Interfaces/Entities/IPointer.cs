@@ -1,6 +1,8 @@
-﻿namespace Prigitsk.Core.Entities
+﻿using Prigitsk.Core.Graph;
+
+namespace Prigitsk.Core.Entities
 {
-    public interface IPointer
+    public interface IPointer : ITreeish
     {
         /// <summary>
         ///     Full name of the pointer.

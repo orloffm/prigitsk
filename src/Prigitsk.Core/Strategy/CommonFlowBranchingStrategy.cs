@@ -20,7 +20,7 @@ namespace Prigitsk.Core.Strategy
             "^hotfix"
         };
 
-        public string GetHtmlColorFor(IBranch branch)
+        public string GetHexColorFor(IBranch branch)
         {
             string label = branch.Label.ToLower();
             if (label == "master")
