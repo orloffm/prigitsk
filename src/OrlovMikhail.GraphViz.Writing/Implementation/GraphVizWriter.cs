@@ -23,7 +23,7 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public void Comment(string comment)
         {
-                EmptyLine();
+            EmptyLine();
 
             if (string.IsNullOrWhiteSpace(comment))
             {
