@@ -4,11 +4,15 @@ nodesep=0.2;
 ranksep=0.1;
 forcelabels=false;
 graph [fontname = "consolas", fontcolor="black", fontsize="8pt"]; node [fontname = "consolas", fontcolor="black", fontsize="8pt"]; edge [fontname = "consolas", fontcolor="black", fontsize="8pt"];
+
 // general
 node [style=filled; color="black"];
-edge [arrowhead=vee, color="black", penwidth=l];
+edge [arrowhead=vee, color="black", penwidth=1];
+
 // branch names
-node [fixedsize=false, penwidth=0, fillcolor=none, shape=none, width=0, height=0, margin="0.05"]; subgraph {
+node [fixedsize=false, penwidth=0, fillcolor=none, shape=none, width=0, height=0, margin="0.05"];
+
+subgraph {
 rank=sink;
 me [label="master", group="master"];
 }
@@ -35,13 +39,15 @@ subgraph {
 rank=sink;
 ice [label="dev-wolf", group="wolf"];
 }
+
 // tags
-node [shape=cds, fixedsize=false, fillcolor="#C6C6C6", penwidth=l, margin="0.11,0.055"]
+node [shape=cds, fixedsize=false, fillcolor="#C6C6C6", penwidth=1, margin="0.11,0.055"]
 tag2 [label="5.2.0"]
 tag21 [label="5.2.1"]
 tag22 [label="5.2.2"]
 tag3 [label="5.3.0"]
 tag31 [label="5.3.1"]
+
 // graph
 node [width=0.22, height=0.22, fixedsize=true, label="", margin="0.11,0.055", shape=circle, penwidth=2, fillcolor="#FF0000"]
 // branches
@@ -50,10 +56,12 @@ ml [label="Ml"];
 m2 [label="M2"];
 m3 [label="M3"];
 m4 [label="M4"];
+
 subgraph {
 rank=source;
 ms [label="", width=0, height=0, penwidth=0];
 }
+
 edge [color="#27E4F9"]; ml -> m2 -> m3 -> m4;
 ms -> ml [style=dashed, arrowhead=none ]; m4 -> me [ style=dashed, arrowhead=none ];
 node [group="hotfixes", fillcolor="#FD5965", color="#FD5965", fontcolor="#650108"];
@@ -79,7 +87,7 @@ node [group="develop", fillcolor="#FFE333", color="#FFE333", fontcolor="#665800"
 rank=source;
 ds [label="", width=0, height=0, penwidth=0];
 }
-dl [label=l]; d2 [label=2]; d3 [label=3]; d4 [label=4]; d5 [label=5]; d6 [label=6]; d7 [label=7]; d8 [label=8];
+dl [label=1]; d2 [label=2]; d3 [label=3]; d4 [label=4]; d5 [label=5]; d6 [label=6]; d7 [label=7]; d8 [label=8];
 d9 [label=9]; dl0 [label=10];
 ds ->	dl	[style=dashed;	arrowhead=none ];
 dl ->	d2	->	d3	->	d4;
@@ -157,7 +165,7 @@ subgraph{ rank=same; m4; d9; } // hack
 subgraph{ rank=same; fgl; fal; } // hack
 subgraph{ rank=same; s5; fil; } // hack
 // tags connections
-edge [color="#b0b0b0", style=dotted, len=0.3, arrowhead=none, penwidth=l]; subgraph { rank="same"; tag3 -> m3 ;
+edge [color="#b0b0b0", style=dotted, len=0.3, arrowhead=none, penwidth=1]; subgraph { rank="same"; tag3 -> m3 ;
 }
 subgraph {
 rank="same"; m4 -> tag31;
