@@ -12,7 +12,7 @@ using Thinktecture.IO;
 
 namespace Prigitsk.Core.Rendering
 {
-    public sealed class OldTreeRenderer 
+    public sealed class OldTreeRenderer
     {
         private const string BranchEdgesFormat
             = @"edge[color=""{0}"", penwidth={1}];";

@@ -8,7 +8,6 @@ namespace Prigitsk.Core.Tests.Remotes
     {
         [Theory]
         [InlineData(@"git@github.com:gohugoio/hugo.git", false, true, "github.com", "gohugoio", "hugo")]
-        [InlineData(@"git@github.com:gohugoio/hugo.git", false, true, "github.com", "gohugoio", "hugo")]
         [InlineData(@"https://github.com/gohugoio/hugo.git", false, true, "github.com", "gohugoio", "hugo")]
         [InlineData(@"https://github.somebank.com/gohugoio/hugo.git", false, false)]
         [InlineData(@"https://github.com/gohugoio/hugo", true, true, "github.com", "gohugoio", "hugo")]

@@ -1,18 +1,18 @@
 ﻿using System;
-using Thinktecture.IO;
+using OrlovMikhail.GraphViz.Writing;
 
 namespace Prigitsk.Core.Rendering
 {
     public class TreeRendererFactory : ITreeRendererFactory
     {
-        private readonly Func<ITextWriter, ITreeRenderer> _rendererMaker;
+        private readonly Func<IGraphVizWriter, ITreeRenderer> _rendererMaker;
 
-        public TreeRendererFactory(Func<ITextWriter, ITreeRenderer> rendererMaker)
+        public TreeRendererFactory(Func<IGraphVizWriter, ITreeRenderer> rendererMaker)
         {
             _rendererMaker = rendererMaker;
         }
 
-        public ITreeRenderer CreateRenderer(ITextWriter textWriter)
+        public ITreeRenderer CreateRenderer(IGraphVizWriter textWriter)
         {
             return _rendererMaker(textWriter);
         }

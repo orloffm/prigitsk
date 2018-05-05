@@ -2,7 +2,7 @@
 {
     public abstract class BooleanAttribute : Attribute<bool>
     {
-        protected BooleanAttribute(bool value):base(value)
+        protected BooleanAttribute(bool value) : base(value)
         {
         }
 

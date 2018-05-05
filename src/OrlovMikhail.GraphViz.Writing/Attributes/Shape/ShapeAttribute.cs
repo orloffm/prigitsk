@@ -6,11 +6,11 @@
         {
         }
 
+        public override string Key => "shape";
+
         protected override string GetStringValueRaw()
         {
             return Value.ToString().ToLower();
         }
-        public override string Key => "shape";
-
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Thinktecture.IO;
+﻿using Thinktecture.IO;
 using Thinktecture.IO.Adapters;
 using Thinktecture.Text;
 

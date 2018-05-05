@@ -61,7 +61,7 @@ namespace Prigitsk.Core.Rendering
             WriteTagsAndOrphanedBranchesConnections(tags, orphanedBranches);
             WriteFooter();
         }
-        
+
         private void WriteCurrentBranchesLabels(
             IEnumerable<IBranch> currentBranches,
             IRemoteWebUrlProvider remoteUrlProvider)

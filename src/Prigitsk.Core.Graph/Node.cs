@@ -8,9 +8,9 @@ namespace Prigitsk.Core.Graph
 {
     public class Node : INode, IEquatable<Node>
     {
-        private readonly IHash _initialCommitHash;
         private readonly List<Node> _absorbedParentsList;
         private readonly int _hashCode;
+        private readonly IHash _initialCommitHash;
 
         public Node(IHash initialCommitHash)
         {
@@ -29,6 +29,8 @@ namespace Prigitsk.Core.Graph
         public ICommit Commit { get; private set; }
 
         public IEnumerable<INode> Parents => ParentsSet.WrapAsEnumerable();
+
+        public string Treeish => _initialCommitHash.ToShortString();
 
         internal ISet<Node> ChildrenSet { get; }
 
@@ -74,7 +76,5 @@ namespace Prigitsk.Core.Graph
         {
             Commit = commit;
         }
-
-        public string Treeish => _initialCommitHash.ToShortString();
     }
 }

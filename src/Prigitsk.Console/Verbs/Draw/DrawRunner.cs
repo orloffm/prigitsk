@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using OrlovMikhail.GraphViz.Writing;
 using Prigitsk.Console.General;
 using Prigitsk.Console.General.Programs;
 using Prigitsk.Core.Entities;
@@ -20,6 +21,7 @@ namespace Prigitsk.Console.Verbs.Draw
     {
         private readonly IExternalAppPathProvider _appPathProvider;
         private readonly IFileSystem _fileSystem;
+        private readonly IGraphVizWriterFactory _graphVizFactory;
         private readonly IRepositoryDataLoader _loader;
         private readonly IProcessRunner _processRunner;
         private readonly IRemoteHelper _remoteHelper;
@@ -40,6 +42,7 @@ namespace Prigitsk.Console.Verbs.Draw
             ISimplifier simplifier,
             IFileSystem fileSystem,
             ITreeRendererFactory treeRendererFactory,
+            IGraphVizWriterFactory graphVizFactory,
             IRemoteHelper remoteHelper,
             ITextWriterFactory textWriterFactory,
             IExternalAppPathProvider appPathProvider,
@@ -53,6 +56,7 @@ namespace Prigitsk.Console.Verbs.Draw
             _simplifier = simplifier;
             _fileSystem = fileSystem;
             _treeRendererFactory = treeRendererFactory;
+            _graphVizFactory = graphVizFactory;
             _remoteHelper = remoteHelper;
             _textWriterFactory = textWriterFactory;
             _appPathProvider = appPathProvider;
@@ -98,7 +102,9 @@ namespace Prigitsk.Console.Verbs.Draw
             {
                 using (IStreamWriter textWriter = _textWriterFactory.CreateStreamWriter(fileStream))
                 {
-                    ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(textWriter);
+                    IGraphVizWriter graphVizWriter = _graphVizFactory.CreateGraphVizWriter(textWriter);
+
+                    ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(graphVizWriter);
                     treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
                 }
             }

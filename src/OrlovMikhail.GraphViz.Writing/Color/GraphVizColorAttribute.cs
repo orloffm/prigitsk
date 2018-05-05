@@ -2,7 +2,7 @@
 {
     public abstract class GraphVizColorAttribute : Attribute<IGraphVizColor>
     {
-        protected GraphVizColorAttribute(IGraphVizColor color):base(color)
+        protected GraphVizColorAttribute(IGraphVizColor color) : base(color)
         {
         }
 

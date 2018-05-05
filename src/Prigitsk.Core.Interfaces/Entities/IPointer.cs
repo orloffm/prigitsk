@@ -1,6 +1,4 @@
-﻿using Prigitsk.Core.Graph;
-
-namespace Prigitsk.Core.Entities
+﻿namespace Prigitsk.Core.Entities
 {
     public interface IPointer : ITreeish
     {

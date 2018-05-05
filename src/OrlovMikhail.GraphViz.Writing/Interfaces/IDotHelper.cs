@@ -4,8 +4,8 @@
     {
         string EscapeId(string s);
 
-        bool IsProperlyQuoted(string s);
-
         string GetRecordFromAttribute(IAttribute attribute);
+
+        bool IsProperlyQuoted(string s);
     }
 }

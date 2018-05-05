@@ -18,6 +18,8 @@ namespace Prigitsk.Core.Entities
 
         public IEnumerable<IHash> Parents { get; }
 
+        public string Treeish => Hash.ToShortString();
+
         public static bool AreEqual(ICommit a, ICommit b)
         {
             if (ReferenceEquals(a, b))
@@ -57,7 +59,5 @@ namespace Prigitsk.Core.Entities
         {
             return Hash.ToString();
         }
-
-        public string Treeish => Hash.ToShortString();
     }
 }

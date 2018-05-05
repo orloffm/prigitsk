@@ -8,11 +8,11 @@ namespace OrlovMikhail.GraphViz.Writing
     public class GraphVizWriter : IGraphVizWriter
     {
         private const int TabIndent = 2;
+        private readonly IDotHelper _dotHelper;
         private readonly Stack<GraphHandle> _subGraphs;
 
         private readonly ITextWriter _w;
         private GraphMode _graphMode;
-        private readonly IDotHelper _dotHelper;
 
         public GraphVizWriter(ITextWriter w, IDotHelper dotHelper)
         {
@@ -57,41 +57,7 @@ namespace OrlovMikhail.GraphViz.Writing
             sb.Append(";");
 
             string wholeString = sb.ToString();
-         Line(wholeString);
-        }
-
-        /// <summary>
-        /// Serializes an attribute set to a string builder in form " [a = b]"
-        /// </summary>
-        private void AppendAttributeSet(IAttrSet attrSet, StringBuilder sb)
-        {
-            if (!AttrSet.NotNullOrEmpty(attrSet))
-            {
-                return;
-            }
-
-            sb.Append(" [");
-            bool wroteFirst = false;
-            foreach (var attribute in attrSet)
-            {
-                if (!wroteFirst)
-                {
-                    sb.Append(", ");
-                }
-
-                string record = _dotHelper.GetRecordFromAttribute(attribute);
-                sb.Append(record);
-
-                wroteFirst = true;
-            }
-
-            sb.Append("]");
-        }
-
-
-        private string GetEdgeMarker()
-        {
-            return _graphMode == GraphMode.Graph ? "--" : "->";
+            Line(wholeString);
         }
 
         public void EmptyLine()
@@ -143,7 +109,7 @@ namespace OrlovMikhail.GraphViz.Writing
             }
         }
 
-        public void SetEdgeAttributes(IAttrSet attributesSet )
+        public void SetEdgeAttributes(IAttrSet attributesSet)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("edge");
@@ -151,7 +117,7 @@ namespace OrlovMikhail.GraphViz.Writing
             Line(sb.ToString());
         }
 
-        public void SetGraphAttributes(IAttrSet attributesSet )
+        public void SetGraphAttributes(IAttrSet attributesSet)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("graph");
@@ -159,7 +125,7 @@ namespace OrlovMikhail.GraphViz.Writing
             Line(sb.ToString());
         }
 
-        public void SetNodeAttributes(IAttrSet attributesSet )
+        public void SetNodeAttributes(IAttrSet attributesSet)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("node");
@@ -206,7 +172,7 @@ namespace OrlovMikhail.GraphViz.Writing
         }
 
         /// <summary>
-        /// Ends graph or subgraph when called by handle disposal.
+        ///     Ends graph or subgraph when called by handle disposal.
         /// </summary>
         internal void EndGraphFromHandle(GraphHandle handle)
         {
@@ -219,7 +185,35 @@ namespace OrlovMikhail.GraphViz.Writing
         }
 
         /// <summary>
-        /// Pops a graph handle from stack, no checks performed.
+        ///     Serializes an attribute set to a string builder in form " [a = b]"
+        /// </summary>
+        private void AppendAttributeSet(IAttrSet attrSet, StringBuilder sb)
+        {
+            if (!AttrSet.NotNullOrEmpty(attrSet))
+            {
+                return;
+            }
+
+            sb.Append(" [");
+            bool wroteFirst = false;
+            foreach (var attribute in attrSet)
+            {
+                if (!wroteFirst)
+                {
+                    sb.Append(", ");
+                }
+
+                string record = _dotHelper.GetRecordFromAttribute(attribute);
+                sb.Append(record);
+
+                wroteFirst = true;
+            }
+
+            sb.Append("]");
+        }
+
+        /// <summary>
+        ///     Pops a graph handle from stack, no checks performed.
         /// </summary>
         private void EndGraphInternal()
         {
@@ -232,6 +226,11 @@ namespace OrlovMikhail.GraphViz.Writing
         {
             int count = _subGraphs.Count;
             return new string(' ', count * TabIndent);
+        }
+
+        private string GetEdgeMarker()
+        {
+            return _graphMode == GraphMode.Graph ? "--" : "->";
         }
 
         private void Line(string text)

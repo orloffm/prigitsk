@@ -1,9 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-
-namespace OrlovMikhail.GraphViz.Writing
+﻿namespace OrlovMikhail.GraphViz.Writing
 {
     public abstract class Attribute<T> : IAttribute
     {

@@ -5,7 +5,7 @@
         public FixedSizeAttribute(bool value) : base(value)
         {
         }
-        public override string Key => "fixedSize";
 
+        public override string Key => "fixedSize";
     }
 }

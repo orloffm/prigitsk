@@ -5,7 +5,7 @@
         public HeightAttribute(decimal value) : base(value)
         {
         }
-        public override string Key => "height";
 
+        public override string Key => "height";
     }
 }

@@ -1,9 +1,9 @@
-﻿using Thinktecture.IO;
+﻿using OrlovMikhail.GraphViz.Writing;
 
 namespace Prigitsk.Core.Rendering
 {
     public interface ITreeRendererFactory
     {
-        ITreeRenderer CreateRenderer(ITextWriter textWriter);
+        ITreeRenderer CreateRenderer(IGraphVizWriter textWriter);
     }
 }

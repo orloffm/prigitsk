@@ -11,6 +11,8 @@ namespace Prigitsk.Core.Entities
             Value = hash;
         }
 
+        public string Treeish => ToShortString();
+
         public string Value { get; }
 
         public static bool AreEqual(IHash a, IHash b)
@@ -62,7 +64,5 @@ namespace Prigitsk.Core.Entities
         {
             return ToShortString();
         }
-
-        public string Treeish => ToShortString();
     }
 }

@@ -10,14 +10,13 @@ using Prigitsk.Console.CommandLine.Conversion.Draw;
 using Prigitsk.Console.CommandLine.Conversion.Fetch;
 using Prigitsk.Console.General;
 using Prigitsk.Console.Properties;
-using Prigitsk.Console.Tools;
 using Prigitsk.Console.Verbs;
 using Prigitsk.Console.Verbs.Configure;
 using Prigitsk.Console.Verbs.Draw;
 using Prigitsk.Console.Verbs.Fetch;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.RepoData;
-using Prigitsk.Framework.IO;
+using Prigitsk.Framework;
 
 namespace Prigitsk.Console
 {
@@ -43,15 +42,15 @@ namespace Prigitsk.Console
             // Use NLogLoggerFactory as a factory required by Logger<T>.
             builder.RegisterType<NLogLoggerFactory>().AsImplementedInterfaces().InstancePerLifetimeScope();
 
-            // assemblies
+            // Assemblies.
             builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly()).AsImplementedInterfaces();
+            // Frameworks.
             builder.RegisterAssemblyTypes(typeof(GitBranchWrapped).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(GraphVizWriter).Assembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(typeof(OrderedSet<>).Assembly).AsImplementedInterfaces();
+            // Lib.
             builder.RegisterAssemblyTypes(typeof(RepositoryData).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof(ProcessRunner).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof(TextWriterFactory).Assembly).AsImplementedInterfaces();
             builder.RegisterAssemblyTypes(typeof(Tree).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof(PenWidthAttribute).Assembly).AsImplementedInterfaces();
-            builder.RegisterAssemblyTypes(typeof(FileSystem).Assembly).AsImplementedInterfaces();
 
             // external
             builder.RegisterInstance(AppSettings.Default).AsSelf();
