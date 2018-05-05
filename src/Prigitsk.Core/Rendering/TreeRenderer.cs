@@ -113,6 +113,8 @@ namespace Prigitsk.Core.Rendering
                     .NodeSep(0.2m)
                     .RankSep(0.1m)
                     .ForceLabels(false));
+
+            _gvWriter.SetNodeAttributes(AttrSet.Empty.Style(Style.Filled));
         }
 
         private void WriteInBranchEdge(

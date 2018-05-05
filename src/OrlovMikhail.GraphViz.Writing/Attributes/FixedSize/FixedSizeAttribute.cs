@@ -6,6 +6,6 @@
         {
         }
 
-        public override string Key => "fixedSize";
+        public override string Key => "fixedsize";
     }
 }
