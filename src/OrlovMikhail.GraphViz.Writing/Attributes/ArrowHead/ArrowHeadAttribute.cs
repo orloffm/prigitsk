@@ -6,7 +6,7 @@
         {
         }
 
-        public override string Key => "arrowHead";
+        public override string Key => "arrowhead";
 
         protected override string GetStringValueRaw()
         {

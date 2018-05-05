@@ -27,5 +27,19 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
 
             Assert.Equal(expected, record);
         }
+
+
+        [Fact]
+        public void GivenColorAttribute_ThenReturnsProperRecordForIt()
+        {
+            var hexColor = "#C6C6C6";
+            var colorValue = GraphVizColor.FromHex(hexColor);
+            FillColorAttribute fillColorAttribute = new FillColorAttribute(colorValue);
+            DotHelper dh = new DotHelper();
+            string record = dh.GetRecordFromAttribute(fillColorAttribute);
+            string expected = $"{fillColorAttribute.Key}=\"#C6C6C6\"";
+
+            Assert.Equal(expected, record);
+        }
     }
 }

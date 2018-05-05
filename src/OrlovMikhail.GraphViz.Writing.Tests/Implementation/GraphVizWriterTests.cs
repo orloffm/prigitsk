@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using System;
+using Moq;
 using Thinktecture.IO;
 using Thinktecture.IO.Adapters;
 using Xunit;
@@ -23,7 +24,7 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
             g.Node("z", attributes);
 
             string result = writer.GetStringBuilder().ToString();
-            string expected = $"z [width=1, label=x];";
+            string expected = $"z [width=1, label=x];{Environment.NewLine}";
 
             Assert.Equal(expected, result);
         }

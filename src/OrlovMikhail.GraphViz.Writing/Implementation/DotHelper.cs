@@ -7,7 +7,7 @@ namespace OrlovMikhail.GraphViz.Writing
     public class DotHelper
         : IDotHelper
     {
-        private const string AlphaNumericRegexPattern = @"^[^\d][_\dA-Za-z]*$";
+        private const string AlphaNumericRegexPattern = @"^[a-zA-Z\200-\377][a-zA-Z\200-\3770-9]*$";
 
         public string EscapeId(string s)
         {

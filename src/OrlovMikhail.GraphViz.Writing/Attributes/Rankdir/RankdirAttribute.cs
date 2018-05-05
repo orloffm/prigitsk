@@ -6,6 +6,6 @@
         {
         }
 
-        public override string Key => "rankDir";
+        public override string Key => "rankdir";
     }
 }

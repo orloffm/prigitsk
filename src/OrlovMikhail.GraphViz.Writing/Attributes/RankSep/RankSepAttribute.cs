@@ -6,6 +6,6 @@
         {
         }
 
-        public override string Key => "rankSep";
+        public override string Key => "ranksep";
     }
 }

@@ -6,6 +6,6 @@
         {
         }
 
-        public override string Key => "forceLabels";
+        public override string Key => "forcelabels";
     }
 }

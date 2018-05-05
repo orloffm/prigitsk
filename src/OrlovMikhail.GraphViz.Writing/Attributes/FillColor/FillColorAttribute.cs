@@ -6,6 +6,6 @@
         {
         }
 
-        public override string Key => "fillColor";
+        public override string Key => "fillcolor";
     }
 }
