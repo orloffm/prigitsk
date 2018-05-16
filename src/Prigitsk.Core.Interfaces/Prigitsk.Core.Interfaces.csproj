@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Thinktecture.IO.Abstractions" Version="2.3.0" />
+    <Compile Remove="Git\**" />
+    <EmbeddedResource Remove="Git\**" />
+    <None Remove="Git\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Git\" />
+    <PackageReference Include="Thinktecture.IO.Abstractions" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>

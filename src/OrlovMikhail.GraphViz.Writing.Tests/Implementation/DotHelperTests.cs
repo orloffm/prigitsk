@@ -17,6 +17,21 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
             Assert.Equal(isQuotedProperly, result);
         }
 
+        [Theory]
+        [InlineData("a", "a")]
+        [InlineData("1a", "\"1a\"")]
+        [InlineData("1e4", "\"1e4\"")]
+        [InlineData("1", "1")]
+        [InlineData("1.2", "1.2")]
+        [InlineData("1,2", "\"1,2\"")]
+        [InlineData("\"1,2\"", "\"1,2\"")]
+        public void GivenString_ThenEscapesItWhenNeeded(string input, string expected)
+        {
+            DotHelper dh = new DotHelper();
+            string result = dh.EscapeId(input);
+            Assert.Equal(expected, result);
+        }
+
         [Fact]
         public void GivenColorAttribute_ThenReturnsProperRecordForIt()
         {

@@ -8,6 +8,7 @@ namespace OrlovMikhail.GraphViz.Writing
         : IDotHelper
     {
         private const string AlphaNumericRegexPattern = @"^[a-zA-Z\200-\377][a-zA-Z\200-\3770-9]*$";
+        private const string NumeralRegexPattern = @"^[-]?(?:\.[0-9]+|[0-9]+(\.[0-9]*)?)$";
 
         public string EscapeId(string s)
         {
@@ -18,7 +19,7 @@ namespace OrlovMikhail.GraphViz.Writing
                 return s;
             }
 
-            bool isNumeral = decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal _);
+            bool isNumeral = Regex.IsMatch(s, NumeralRegexPattern, RegexOptions.Compiled);
             if (isNumeral)
             {
                 return s;
