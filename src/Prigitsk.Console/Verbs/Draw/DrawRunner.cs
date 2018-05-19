@@ -157,7 +157,7 @@ namespace Prigitsk.Console.Verbs.Draw
                 throw new LoggedAsFatalException(message);
             }
 
-            Log.Debug("Using Git repository from {di.FullName}.");
+            Log.Debug($"Using Git repository from {di.FullName}.");
 
             return di;
         }

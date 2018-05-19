@@ -12,6 +12,9 @@
         /// </summary>
         string Label { get; }
 
+        /// <summary>
+        ///     The commit the pointer points to.
+        /// </summary>
         IHash Tip { get; }
     }
 }

@@ -18,7 +18,15 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public void Add(IAttribute a)
         {
-            _set[a.Key] = a;
+            _set.Remove(a.Key);
+
+            bool shouldAdd = a.StringValue != null;
+            if (!shouldAdd)
+            {
+                return;
+            }
+
+            _set.Add(a.Key, a);
         }
 
         public IEnumerator<IAttribute> GetEnumerator()

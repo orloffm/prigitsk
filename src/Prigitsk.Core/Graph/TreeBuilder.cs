@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.RepoData;
@@ -8,6 +9,13 @@ namespace Prigitsk.Core.Graph
 {
     public class TreeBuilder : ITreeBuilder
     {
+        private readonly ITagPickerFactory _tagPickerFactory;
+
+        public TreeBuilder(ITagPickerFactory tagPickerFactory)
+        {
+            _tagPickerFactory = tagPickerFactory;
+        }
+
         public ITree Build(
             IRepositoryData repository,
             IRemote remoteToUse,
@@ -16,12 +24,22 @@ namespace Prigitsk.Core.Graph
         {
             ITree tree = new Tree();
 
-            // Commits.
-            foreach (ICommit commit in repository.Commits)
-            {
-                tree.AddCommit(commit);
-            }
+            AddCommits(repository, tree);
 
+            AddBranches(repository, remoteToUse, strategy, options, tree);
+
+            AddTags(repository, options, tree);
+
+            return tree;
+        }
+
+        private static void AddBranches(
+            IRepositoryData repository,
+            IRemote remoteToUse,
+            IBranchingStrategy strategy,
+            ITreeBuildingOptions options,
+            ITree tree)
+        {
             // All branches from this remote.
             IEnumerable<IBranch> branches = repository.Branches.GetFor(remoteToUse);
 
@@ -53,19 +71,48 @@ namespace Prigitsk.Core.Graph
                 hashesInBranch.Reverse();
                 tree.AddBranch(b, hashesInBranch);
             }
+        }
+
+        private static void AddCommits(IRepositoryData repository, ITree tree)
+        {
+            // Commits.
+            foreach (ICommit commit in repository.Commits)
+            {
+                tree.AddCommit(commit);
+            }
+        }
+
+        private void AddTags(IRepositoryData repository, ITreeBuildingOptions options, ITree tree)
+        {
+            Tuple<ITag, INode>[] tagsAndNodes = repository.Tags
+                .Select(t => Tuple.Create(t, tree.GetNode(t.Tip)))
+                .ToArray();
+
+            // Prepare picker.
+            ITagPicker tagPicker = PrepareTagPicker(options, tagsAndNodes);
 
             // Now tags.
-            foreach (ITag tag in repository.Tags)
+            foreach (Tuple<ITag, INode> tagAndNode in tagsAndNodes)
             {
-                if (!options.CheckIfTagShouldBePicked(tag.FullName))
+                ITag tag = tagAndNode.Item1;
+                IBranch branch = tree.GetContainingBranch(tagAndNode.Item2);
+
+                if (!tagPicker.CheckIfTagShouldBePicked(tag, branch))
                 {
                     continue;
                 }
 
                 tree.AddTag(tag);
             }
+        }
 
-            return tree;
+        private ITagPicker PrepareTagPicker(ITreeBuildingOptions options, IEnumerable<Tuple<ITag, INode>> tagsAndNodes)
+        {
+            var commitsTuple = tagsAndNodes.Select(t => Tuple.Create(t.Item1, t.Item2.Commit));
+
+            ITagPicker tagPicker = _tagPickerFactory.CreateTagPicker(options.TagPickingOptions);
+            tagPicker.PreProcessAllTags(commitsTuple);
+            return tagPicker;
         }
     }
 }

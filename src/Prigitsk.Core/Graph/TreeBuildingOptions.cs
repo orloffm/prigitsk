@@ -2,6 +2,14 @@
 {
     public class TreeBuildingOptions : ITreeBuildingOptions
     {
+        public TreeBuildingOptions()
+        {
+            TagPickingOptions = new TagPickingOptions()
+            {
+                Mode = TagPickingMode.All
+            };
+        }
+
         public static ITreeBuildingOptions Default => new TreeBuildingOptions();
 
         public string RemoteToUse => null;
@@ -11,9 +19,6 @@
             return true;
         }
 
-        public bool CheckIfTagShouldBePicked(string tagName)
-        {
-            return true;
-        }
+        public ITagPickingOptions TagPickingOptions { get; }
     }
 }
