@@ -167,10 +167,10 @@ namespace Prigitsk.Core.Rendering
 
             _gvWriter.Comment("Branches.");
 
-            var firstNodeDates = new Dictionary<IBranch, DateTimeOffset>();
+            var firstNodeDates = new Dictionary<IBranch, DateTimeOffset?>();
             foreach (IBranch b in currentBranches)
             {
-                DateTimeOffset firstNodeDate = tree.EnumerateNodes(b).First().Commit.CommittedWhen.Value;
+                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.CommittedWhen;
                 firstNodeDates.Add(b, firstNodeDate);
             }
 

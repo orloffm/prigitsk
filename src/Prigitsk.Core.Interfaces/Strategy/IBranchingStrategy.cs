@@ -24,6 +24,6 @@ namespace Prigitsk.Core.Strategy
         /// </summary>
         IEnumerable<IBranch> SortForWritingDescending(
             IEnumerable<IBranch> branchesEnumerable,
-            IDictionary<IBranch, DateTimeOffset> firstNodeDates);
+            IDictionary<IBranch, DateTimeOffset?> firstNodeDates);
     }
 }

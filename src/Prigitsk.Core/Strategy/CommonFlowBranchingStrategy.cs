@@ -83,7 +83,7 @@ namespace Prigitsk.Core.Strategy
 
         public IEnumerable<IBranch> SortForWritingDescending(
             IEnumerable<IBranch> branchesEnumerable,
-            IDictionary<IBranch, DateTimeOffset> firstNodeDates)
+            IDictionary<IBranch, DateTimeOffset?> firstNodeDates)
         {
             var branches = new List<IBranch>(branchesEnumerable);
             var ret = new List<IBranch>();

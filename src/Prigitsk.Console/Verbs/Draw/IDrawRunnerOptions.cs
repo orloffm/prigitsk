@@ -5,10 +5,6 @@ namespace Prigitsk.Console.Verbs.Draw
     public interface IDrawRunnerOptions
         : IVerbRunnerOptions
     {
-        int TagCount { get; set; }
-
-        TagPickingMode TagPickingMode { get; set; }
-
         /// <summary>
         ///     Forcefully treat the repository as belonging to GitHub server when rendering.
         ///     Affects the links.
@@ -37,6 +33,13 @@ namespace Prigitsk.Console.Verbs.Draw
         bool LeaveHeads { get; }
 
         /// <summary>
+        ///     If the name of a branch consists of some other branch name and a suffix,
+        ///     and this suffix matches any of these expressions, the branch is considered
+        ///     to be lesser branch and is drawn differently.
+        /// </summary>
+        string[] LesserBranchesRegices { get; }
+
+        /// <summary>
         ///     Output file name.
         /// </summary>
         string OutputFileName { get; }
@@ -61,6 +64,10 @@ namespace Prigitsk.Console.Verbs.Draw
         ///     Directory containing a .git repository.
         /// </summary>
         string Repository { get; }
+
+        int TagCount { get; }
+
+        TagPickingMode TagPickingMode { get; }
 
         /// <summary>
         ///     Target directory.

@@ -1,8 +1,10 @@
-﻿using Prigitsk.Core.Graph;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Prigitsk.Core.Graph;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
-    public class DrawRunnerOptions : IDrawRunnerOptions
+    public sealed class DrawRunnerOptions : IDrawRunnerOptions
     {
         public DrawRunnerOptions(
             string repository,
@@ -17,7 +19,8 @@ namespace Prigitsk.Console.Verbs.Draw
             bool keepAllOrphans,
             bool keepOrphansWithTags,
             bool noTags,
-            int tagCount)
+            int tagCount,
+            IEnumerable<string> lesserBranchesRegices)
         {
             Repository = repository;
             TargetDirectory = target;
@@ -31,8 +34,9 @@ namespace Prigitsk.Console.Verbs.Draw
             KeepAllOrphans = keepAllOrphans;
             KeepOrphansWithTags = keepOrphansWithTags;
             TagCount = tagCount;
+            LesserBranchesRegices = lesserBranchesRegices?.ToArray();
 
-            SetTagPickingMode(noTags);
+            TagPickingMode = FigureOutTagPickingMode(noTags);
         }
 
         public bool ForceTreatAsGitHub { get; }
@@ -44,6 +48,8 @@ namespace Prigitsk.Console.Verbs.Draw
         public bool KeepOrphansWithTags { get; }
 
         public bool LeaveHeads { get; }
+
+        public string[] LesserBranchesRegices { get; }
 
         public string OutputFileName { get; }
 
@@ -57,27 +63,25 @@ namespace Prigitsk.Console.Verbs.Draw
 
         public int TagCount { get; set; }
 
-        public TagPickingMode TagPickingMode { get; set; }
+        public TagPickingMode TagPickingMode { get; }
 
         public string TargetDirectory { get; }
 
-        private void SetTagPickingMode(bool noTags)
+        private TagPickingMode FigureOutTagPickingMode(bool noTags)
         {
             bool pickNone = noTags || TagCount == 0;
             if (pickNone)
             {
-                TagPickingMode = TagPickingMode.None;
-                return;
+                return TagPickingMode.None;
             }
 
             bool pickAll = TagCount < 0;
             if (pickAll)
             {
-                TagPickingMode = TagPickingMode.All;
-                return;
+                return TagPickingMode.All;
             }
 
-            TagPickingMode = TagPickingMode.Latest;
+            return TagPickingMode.Latest;
         }
     }
 }

@@ -13,8 +13,19 @@ namespace Prigitsk.Console.CommandLine.Parsing
                 "Forcefully treat the repository as belonging to a GitHub server when rendering. Affects the links.")]
         public bool ForceTreatAsGitHub { get; set; }
 
-        [Option('f', "format", Default = "svg", HelpText = "Output file format.")]
+        [Option("format", Default = "svg", HelpText = "Output file format.")]
         public string Format { get; set; }
+
+        [Option(
+            "lesserBranchSuffix",
+            Default = @"-\d+",
+            HelpText = "If a branch name consists of some other branch name and a suffix, then," +
+                       "if any of these regular expressions apply to the whole suffix," +
+                       "the branch is considered a lesser branch and is drawn differently." +
+                       "\r\n" +
+                       "Default value is a number after a minus sign. Thus, if a branch named" +
+                       "\"x\" exists, branches \"x-1\" and \"x-2-a\" will be considered lesser branches.")]
+        public string[] LesserBranchesRegices { get; set; }
 
         [Option('k', "keepOrphans", Default = false, HelpText = "Do not remove commits not accessible from any tip.")]
         public bool KeepAllOrphans { get; set; }
