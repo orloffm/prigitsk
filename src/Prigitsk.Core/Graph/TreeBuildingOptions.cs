@@ -1,24 +1,24 @@
 ﻿namespace Prigitsk.Core.Graph
 {
-    public class TreeBuildingOptions : ITreeBuildingOptions
+    public sealed class TreeBuildingOptions : ITreeBuildingOptions
     {
         public TreeBuildingOptions()
         {
-            TagPickingOptions = new TagPickingOptions()
+            TagPickingOptions = new TagPickingOptions
             {
                 Mode = TagPickingMode.All
             };
         }
 
-        public static ITreeBuildingOptions Default => new TreeBuildingOptions();
+        public static TreeBuildingOptions Default => new TreeBuildingOptions();
 
         public string RemoteToUse => null;
+
+        public ITagPickingOptions TagPickingOptions { get; }
 
         public bool CheckIfBranchShouldBePicked(string branchLabel)
         {
             return true;
         }
-
-        public ITagPickingOptions TagPickingOptions { get; }
     }
 }

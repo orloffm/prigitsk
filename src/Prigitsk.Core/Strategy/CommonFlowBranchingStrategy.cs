@@ -12,11 +12,11 @@ namespace Prigitsk.Core.Strategy
         private static readonly string[] RegexStrings =
         {
             "^master$",
-            "^release",
-            "-RC$",
             "^develop?",
             "^dev",
             "-dev-",
+            "^release",
+            "-RC$",
             "^hotfix"
         };
 

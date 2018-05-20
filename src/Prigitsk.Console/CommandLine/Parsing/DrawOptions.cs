@@ -33,6 +33,16 @@ namespace Prigitsk.Console.CommandLine.Parsing
         public bool LeaveHeads { get; set; }
 
         /// <summary>
+        ///     Disable writing tags.
+        /// </summary>
+        [Option(
+            'n',
+            "noTags",
+            Default = false,
+            HelpText = "Disable writing tags. Has higher priority than specifying tag count.")]
+        public bool NoTags { get; set; }
+
+        /// <summary>
         ///     The target file name.
         /// </summary>
         [Option('o', "output", HelpText = "Output file name.")]
@@ -61,6 +71,12 @@ namespace Prigitsk.Console.CommandLine.Parsing
         /// </summary>
         [Option('r', "repository", HelpText = "Directory containing a .git repository.")]
         public string Repository { get; set; }
+
+        /// <summary>
+        ///     The number of tags to include.
+        /// </summary>
+        [Option("tagCount", Default = -1, HelpText = "Number of latest tags to include.")]
+        public int TagCount { get; set; }
 
         /// <summary>
         ///     The target directory.

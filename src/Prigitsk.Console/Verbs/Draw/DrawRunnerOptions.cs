@@ -1,4 +1,6 @@
-﻿namespace Prigitsk.Console.Verbs.Draw
+﻿using Prigitsk.Core.Graph;
+
+namespace Prigitsk.Console.Verbs.Draw
 {
     public class DrawRunnerOptions : IDrawRunnerOptions
     {
@@ -13,7 +15,9 @@
             bool removeTails,
             bool preventSimplification,
             bool keepAllOrphans,
-            bool keepOrphansWithTags)
+            bool keepOrphansWithTags,
+            bool noTags,
+            int tagCount)
         {
             Repository = repository;
             TargetDirectory = target;
@@ -26,6 +30,9 @@
             PreventSimplification = preventSimplification;
             KeepAllOrphans = keepAllOrphans;
             KeepOrphansWithTags = keepOrphansWithTags;
+            TagCount = tagCount;
+
+            SetTagPickingMode(noTags);
         }
 
         public bool ForceTreatAsGitHub { get; }
@@ -48,6 +55,29 @@
 
         public string Repository { get; }
 
+        public int TagCount { get; set; }
+
+        public TagPickingMode TagPickingMode { get; set; }
+
         public string TargetDirectory { get; }
+
+        private void SetTagPickingMode(bool noTags)
+        {
+            bool pickNone = noTags || TagCount == 0;
+            if (pickNone)
+            {
+                TagPickingMode = TagPickingMode.None;
+                return;
+            }
+
+            bool pickAll = TagCount < 0;
+            if (pickAll)
+            {
+                TagPickingMode = TagPickingMode.All;
+                return;
+            }
+
+            TagPickingMode = TagPickingMode.Latest;
+        }
     }
 }

@@ -1,8 +1,14 @@
-﻿namespace Prigitsk.Console.Verbs.Draw
+﻿using Prigitsk.Core.Graph;
+
+namespace Prigitsk.Console.Verbs.Draw
 {
     public interface IDrawRunnerOptions
         : IVerbRunnerOptions
     {
+        int TagCount { get; set; }
+
+        TagPickingMode TagPickingMode { get; set; }
+
         /// <summary>
         ///     Forcefully treat the repository as belonging to GitHub server when rendering.
         ///     Affects the links.

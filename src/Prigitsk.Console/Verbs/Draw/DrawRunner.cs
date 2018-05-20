@@ -86,7 +86,11 @@ namespace Prigitsk.Console.Verbs.Draw
 
             // Create the tree.
             IBranchingStrategy strategy = _strategyProvider.GetStrategy();
-            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
+            ITreeBuildingOptions buildingOptions = TreeBuildingOptions.Default;
+            buildingOptions.TagPickingOptions.LatestCount = Options.TagCount;
+            buildingOptions.TagPickingOptions.Mode = Options.TagPickingMode;
+
+            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, buildingOptions);
 
             SimplifyTree(tree);
 
