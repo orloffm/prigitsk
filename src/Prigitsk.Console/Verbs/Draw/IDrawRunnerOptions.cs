@@ -37,7 +37,7 @@ namespace Prigitsk.Console.Verbs.Draw
         ///     and this suffix matches any of these expressions, the branch is considered
         ///     to be lesser branch and is drawn differently.
         /// </summary>
-        string[] LesserBranchesRegices { get; }
+        string LesserBranchesRegex { get; }
 
         /// <summary>
         ///     Output file name.

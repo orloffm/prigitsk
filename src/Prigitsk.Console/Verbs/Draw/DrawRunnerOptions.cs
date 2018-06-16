@@ -20,7 +20,7 @@ namespace Prigitsk.Console.Verbs.Draw
             bool keepOrphansWithTags,
             bool noTags,
             int tagCount,
-            IEnumerable<string> lesserBranchesRegices)
+            string lesserBranchesRegex)
         {
             Repository = repository;
             TargetDirectory = target;
@@ -34,7 +34,7 @@ namespace Prigitsk.Console.Verbs.Draw
             KeepAllOrphans = keepAllOrphans;
             KeepOrphansWithTags = keepOrphansWithTags;
             TagCount = tagCount;
-            LesserBranchesRegices = lesserBranchesRegices?.ToArray();
+            LesserBranchesRegex = lesserBranchesRegex;
 
             TagPickingMode = FigureOutTagPickingMode(noTags);
         }
@@ -49,7 +49,7 @@ namespace Prigitsk.Console.Verbs.Draw
 
         public bool LeaveHeads { get; }
 
-        public string[] LesserBranchesRegices { get; }
+        public string LesserBranchesRegex { get; }
 
         public string OutputFileName { get; }
 

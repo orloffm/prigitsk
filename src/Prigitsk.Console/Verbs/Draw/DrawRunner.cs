@@ -100,6 +100,7 @@ namespace Prigitsk.Console.Verbs.Draw
             // Rendering options.
             TreeRenderingOptions renderingOptions = TreeRenderingOptions.Default;
             renderingOptions.ForceTreatAsGitHub = Options.ForceTreatAsGitHub;
+            renderingOptions.LesserBranchesRegex = Options.LesserBranchesRegex;
 
             // ReSharper disable once AssignNullToNotNullAttribute
             using (IFileStream fileStream = _fileSystem.File.OpenWrite(tempPath))

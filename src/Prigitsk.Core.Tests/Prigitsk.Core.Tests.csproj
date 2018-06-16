@@ -75,6 +75,7 @@
     <Compile Include="Graph\TreeTests.cs" />
     <Compile Include="Graph\TreeWalkerTests.cs" />
     <Compile Include="Remotes\RemoteWebUrlProviderFactoryTests.cs" />
+    <Compile Include="Rendering\LesserBranchSelectorTests.cs" />
     <Compile Include="RepoData\CommitsDataTests.cs" />
   </ItemGroup>
   <ItemGroup>

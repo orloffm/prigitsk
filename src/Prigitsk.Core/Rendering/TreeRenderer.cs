@@ -15,17 +15,19 @@ namespace Prigitsk.Core.Rendering
     public sealed class TreeRenderer : ITreeRenderer
     {
         private readonly IGraphVizWriter _gvWriter;
-
+        private readonly ILesserBranchSelectorFactory _lesserBranchSelectorFactory;
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
 
         public TreeRenderer(
             ILogger<TreeRenderer> log,
             IGraphVizWriter gvWriter,
+            ILesserBranchSelectorFactory lesserBranchSelectorFactory,
             IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {
             _log = log;
             _gvWriter = gvWriter;
+            _lesserBranchSelectorFactory = lesserBranchSelectorFactory;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
@@ -39,6 +41,9 @@ namespace Prigitsk.Core.Rendering
                 _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.ForceTreatAsGitHub);
 
             WriteHeader();
+
+            ILesserBranchSelector lesserBranchSelector = _lesserBranchSelectorFactory.MakeSelector();
+            lesserBranchSelector.PreProcessAllBranches(tree.Branches, options.LesserBranchesRegex);
 
             IBranch[] currentBranches = tree.Branches.Where(b => tree.EnumerateNodes(b).Any()).ToArray();
             WriteCurrentBranchesLabels(currentBranches, remoteUrlProvider);

@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using CommandLine;
 using Prigitsk.Console.General;
 
 namespace Prigitsk.Console.CommandLine.Parsing
@@ -25,7 +26,7 @@ namespace Prigitsk.Console.CommandLine.Parsing
                        "\r\n" +
                        "Default value is a number after a minus sign. Thus, if a branch named" +
                        "\"x\" exists, branches \"x-1\" and \"x-2-a\" will be considered lesser branches.")]
-        public string[] LesserBranchesRegices { get; set; }
+        public string LesserBranchesSuffix { get; set; }
 
         [Option('k', "keepOrphans", Default = false, HelpText = "Do not remove commits not accessible from any tip.")]
         public bool KeepAllOrphans { get; set; }
