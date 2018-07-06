@@ -12,7 +12,7 @@
         string RemoteToUse { get; }
 
         ITagPickingOptions TagPickingOptions { get; }
-        
+
         bool CheckIfBranchShouldBePicked(string branchLabel);
     }
 }

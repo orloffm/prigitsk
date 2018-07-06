@@ -5,8 +5,8 @@ namespace Prigitsk.Core.Rendering
 {
     public interface ILesserBranchSelector
     {
-        void PreProcessAllBranches(IEnumerable<IBranch> branches, string lesserBranchesRegex);
-
         bool IsLesserBranch(IBranch branch);
+
+        void PreProcessAllBranches(IEnumerable<IBranch> branches, string lesserBranchesRegex);
     }
 }

@@ -108,7 +108,8 @@ namespace Prigitsk.Core.Graph
 
         private ITagPicker PrepareTagPicker(ITreeBuildingOptions options, IEnumerable<Tuple<ITag, INode>> tagsAndNodes)
         {
-            var commitsTuple = tagsAndNodes.Select(t => Tuple.Create(t.Item1, t.Item2.Commit));
+            IEnumerable<Tuple<ITag, ICommit>> commitsTuple =
+                tagsAndNodes.Select(t => Tuple.Create(t.Item1, t.Item2.Commit));
 
             ITagPicker tagPicker = _tagPickerFactory.CreateTagPicker(options.TagPickingOptions);
             tagPicker.PreProcessAllTags(commitsTuple);

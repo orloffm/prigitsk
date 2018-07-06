@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Prigitsk.Core.Graph;
+﻿using Prigitsk.Core.Graph;
 
 namespace Prigitsk.Console.Verbs.Draw
 {

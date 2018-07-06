@@ -17,7 +17,7 @@ namespace Prigitsk.Core.Entities.Comparers
         {
             DateTimeOffset xd = _startDates[x] ?? DateTimeOffset.MaxValue;
             DateTimeOffset yd = _startDates[y] ?? DateTimeOffset.MaxValue;
-            
+
             return xd.CompareTo(yd);
         }
     }
