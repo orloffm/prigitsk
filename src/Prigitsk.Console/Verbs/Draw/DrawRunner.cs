@@ -193,17 +193,19 @@ namespace Prigitsk.Console.Verbs.Draw
         private void SimplifyTree(ITree tree)
         {
             bool simplify = !Options.PreventSimplification;
-            if (simplify)
+            if (!simplify)
             {
-                // Simplify the tree.
-                SimplificationOptions simplificationOptions = SimplificationOptions.Default;
-                simplificationOptions.LeaveTails = Options.LeaveHeads;
-                simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
-                simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
-                simplificationOptions.KeepOrphansWithTags = Options.KeepOrphansWithTags;
-
-                _simplifier.Simplify(tree, simplificationOptions);
+                return;
             }
+
+            // Simplify the tree.
+            SimplificationOptions simplificationOptions = SimplificationOptions.Default;
+            simplificationOptions.LeaveTails = Options.LeaveHeads;
+            simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
+            simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
+            simplificationOptions.KeepOrphansWithTags = Options.KeepOrphansWithTags;
+
+            _simplifier.Simplify(tree, simplificationOptions);
         }
 
         /// <summary>

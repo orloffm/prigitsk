@@ -82,6 +82,9 @@ namespace Prigitsk.Core.Graph
             }
         }
 
+        /// <summary>
+        ///     Adds tags, but only those that are permitted by the tag picker.
+        /// </summary>
         private void AddTags(IRepositoryData repository, ITreeBuildingOptions options, ITree tree)
         {
             Tuple<ITag, INode>[] tagsAndNodes = repository.Tags
