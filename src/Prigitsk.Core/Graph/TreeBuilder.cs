@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.RepoData;
@@ -20,15 +19,16 @@ namespace Prigitsk.Core.Graph
             IRepositoryData repository,
             IRemote remoteToUse,
             IBranchesKnowledge branchesKnowledge,
-            ITreeBuildingOptions options)
+            IBranchPickingOptions branchPickingOptions,
+            ITagPickingOptions tagPickingOptions)
         {
             ITree tree = new Tree();
 
             AddCommits(repository.Commits, tree);
 
-            AddBranches(branchesKnowledge, repository.Commits, options, tree);
+            AddBranches(branchesKnowledge, repository.Commits, branchPickingOptions, tree);
 
-            AddTags(repository.Tags, options, tree);
+            AddTags(repository.Tags, tagPickingOptions, tree);
 
             return tree;
         }
@@ -36,17 +36,15 @@ namespace Prigitsk.Core.Graph
         private static void AddBranches(
             IBranchesKnowledge branchesKnowledge,
             ICommitsData commitsData,
-            ITreeBuildingOptions options,
+            IBranchPickingOptions branchPickingOptions,
             ITree tree)
         {
-            // Sort these branches.
-
             // Branches in the writing order.
             IBranch[] branchesOrdered = branchesKnowledge.EnumerateBranchesInLogicalOrder().ToArray();
 
             // Filter them so that we get only those we want to write.
             IBranch[] branchesFiltered =
-                branchesOrdered.Where(b => options.CheckIfBranchShouldBePicked(b.Label)).ToArray();
+                branchesOrdered.Where(b => branchPickingOptions.CheckIfBranchShouldBePicked(b.Label)).ToArray();
 
             var commitsSet = new HashSet<ICommit>(commitsData);
             foreach (IBranch b in branchesFiltered)
@@ -83,22 +81,19 @@ namespace Prigitsk.Core.Graph
         /// <summary>
         ///     Adds tags, but only those that are permitted by the tag picker.
         /// </summary>
-        private void AddTags(IEnumerable<ITag> tags, ITreeBuildingOptions options, ITree tree)
+        private void AddTags(IEnumerable<ITag> tags, ITagPickingOptions tagPickingOptions, ITree tree)
         {
-            Tuple<ITag, INode>[] tagsAndNodes = tags
-                .Select(t => Tuple.Create(t, tree.GetNode(t.Tip)))
-                .ToArray();
+            ITagInfo[] tagInfos = tags.Select(t => CreateTagInfo(t, tree)).ToArray();
 
             // Prepare picker.
-            ITagPicker tagPicker = PrepareTagPicker(options, tagsAndNodes);
+            ITagPicker tagPicker = PrepareTagPicker(tagPickingOptions, tagInfos);
 
             // Now tags.
-            foreach (Tuple<ITag, INode> tagAndNode in tagsAndNodes)
+            foreach (ITagInfo tagInfo in tagInfos)
             {
-                ITag tag = tagAndNode.Item1;
-                IBranch branch = tree.GetContainingBranch(tagAndNode.Item2);
+                ITag tag = tagInfo.Tag;
 
-                if (!tagPicker.CheckIfTagShouldBePicked(tag, branch))
+                if (!tagPicker.CheckIfTagShouldBePicked(tag))
                 {
                     continue;
                 }
@@ -107,14 +102,37 @@ namespace Prigitsk.Core.Graph
             }
         }
 
-        private ITagPicker PrepareTagPicker(ITreeBuildingOptions options, IEnumerable<Tuple<ITag, INode>> tagsAndNodes)
+        private ITagInfo CreateTagInfo(ITag tag, ITree tree)
         {
-            IEnumerable<Tuple<ITag, ICommit>> commitsTuple =
-                tagsAndNodes.Select(t => Tuple.Create(t.Item1, t.Item2.Commit));
+            INode node = tree.GetNode(tag.Tip);
+            IBranch branch = tree.GetContainingBranch(node);
+            return new TagInfo(tag, node, branch);
+        }
 
-            ITagPicker tagPicker = _tagPickerFactory.CreateTagPicker(options.TagPickingOptions);
-            tagPicker.PreProcessAllTags(commitsTuple);
+        private ITagPicker PrepareTagPicker(
+            ITagPickingOptions tagPickingOptions,
+            IEnumerable<ITagInfo> tagInfos)
+        {
+            ITagPicker tagPicker = _tagPickerFactory.CreateTagPicker(tagPickingOptions);
+
+            tagPicker.PreProcessAllTags(tagInfos);
             return tagPicker;
         }
+    }
+
+    public sealed class TagInfo : ITagInfo
+    {
+        public TagInfo(ITag tag, INode node, IBranch branch)
+        {
+            Tag = tag;
+            Node = node;
+            ContainingBranch = branch;
+        }
+
+        public IBranch ContainingBranch { get; }
+
+        public INode Node { get; }
+
+        public ITag Tag { get; }
     }
 }

@@ -23,7 +23,7 @@ namespace Prigitsk.Core.Simplification
             // First, remove orphans, if applicable.
             if (!options.KeepAllOrphans)
             {
-                RemoveOrphans(tree, options.KeepOrphansWithTags);
+                RemoveOrphans(tree);
             }
 
             int pass = 0;
@@ -282,7 +282,7 @@ namespace Prigitsk.Core.Simplification
         /// <summary>
         ///     Removes orphaned nodes (i.e. not contained in branches) that don't have tags.
         /// </summary>
-        private void RemoveOrphans(ITree tree, bool keepOrphansWithTags)
+        private void RemoveOrphans(ITree tree)
         {
             INode[] nodes = tree.Nodes.ToArray();
 
@@ -295,19 +295,11 @@ namespace Prigitsk.Core.Simplification
                     continue;
                 }
 
-                // Tags.
-                ITag[] tags = tree.GetPointingTags(node).ToArray();
-                if (tags.Length != 0)
+                // It shouldn't have tags.
+                bool hasTags = tree.GetPointingTags(node).Any();
+                if (hasTags)
                 {
-                    if (keepOrphansWithTags)
-                    {
-                        continue;
-                    }
-
-                    foreach (ITag tag in tags)
-                    {
-                        tree.DropTag(tag);
-                    }
+                    continue;
                 }
 
                 tree.RemoveNode(node);

@@ -16,14 +16,21 @@ namespace Prigitsk.Console.CommandLine.Parsing
         [Option("format", Default = "svg", HelpText = "Output file format.")]
         public string Format { get; set; }
 
-        [Option('k', "keepOrphans", Default = false, HelpText = "Do not remove commits not accessible from any tip.")]
-        public bool KeepAllOrphans { get; set; }
+        [Option(
+            "orphanedTags",
+            Default = false,
+            HelpText = "Include tags attached to commits not accessible from any tip. " +
+                       "By default they are removed, and the tag count applies to the remaining tags.")]
+        public bool IncludeOrphanedTags { get; set; }
 
         [Option(
-            "keepOrphansWithTags",
+            'k',
+            "keepOrphans",
             Default = false,
-            HelpText = "Still remove commits not accessible from any tip, but keep them if they have tags on them.")]
-        public bool KeepOrphansWithTags { get; set; }
+            HelpText =
+                "Do not remove orphan commits, i.e. those not accessible from any tip and not having any tags on them. " +
+                "Tags on orphans can be removed by a separate argument.")]
+        public bool KeepAllOrphans { get; set; }
 
         [Option(
             "leaveHeads",

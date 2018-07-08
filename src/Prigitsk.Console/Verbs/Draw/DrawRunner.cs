@@ -89,11 +89,19 @@ namespace Prigitsk.Console.Verbs.Draw
             IBranch[] allBranches = repositoryData.Branches.GetFor(remoteToUse).ToArray();
             IBranchesKnowledge branchesKnowledge = strategy.CreateKnowledge(allBranches);
 
-            ITreeBuildingOptions buildingOptions = TreeBuildingOptions.Default;
-            buildingOptions.TagPickingOptions.LatestCount = Options.TagCount;
-            buildingOptions.TagPickingOptions.Mode = Options.TagPickingMode;
+            // Options for building the tree.
+            ITagPickingOptions tagPickingOptions = TagPickingOptions.Set(
+                Options.TagPickingMode,
+                Options.TagCount,
+                Options.IncludeOrphanedTags);
+            IBranchPickingOptions branchPickingOptions = BranchPickingOptions.Default;
 
-            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, branchesKnowledge, buildingOptions);
+            ITree tree = _treeBuilder.Build(
+                repositoryData,
+                remoteToUse,
+                branchesKnowledge,
+                branchPickingOptions,
+                tagPickingOptions);
 
             SimplifyTree(tree);
 
@@ -205,7 +213,6 @@ namespace Prigitsk.Console.Verbs.Draw
             simplificationOptions.LeaveTails = Options.LeaveHeads;
             simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
             simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
-            simplificationOptions.KeepOrphansWithTags = Options.KeepOrphansWithTags;
 
             _simplifier.Simplify(tree, simplificationOptions);
         }

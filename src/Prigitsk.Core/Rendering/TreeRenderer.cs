@@ -75,7 +75,7 @@ namespace Prigitsk.Core.Rendering
             IEnumerable<IBranch> currentBranches,
             IRemoteWebUrlProvider remoteUrlProvider)
         {
-            _gvWriter.Comment("Branch names.");
+            _gvWriter.Comment("ContainingBranch names.");
 
             _gvWriter.SetNodeAttributes(
                 AttrSet.Empty

@@ -10,6 +10,7 @@ namespace Prigitsk.Core.Graph
             IRepositoryData repository,
             IRemote remoteToUse,
             IBranchesKnowledge branchesKnowledge,
-            ITreeBuildingOptions options);
+            IBranchPickingOptions branchPickingOptions,
+            ITagPickingOptions tagPickingOptions);
     }
 }

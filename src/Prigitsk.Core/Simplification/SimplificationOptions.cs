@@ -6,7 +6,6 @@
         public SimplificationOptions()
         {
             KeepAllOrphans = false;
-            KeepOrphansWithTags = false;
             LeaveTails = false;
             FirstBranchNodeMayBeRemoved = false;
         }
@@ -16,8 +15,6 @@
         public bool FirstBranchNodeMayBeRemoved { get; set; }
 
         public bool KeepAllOrphans { get; set; }
-
-        public bool KeepOrphansWithTags { get; set; }
 
         public bool LeaveTails { get; set; }
     }

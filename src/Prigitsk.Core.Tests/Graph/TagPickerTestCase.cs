@@ -10,6 +10,7 @@ namespace Prigitsk.Core.Tests.Graph
             TagAName = "A";
             TagBName = "B";
             TagCName = "C";
+            IncludeOrphanedTags = true;
         }
 
         public string BranchAName { get; set; }
@@ -29,6 +30,8 @@ namespace Prigitsk.Core.Tests.Graph
         public bool ExpectedTagBPicked { get; set; }
 
         public bool ExpectedTagCPicked { get; set; }
+
+        public bool IncludeOrphanedTags { get; set; }
 
         public TagPickingMode Mode { get; set; }
 

@@ -18,14 +18,15 @@ namespace Prigitsk.Console.Verbs.Draw
         string Format { get; }
 
         /// <summary>
+        ///     Include tags attached to commits not accessible from any tip.
+        ///     By default they are removed, and the tag count applies to the remaining tags.
+        /// </summary>
+        bool IncludeOrphanedTags { get; }
+
+        /// <summary>
         ///     Do not remove commits not accessible from any tip.
         /// </summary>
         bool KeepAllOrphans { get; }
-
-        /// <summary>
-        ///     Still remove commits not accessible from any tip, but keep them if they have tags on them.
-        /// </summary>
-        bool KeepOrphansWithTags { get; }
 
         /// <summary>
         ///     Prevent concatenation of nodes on branches after last merge or diversion.

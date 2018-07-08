@@ -6,8 +6,6 @@
 
         bool KeepAllOrphans { get; }
 
-        bool KeepOrphansWithTags { get; }
-
         bool LeaveTails { get; }
     }
 }

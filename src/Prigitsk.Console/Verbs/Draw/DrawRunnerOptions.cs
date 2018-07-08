@@ -16,7 +16,7 @@ namespace Prigitsk.Console.Verbs.Draw
             bool removeTails,
             bool preventSimplification,
             bool keepAllOrphans,
-            bool keepOrphansWithTags,
+            bool includeOrphanedTags,
             bool noTags,
             int tagCount,
             string lesserBranchesRegex)
@@ -31,20 +31,20 @@ namespace Prigitsk.Console.Verbs.Draw
             RemoveTails = removeTails;
             PreventSimplification = preventSimplification;
             KeepAllOrphans = keepAllOrphans;
-            KeepOrphansWithTags = keepOrphansWithTags;
+            IncludeOrphanedTags = includeOrphanedTags;
             TagCount = tagCount;
             WorkItemBranchesRegex = new WorkItemSuffixRegex(lesserBranchesRegex);
 
-            TagPickingMode = FigureOutTagPickingMode(noTags);
+            TagPickingMode = FigureOutTagPickingMode(noTags, tagCount);
         }
 
         public bool ForceTreatAsGitHub { get; }
 
         public string Format { get; }
 
-        public bool KeepAllOrphans { get; }
+        public bool IncludeOrphanedTags { get; }
 
-        public bool KeepOrphansWithTags { get; }
+        public bool KeepAllOrphans { get; }
 
         public bool LeaveHeads { get; }
 
@@ -66,15 +66,15 @@ namespace Prigitsk.Console.Verbs.Draw
 
         public IWorkItemSuffixRegex WorkItemBranchesRegex { get; }
 
-        private TagPickingMode FigureOutTagPickingMode(bool noTags)
+        private TagPickingMode FigureOutTagPickingMode(bool noTags, int tagCount)
         {
-            bool pickNone = noTags || TagCount == 0;
+            bool pickNone = noTags || tagCount == 0;
             if (pickNone)
             {
                 return TagPickingMode.None;
             }
 
-            bool pickAll = TagCount < 0;
+            bool pickAll = tagCount < 0;
             if (pickAll)
             {
                 return TagPickingMode.All;

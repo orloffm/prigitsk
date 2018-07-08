@@ -10,10 +10,11 @@ namespace Prigitsk.Core.Tests.Graph
     {
         private void Run(TagPickerTestCase testCase)
         {
-            ICommit MockCommit(DateTimeOffset? date)
+            INode MockNode(DateTimeOffset? date)
             {
                 ICommit commit = Mock.Of<ICommit>(c => c.CommittedWhen == date);
-                return commit;
+                INode node = Mock.Of<INode>(n => n.Commit == commit);
+                return node;
             }
 
             IBranch MockBranch(string name)
@@ -26,37 +27,36 @@ namespace Prigitsk.Core.Tests.Graph
                 return new Branch(name, null);
             }
 
-            TagPicker p = new TagPicker(
-                new TagPickingOptions
-                {
-                    LatestCount = testCase.TakeCount,
-                    Mode = testCase.Mode
-                });
+            ITagPickingOptions tpo = TagPickingOptions.Set(
+                testCase.Mode,
+                testCase.TakeCount,
+                testCase.IncludeOrphanedTags);
+            TagPicker p = new TagPicker(tpo);
 
             ITag ta = new Tag(testCase.TagAName, null);
             ITag tb = new Tag(testCase.TagBName, null);
             ITag tc = new Tag(testCase.TagCName, null);
 
-            ICommit ca = MockCommit(testCase.CommitADate);
-            ICommit cb = MockCommit(testCase.CommitBDate);
-            ICommit cc = MockCommit(testCase.CommitCDate);
+            INode na = MockNode(testCase.CommitADate);
+            INode nb = MockNode(testCase.CommitBDate);
+            INode nc = MockNode(testCase.CommitCDate);
 
             IBranch ba = MockBranch(testCase.BranchAName);
             IBranch bb = MockBranch(testCase.BranchBName);
             IBranch bc = MockBranch(testCase.BranchCName);
 
-            var tuples = new[]
+            var tagInfos = new[]
             {
-                Tuple.Create(ta, ca),
-                Tuple.Create(tb, cb),
-                Tuple.Create(tc, cc)
+                new TagInfo(ta, na, ba),
+                new TagInfo(tb, nb, bb),
+                new TagInfo(tc, nc, bc)
             };
 
-            p.PreProcessAllTags(tuples);
+            p.PreProcessAllTags(tagInfos);
 
-            Assert.Equal(testCase.ExpectedTagAPicked, p.CheckIfTagShouldBePicked(ta, ba));
-            Assert.Equal(testCase.ExpectedTagBPicked, p.CheckIfTagShouldBePicked(tb, bb));
-            Assert.Equal(testCase.ExpectedTagCPicked, p.CheckIfTagShouldBePicked(tc, bc));
+            Assert.Equal(testCase.ExpectedTagAPicked, p.CheckIfTagShouldBePicked(ta));
+            Assert.Equal(testCase.ExpectedTagBPicked, p.CheckIfTagShouldBePicked(tb));
+            Assert.Equal(testCase.ExpectedTagCPicked, p.CheckIfTagShouldBePicked(tc));
         }
 
         private static TagPickerTestCase CreateIdealCase()

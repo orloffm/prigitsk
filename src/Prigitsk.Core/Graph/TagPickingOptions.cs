@@ -2,10 +2,24 @@
 {
     public sealed class TagPickingOptions : ITagPickingOptions
     {
-        public static TagPickingOptions Default => new TagPickingOptions {Mode = TagPickingMode.All};
+        private TagPickingOptions(TagPickingMode mode, int tagCount, bool includeOrphanedTags)
+        {
+            LatestCount = tagCount;
+            Mode = mode;
+            IncludeOrphanedTags = includeOrphanedTags;
+        }
 
-        public int LatestCount { get; set; }
+        public static TagPickingOptions Default => new TagPickingOptions(TagPickingMode.All, -1, false);
 
-        public TagPickingMode Mode { get; set; }
+        public bool IncludeOrphanedTags { get; }
+
+        public int LatestCount { get; }
+
+        public TagPickingMode Mode { get; }
+
+        public static ITagPickingOptions Set(TagPickingMode mode, int tagCount, bool includeOrphanedTags)
+        {
+            return new TagPickingOptions(mode, tagCount, includeOrphanedTags);
+        }
     }
 }
