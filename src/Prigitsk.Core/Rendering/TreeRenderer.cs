@@ -188,7 +188,7 @@ namespace Prigitsk.Core.Rendering
             foreach (IBranch b in currentBranchesSorted)
             {
                 // How to draw this branch's nodes?
-                Color color = branchesKnowledge.GetSuggestedDrawingColorFor(b) ?? Color.Black;
+                Color color = branchesKnowledge.GetSuggestedDrawingColorFor(b);
 
                 _gvWriter.SetNodeAttributes(
                     AttrSet.Empty

@@ -1,6 +1,6 @@
 ﻿namespace Prigitsk.Core.Strategy
 {
-    public interface ILesserBranchSelectorFactory
+    public interface IWorkItemBranchSelectorFactory
     {
         IWorkItemBranchSelector MakeSelector();
     }

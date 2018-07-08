@@ -20,7 +20,9 @@ namespace Prigitsk.Core.Strategy
         ///     Returns the color that should be used to draw the branch.
         ///     It is dark enough to be used on top of white background.
         /// </summary>
-        Color? GetSuggestedDrawingColorFor(IBranch branch);
+        Color GetSuggestedDrawingColorFor(IBranch branch);
+
+        void Initialise(IEnumerable<IBranch> branches);
 
         /// <summary>
         ///     Returns whether the given branch is a per-workitem one.

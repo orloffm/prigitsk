@@ -5,7 +5,7 @@
         Master = 0,
         Develop = 1,
         DevelopFeature = 2,
-        DevelopWorkItem = 3,
+        WorkItem = 3,
         Release = 4,
         MasterHotfix = 5
     }

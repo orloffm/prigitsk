@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Framework
 {
-    public class PairList<T, TU>
+    public class PairList<T, TU> : IPairList<T, TU>
     {
         private readonly Dictionary<T, HashSet<TU>> _dic;
 
@@ -24,6 +24,11 @@ namespace Prigitsk.Framework
             }
 
             sub.Add(value);
+        }
+
+        public void Clear()
+        {
+            _dic.Clear();
         }
 
         public bool Contains(

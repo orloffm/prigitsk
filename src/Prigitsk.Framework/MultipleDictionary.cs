@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Prigitsk.Framework
 {
@@ -29,19 +31,35 @@ namespace Prigitsk.Framework
 
         public bool Add(TKey key, TValue value)
         {
-            ISet<TValue> valueSet;
-            if (!_dic.TryGetValue(key, out valueSet))
-            {
-                valueSet = new HashSet<TValue>();
-                _dic.Add(key, valueSet);
-            }
+            bool added = AddInternal(
+                key,
+                set => set.Add(value));
 
-            return valueSet.Add(value);
+            return added;
         }
 
-        public void Add(TKey key, ISet<TValue> value)
+        public bool Add(TKey key, IEnumerable<TValue> values)
         {
-            _dic.Add(key, value);
+            bool added = AddInternal(
+                key,
+                set =>
+                {
+                    bool anythingAdded = false;
+                    foreach (TValue value in values)
+                    {
+                        anythingAdded |= set.Add(value);
+                    }
+
+                    return anythingAdded;
+                }
+            );
+
+            return added;
+        }
+
+        public void Add(TKey key, ISet<TValue> values)
+        {
+            Add(key, values.AsEnumerable());
         }
 
         public void Clear()
@@ -98,6 +116,18 @@ namespace Prigitsk.Framework
         void ICollection<KeyValuePair<TKey, ISet<TValue>>>.Add(KeyValuePair<TKey, ISet<TValue>> item)
         {
             ((ICollection<KeyValuePair<TKey, ISet<TValue>>>) _dic).Add(item);
+        }
+
+        private bool AddInternal(TKey key, Func<ISet<TValue>, bool> addValue)
+        {
+            ISet<TValue> valueSet;
+            if (!_dic.TryGetValue(key, out valueSet))
+            {
+                valueSet = new HashSet<TValue>();
+                _dic.Add(key, valueSet);
+            }
+
+            return addValue(valueSet);
         }
 
         bool ICollection<KeyValuePair<TKey, ISet<TValue>>>.Contains(KeyValuePair<TKey, ISet<TValue>> item)

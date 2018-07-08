@@ -2,11 +2,11 @@
 
 namespace Prigitsk.Core.Strategy
 {
-    public sealed class LesserBranchSelectorFactory : ILesserBranchSelectorFactory
+    public sealed class WorkItemBranchSelectorFactory : IWorkItemBranchSelectorFactory
     {
         private readonly Func<IWorkItemBranchSelector> _maker;
 
-        public LesserBranchSelectorFactory(Func<IWorkItemBranchSelector> maker)
+        public WorkItemBranchSelectorFactory(Func<IWorkItemBranchSelector> maker)
         {
             _maker = maker;
         }
