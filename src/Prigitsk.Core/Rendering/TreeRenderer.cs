@@ -158,7 +158,7 @@ namespace Prigitsk.Core.Rendering
             IBranchesKnowledge branchesKnowledge,
             IBranch[] currentBranches,
             IRemoteWebUrlProvider remoteUrlProvider,
-            PairList<INode, INode> otherLinks)
+            IPairList<INode, INode> otherLinks)
         {
             _gvWriter.Comment("Graph.");
 
@@ -268,7 +268,7 @@ namespace Prigitsk.Core.Rendering
         }
 
         private void WriteOtherEdges(
-            PairList<INode, INode> otherLinks,
+            IPairList<INode, INode> otherLinks,
             IRemoteWebUrlProvider remoteUrlProvider)
         {
             _gvWriter.Comment("All other edges.");

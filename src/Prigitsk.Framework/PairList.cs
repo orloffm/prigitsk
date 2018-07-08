@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Framework
 {
-    public class PairList<T, TU> : IPairList<T, TU>
+    public sealed class PairList<T, TU> : IPairList<T, TU>
     {
         private readonly Dictionary<T, HashSet<TU>> _dic;
 
