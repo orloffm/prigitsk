@@ -1,59 +1,86 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Prigitsk.Framework
 {
-    public sealed class PairList<T, TU> : IPairList<T, TU>
+    public sealed class PairList<TA, TB> : IPairList<TA, TB>
     {
-        private readonly Dictionary<T, HashSet<TU>> _dic;
+        private readonly List<Tuple<TA, TB>> _items;
 
         public PairList()
         {
-            _dic = new Dictionary<T, HashSet<TU>>();
+            _items = new List<Tuple<TA, TB>>();
         }
 
-        public void Add(
-            T key,
-            TU value)
-        {
-            HashSet<TU> sub;
-            if (!_dic.TryGetValue(key, out sub))
-            {
-                sub = new HashSet<TU>();
-                _dic[key] = sub;
-            }
+        public int Count => _items.Count;
 
-            sub.Add(value);
+        public bool IsReadOnly => false;
+
+        public Tuple<TA, TB> this[int index]
+        {
+            get =>  _items[index];
+            set => _items[index] = value;
+        }
+
+        public void Add(Tuple<TA, TB> item)
+        {
+           _items.Add(item);
+        }
+
+        public void Add(TA a, TB b)
+        {
+            Add(Tuple.Create(a, b));
         }
 
         public void Clear()
         {
-            _dic.Clear();
+            _items.Clear();
         }
 
-        public bool Contains(
-            T key,
-            TU value)
+        public bool Contains(Tuple<TA, TB> item)
         {
-            HashSet<TU> sub;
-            if (!_dic.TryGetValue(key, out sub))
-            {
-                return false;
-            }
-
-            return sub.Contains(value);
+            return _items.Contains(item);
         }
 
-        public IEnumerable<Tuple<T, TU>> EnumerateItems()
+        public bool Contains(TA a, TB b)
         {
-            foreach (KeyValuePair<T, HashSet<TU>> kvp in _dic)
-            {
-                T key = kvp.Key;
-                foreach (TU value in kvp.Value)
-                {
-                    yield return Tuple.Create(key, value);
-                }
-            }
+            return Contains(Tuple.Create(a, b));
+        }
+
+        public void CopyTo(Tuple<TA, TB>[] array, int arrayIndex)
+        {
+            _items.CopyTo(array, arrayIndex);
+        }
+
+        public IEnumerator<Tuple<TA, TB>> GetEnumerator()
+        {
+            return _items.GetEnumerator();
+        }
+
+        public int IndexOf(Tuple<TA, TB> item)
+        {
+            return _items.IndexOf(item);
+        }
+
+        public void Insert(int index, Tuple<TA, TB> item)
+        {
+            _items.Insert(index, item);
+        }
+
+        public bool Remove(Tuple<TA, TB> item)
+        {
+            return _items.Remove(item);
+        }
+
+        public void RemoveAt(int index)
+        {
+            _items.RemoveAt(index);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

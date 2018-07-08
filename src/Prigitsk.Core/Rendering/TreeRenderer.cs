@@ -134,7 +134,7 @@ namespace Prigitsk.Core.Rendering
             bool drawDotted = childNote.AbsorbedParentCommits.Any();
             if (drawDotted)
             {
-                attrSet.Style(Style.Dotted);
+                attrSet.Style(Style.Dashed);
             }
 
             _gvWriter.Edge(parentNode, childNote, attrSet);
@@ -225,7 +225,7 @@ namespace Prigitsk.Core.Rendering
                         }
                     }
 
-                    foreach (Tuple<INode, INode> tuple in edgesInBranch.EnumerateItems())
+                    foreach (Tuple<INode, INode> tuple in edgesInBranch)
                     {
                         WriteInBranchEdge(tuple.Item1, tuple.Item2);
                     }
@@ -278,7 +278,7 @@ namespace Prigitsk.Core.Rendering
                     .Color(Color.Black)
             );
 
-            foreach (Tuple<INode, INode> pair in otherLinks.EnumerateItems())
+            foreach (Tuple<INode, INode> pair in otherLinks)
             {
                 INode nodeA = pair.Item1;
                 INode nodeB = pair.Item2;

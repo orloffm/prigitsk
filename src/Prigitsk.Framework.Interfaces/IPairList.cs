@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 namespace Prigitsk.Framework
 {
-    public interface IPairList<T, TU>
+    /// <summary>
+    ///     The list that holds two items.
+    /// </summary>
+    public interface IPairList<TA, TB> : IList<Tuple<TA, TB>>
     {
-        void Add(T key, TU value);
+        void Add(TA a, TB b);
 
-        void Clear();
-
-        bool Contains(T key, TU value);
-
-        IEnumerable<Tuple<T, TU>> EnumerateItems();
+        bool Contains(TA a, TB b);
     }
 }
