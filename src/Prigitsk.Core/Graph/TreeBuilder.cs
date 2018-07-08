@@ -7,7 +7,7 @@ using Prigitsk.Core.Strategy;
 
 namespace Prigitsk.Core.Graph
 {
-    public class TreeBuilder : ITreeBuilder
+    public sealed class TreeBuilder : ITreeBuilder
     {
         private readonly ITagPickerFactory _tagPickerFactory;
 
@@ -19,53 +19,51 @@ namespace Prigitsk.Core.Graph
         public ITree Build(
             IRepositoryData repository,
             IRemote remoteToUse,
-            IBranchingStrategy strategy,
+            IBranchesKnowledge branchesKnowledge,
             ITreeBuildingOptions options)
         {
             ITree tree = new Tree();
 
-            AddCommits(repository, tree);
+            AddCommits(repository.Commits, tree);
 
-            AddBranches(repository, remoteToUse, strategy, options, tree);
+            AddBranches(branchesKnowledge, repository.Commits, options, tree);
 
-            AddTags(repository, options, tree);
+            AddTags(repository.Tags, options, tree);
 
             return tree;
         }
 
         private static void AddBranches(
-            IRepositoryData repository,
-            IRemote remoteToUse,
-            IBranchingStrategy strategy,
+            IBranchesKnowledge branchesKnowledge,
+            ICommitsData commitsData,
             ITreeBuildingOptions options,
             ITree tree)
         {
-            // All branches from this remote.
-            IEnumerable<IBranch> branches = repository.Branches.GetFor(remoteToUse);
-
-            // Filter them so that we get only those we want to write.
-            IBranch[] branchesFiltered = branches.Where(b => options.CheckIfBranchShouldBePicked(b.Label)).ToArray();
-
             // Sort these branches.
 
-            // Branches.
-            IBranch[] branchesSorted = strategy.SortByPriorityDescending(branchesFiltered).ToArray();
-            var commits = new HashSet<ICommit>(repository.Commits);
-            foreach (IBranch b in branchesSorted)
-            {
-                ICommit tip = repository.Commits.GetByHash(b.Tip);
+            // Branches in the writing order.
+            IBranch[] branchesOrdered = branchesKnowledge.EnumerateBranchesInLogicalOrder().ToArray();
 
-                var hashesInBranch = new List<IHash>(commits.Count / 3);
-                IEnumerable<ICommit> upTheTree = repository.Commits.EnumerateUpTheHistoryFrom(tip);
+            // Filter them so that we get only those we want to write.
+            IBranch[] branchesFiltered =
+                branchesOrdered.Where(b => options.CheckIfBranchShouldBePicked(b.Label)).ToArray();
+
+            var commitsSet = new HashSet<ICommit>(commitsData);
+            foreach (IBranch b in branchesFiltered)
+            {
+                ICommit tip = commitsData.GetByHash(b.Tip);
+
+                var hashesInBranch = new List<IHash>(commitsSet.Count / 3);
+                IEnumerable<ICommit> upTheTree = commitsData.EnumerateUpTheHistoryFrom(tip);
                 foreach (ICommit commit in upTheTree)
                 {
-                    if (!commits.Contains(commit))
+                    if (!commitsSet.Contains(commit))
                     {
                         break;
                     }
 
                     hashesInBranch.Add(commit.Hash);
-                    commits.Remove(commit);
+                    commitsSet.Remove(commit);
                 }
 
                 hashesInBranch.Reverse();
@@ -73,10 +71,10 @@ namespace Prigitsk.Core.Graph
             }
         }
 
-        private static void AddCommits(IRepositoryData repository, ITree tree)
+        private static void AddCommits(IEnumerable<ICommit> commits, ITree tree)
         {
             // Commits.
-            foreach (ICommit commit in repository.Commits)
+            foreach (ICommit commit in commits)
             {
                 tree.AddCommit(commit);
             }
@@ -85,9 +83,9 @@ namespace Prigitsk.Core.Graph
         /// <summary>
         ///     Adds tags, but only those that are permitted by the tag picker.
         /// </summary>
-        private void AddTags(IRepositoryData repository, ITreeBuildingOptions options, ITree tree)
+        private void AddTags(IEnumerable<ITag> tags, ITreeBuildingOptions options, ITree tree)
         {
-            Tuple<ITag, INode>[] tagsAndNodes = repository.Tags
+            Tuple<ITag, INode>[] tagsAndNodes = tags
                 .Select(t => Tuple.Create(t, tree.GetNode(t.Tip)))
                 .ToArray();
 

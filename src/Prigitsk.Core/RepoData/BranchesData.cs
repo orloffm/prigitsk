@@ -13,7 +13,12 @@ namespace Prigitsk.Core.RepoData
 
         public IEnumerable<IBranch> GetFor(IRemote remote)
         {
-            return Data.Where(b => string.Equals(b.RemoteName, remote.RemoteName, StringComparison.OrdinalIgnoreCase));
+            return Data.Where(b => SameRemoteNameAs(remote, b));
+        }
+
+        private bool SameRemoteNameAs(IRemote remote, IBranch b)
+        {
+            return string.Equals(b.RemoteName, remote.RemoteName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

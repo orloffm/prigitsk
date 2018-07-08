@@ -85,12 +85,15 @@ namespace Prigitsk.Console.Verbs.Draw
             IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
 
             // Create the tree.
-            IBranchingStrategy strategy = _strategyProvider.GetStrategy();
+            IBranchingStrategy strategy = _strategyProvider.GetStrategy(Options.WorkItemBranchesRegex);
+            IBranch[] allBranches = repositoryData.Branches.GetFor(remoteToUse).ToArray();
+            IBranchesKnowledge branchesKnowledge = strategy.CreateKnowledge(allBranches);
+
             ITreeBuildingOptions buildingOptions = TreeBuildingOptions.Default;
             buildingOptions.TagPickingOptions.LatestCount = Options.TagCount;
             buildingOptions.TagPickingOptions.Mode = Options.TagPickingMode;
 
-            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, buildingOptions);
+            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, branchesKnowledge, buildingOptions);
 
             SimplifyTree(tree);
 
@@ -100,7 +103,6 @@ namespace Prigitsk.Console.Verbs.Draw
             // Rendering options.
             TreeRenderingOptions renderingOptions = TreeRenderingOptions.Default;
             renderingOptions.ForceTreatAsGitHub = Options.ForceTreatAsGitHub;
-            renderingOptions.LesserBranchesRegex = Options.LesserBranchesRegex;
 
             // ReSharper disable once AssignNullToNotNullAttribute
             using (IFileStream fileStream = _fileSystem.File.OpenWrite(tempPath))
@@ -110,7 +112,7 @@ namespace Prigitsk.Console.Verbs.Draw
                     IGraphVizWriter graphVizWriter = _graphVizFactory.CreateGraphVizWriter(textWriter);
 
                     ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(graphVizWriter);
-                    treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
+                    treeRenderer.Render(tree, remoteToUse, branchesKnowledge, renderingOptions);
                 }
             }
 

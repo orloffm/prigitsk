@@ -9,7 +9,7 @@ namespace Prigitsk.Core.Rendering
         void Render(
             ITree tree,
             IRemote usedRemote,
-            IBranchingStrategy strategy,
+            IBranchesKnowledge branchesKnowledge,
             ITreeRenderingOptions options);
     }
 }

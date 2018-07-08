@@ -9,7 +9,7 @@ namespace Prigitsk.Core.Graph
         ITree Build(
             IRepositoryData repository,
             IRemote remoteToUse,
-            IBranchingStrategy strategy,
+            IBranchesKnowledge branchesKnowledge,
             ITreeBuildingOptions options);
     }
 }

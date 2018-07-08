@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using OrlovMikhail.GraphViz.Writing;
 using Prigitsk.Core.Entities;
+using Prigitsk.Core.Entities.Comparers;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.Remotes;
 using Prigitsk.Core.Strategy;
@@ -15,35 +16,29 @@ namespace Prigitsk.Core.Rendering
     public sealed class TreeRenderer : ITreeRenderer
     {
         private readonly IGraphVizWriter _gvWriter;
-        private readonly ILesserBranchSelectorFactory _lesserBranchSelectorFactory;
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
 
         public TreeRenderer(
             ILogger<TreeRenderer> log,
             IGraphVizWriter gvWriter,
-            ILesserBranchSelectorFactory lesserBranchSelectorFactory,
             IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {
             _log = log;
             _gvWriter = gvWriter;
-            _lesserBranchSelectorFactory = lesserBranchSelectorFactory;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
         public void Render(
             ITree tree,
             IRemote usedRemote,
-            IBranchingStrategy branchingStrategy,
+            IBranchesKnowledge branchesKnowledge,
             ITreeRenderingOptions options)
         {
             IRemoteWebUrlProvider remoteUrlProvider =
                 _remoteWebUrlProviderFactory.CreateUrlProvider(usedRemote.Url, options.ForceTreatAsGitHub);
 
             WriteHeader();
-
-            ILesserBranchSelector lesserBranchSelector = _lesserBranchSelectorFactory.MakeSelector();
-            lesserBranchSelector.PreProcessAllBranches(tree.Branches, options.LesserBranchesRegex);
 
             IBranch[] currentBranches = tree.Branches.Where(b => tree.EnumerateNodes(b).Any()).ToArray();
             WriteCurrentBranchesLabels(currentBranches, remoteUrlProvider);
@@ -57,7 +52,7 @@ namespace Prigitsk.Core.Rendering
 
             // Now the graph itself.
             var otherLinks = new PairList<INode, INode>();
-            WriteNodes(tree, branchingStrategy, currentBranches, remoteUrlProvider, otherLinks);
+            WriteNodes(tree, branchesKnowledge, currentBranches, remoteUrlProvider, otherLinks);
 
             // Render all other edges
             WriteOtherEdges(otherLinks, remoteUrlProvider);
@@ -65,6 +60,15 @@ namespace Prigitsk.Core.Rendering
             // Tags and orphaned branches
             WriteTagsAndOrphanedBranchesConnections(tags, orphanedBranches);
             WriteFooter();
+        }
+
+        private IEnumerable<IBranch> SortByFirstNodeDates(
+            IEnumerable<IBranch> currentBranches,
+            IDictionary<IBranch, DateTimeOffset?> firstNodeDates)
+        {
+            IComparer<IBranch> byDateComparer = new BranchSorterByDate(firstNodeDates);
+
+            return currentBranches.OrderBy(b => b, byDateComparer);
         }
 
         private void WriteCurrentBranchesLabels(
@@ -151,7 +155,7 @@ namespace Prigitsk.Core.Rendering
 
         private void WriteNodes(
             ITree tree,
-            IBranchingStrategy branchingStrategy,
+            IBranchesKnowledge branchesKnowledge,
             IBranch[] currentBranches,
             IRemoteWebUrlProvider remoteUrlProvider,
             PairList<INode, INode> otherLinks)
@@ -179,27 +183,24 @@ namespace Prigitsk.Core.Rendering
                 firstNodeDates.Add(b, firstNodeDate);
             }
 
-            IBranch[] currentBranchesSorted =
-                branchingStrategy.SortForWritingDescending(currentBranches, firstNodeDates).ToArray();
+            IBranch[] currentBranchesSorted = SortByFirstNodeDates(currentBranches, firstNodeDates).ToArray();
 
             foreach (IBranch b in currentBranchesSorted)
             {
-                // Header.
-                // 0 - branch short name
-                // 1 - color
-                string htmlString = branchingStrategy.GetHexColorFor(b);
+                // How to draw this branch's nodes?
+                Color color = branchesKnowledge.GetSuggestedDrawingColorFor(b) ?? Color.Black;
 
                 _gvWriter.SetNodeAttributes(
                     AttrSet.Empty
                         .Group(b.Label)
-                        .FillColor(htmlString)
-                        .Color(htmlString)
+                        .FillColor(color)
+                        .Color(color)
                 );
 
                 _gvWriter.SetEdgeAttributes(
                     AttrSet.Empty
                         .PenWidth(2)
-                        .Color(htmlString)
+                        .Color(color)
                 );
 
                 using (_gvWriter.StartSubGraph())

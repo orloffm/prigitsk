@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
-using Prigitsk.Core.Rendering;
+using Prigitsk.Core.Strategy;
 using Prigitsk.Core.Tests.Helpers;
 using Xunit;
 
 namespace Prigitsk.Core.Tests.Rendering
 {
-    public class LesserBranchSelectorTests
+    public class WorkItemBranchSelectorTests
     {
         private readonly string[] _commonList =
         {
@@ -26,8 +26,8 @@ namespace Prigitsk.Core.Tests.Rendering
         {
             var expectedSet = new HashSet<string>(expectedLesserBranches);
             IBranch[] branches = _commonList.Select(s => EH.MockBranch(s)).ToArray();
-            LesserBranchSelector selector = new LesserBranchSelector();
-            selector.PreProcessAllBranches(branches, regexString);
+            WorkItemBranchSelector selector = new WorkItemBranchSelector();
+            selector.PreProcessAllBranches(branches, new WorkItemSuffixRegex(regexString));
 
             foreach (string branchName in branchesToCheck)
             {

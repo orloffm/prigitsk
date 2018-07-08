@@ -1,4 +1,5 @@
 ﻿using Prigitsk.Core.Graph;
+using Prigitsk.Core.Strategy;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
@@ -31,13 +32,6 @@ namespace Prigitsk.Console.Verbs.Draw
         ///     In other words, this leaves all final direct commits on a branch untouched.
         /// </summary>
         bool LeaveHeads { get; }
-
-        /// <summary>
-        ///     If the name of a branch consists of some other branch name and a suffix,
-        ///     and this suffix matches any of these expressions, the branch is considered
-        ///     to be lesser branch and is drawn differently.
-        /// </summary>
-        string LesserBranchesRegex { get; }
 
         /// <summary>
         ///     Output file name.
@@ -73,5 +67,10 @@ namespace Prigitsk.Console.Verbs.Draw
         ///     Target directory.
         /// </summary>
         string TargetDirectory { get; }
+
+        /// <summary>
+        ///     <see cref="IWorkItemSuffixRegex" />.
+        /// </summary>
+        IWorkItemSuffixRegex WorkItemBranchesRegex { get; }
     }
 }

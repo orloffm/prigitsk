@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Prigitsk.Core.Entities;
 
-namespace Prigitsk.Core.Rendering
+namespace Prigitsk.Core.Strategy
 {
-    public sealed class LesserBranchSelector : ILesserBranchSelector
+    public sealed class WorkItemBranchSelector : IWorkItemBranchSelector
     {
         /// <summary>
         ///     The explicit list of lesser branches.
         /// </summary>
         private readonly HashSet<string> _lesserBranches;
 
-        public LesserBranchSelector()
+        public WorkItemBranchSelector()
         {
             _lesserBranches = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
@@ -23,7 +23,7 @@ namespace Prigitsk.Core.Rendering
             return _lesserBranches.Contains(branch.Label);
         }
 
-        public void PreProcessAllBranches(IEnumerable<IBranch> branches, string lesserBranchesRegex)
+        public void PreProcessAllBranches(IEnumerable<IBranch> branches, IWorkItemSuffixRegex lesserBranchesRegex)
         {
             _lesserBranches.Clear();
 
@@ -83,9 +83,12 @@ namespace Prigitsk.Core.Rendering
             }
         }
 
-        private bool TryCreateRegex(string regexString, out Regex regex)
+        private bool TryCreateRegex(IWorkItemSuffixRegex regexObject, out Regex regex)
         {
             regex = null;
+
+            string regexString = regexObject?.RegexString;
+
             if (string.IsNullOrWhiteSpace(regexString))
             {
                 return false;

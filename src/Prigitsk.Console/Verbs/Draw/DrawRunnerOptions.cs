@@ -1,4 +1,5 @@
 ﻿using Prigitsk.Core.Graph;
+using Prigitsk.Core.Strategy;
 
 namespace Prigitsk.Console.Verbs.Draw
 {
@@ -32,7 +33,7 @@ namespace Prigitsk.Console.Verbs.Draw
             KeepAllOrphans = keepAllOrphans;
             KeepOrphansWithTags = keepOrphansWithTags;
             TagCount = tagCount;
-            LesserBranchesRegex = lesserBranchesRegex;
+            WorkItemBranchesRegex = new WorkItemSuffixRegex(lesserBranchesRegex);
 
             TagPickingMode = FigureOutTagPickingMode(noTags);
         }
@@ -46,8 +47,6 @@ namespace Prigitsk.Console.Verbs.Draw
         public bool KeepOrphansWithTags { get; }
 
         public bool LeaveHeads { get; }
-
-        public string LesserBranchesRegex { get; }
 
         public string OutputFileName { get; }
 
@@ -64,6 +63,8 @@ namespace Prigitsk.Console.Verbs.Draw
         public TagPickingMode TagPickingMode { get; }
 
         public string TargetDirectory { get; }
+
+        public IWorkItemSuffixRegex WorkItemBranchesRegex { get; }
 
         private TagPickingMode FigureOutTagPickingMode(bool noTags)
         {

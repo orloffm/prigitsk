@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Entities.Comparers;
 
-namespace Prigitsk.Core.Strategy
+namespace Prigitsk.Core.Strategy.Flow
 {
-    public sealed class CommonFlowBranchingStrategy : IBranchingStrategy
+    public sealed class CommonFlowBranchingStrategy2
     {
         private static readonly string[] RegexStrings =
         {
