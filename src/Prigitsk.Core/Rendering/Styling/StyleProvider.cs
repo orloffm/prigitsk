@@ -9,20 +9,21 @@ namespace Prigitsk.Core.Rendering.Styling
 
         public IAttrSet EdgeBranchStartVirtual => GetBasePointerStyle();
 
+        public IAttrSet EdgeGeneric => AttrSet.Empty
+            .ArrowHead(ArrowType.Vee)
+            .PenWidth(1)
+            .Color("#b0b0b0");
+
         public IAttrSet EdgeMergedCommits => AttrSet.Empty.Style(Style.Dashed);
 
-        public IAttrSet EdgeOther => AttrSet.Empty
-            .PenWidth(1)
-            .FillColor("#a6a6a6");
+        public IAttrSet EdgeOther => AttrSet.Empty;
 
-        public IAttrSet EdgeTagLabel => GetBasePointerStyle()
-            .Color("#b0b0b0")
-            .Len(0.3m);
+        public IAttrSet EdgeTagLabel => GetBasePointerStyle().Len(0.3m);
 
-        public IAttrSet Graph => AttrSet.Empty
+        public IAttrSet GraphGeneric => AttrSet.Empty
             .Rankdir(Rankdir.LR)
             .NodeSep(0.2m)
-            .RankSep(0.1m)
+            .RankSep(0.2m)
             .ForceLabels(false);
 
         public IAttrSet LabelBranch => AttrSet.Empty
@@ -36,10 +37,13 @@ namespace Prigitsk.Core.Rendering.Styling
 
         public IAttrSet LabelTag => AttrSet.Empty
             .FixedSize(false)
-            .PenWidth(0.5m)
+            .PenWidth(0.2m)
             .FillColor("#C6C6C6")
             .Shape(Shape.Cds)
-            .Margin(0.11m, 0.055m);
+            .Width(0)
+            .Height(0)
+        // .Margin(0.11m, 0.055m)
+        ;
 
         public IAttrSet NodeGeneric => AttrSet.Empty
             .FontName("Consolas")

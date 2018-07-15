@@ -9,13 +9,15 @@ namespace Prigitsk.Core.Rendering.Styling
 
         IAttrSet EdgeBranchStartVirtual { get; }
 
+        IAttrSet EdgeGeneric { get; }
+
         IAttrSet EdgeMergedCommits { get; }
 
         IAttrSet EdgeOther { get; }
 
         IAttrSet EdgeTagLabel { get; }
 
-        IAttrSet Graph { get; }
+        IAttrSet GraphGeneric { get; }
 
         IAttrSet LabelBranch { get; }
 

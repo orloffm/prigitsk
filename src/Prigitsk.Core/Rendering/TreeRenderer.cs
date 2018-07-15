@@ -271,20 +271,30 @@ namespace Prigitsk.Core.Rendering
         {
             _gvWriter.StartGraph(GraphMode.Digraph, true);
 
-            IAttrSet graphStyle = _style.Graph;
+            IAttrSet graphStyle = _style.GraphGeneric;
 
             _gvWriter.SetGraphAttributes(graphStyle);
 
             IAttrSet genericNodeStyle = _style.NodeGeneric;
 
             _gvWriter.SetNodeAttributes(genericNodeStyle);
+
+            IAttrSet genericEdgeStyle = _style.EdgeGeneric;
+
+            _gvWriter.SetEdgeAttributes(genericEdgeStyle);
         }
 
         private void WriteNode(INode n, IRemoteWebUrlProvider remoteUrlProvider)
         {
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
 
-            _gvWriter.Node(n, AttrSet.Empty.Url(url));
+            string tooltip = $"{n.Treeish} - {n.Commit.Message} ({n.Commit.CommittedWhen.Value})";
+
+            IAttrSet nodeAttrs = AttrSet.Empty
+                .Url(url)
+                .Tooltip(tooltip);
+
+            _gvWriter.Node(n, nodeAttrs);
         }
     }
 }

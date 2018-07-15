@@ -10,6 +10,7 @@
         Invodot,
         None,
         Tee,
+        Vee,
         Empty,
         Invempty,
         Diamond,
