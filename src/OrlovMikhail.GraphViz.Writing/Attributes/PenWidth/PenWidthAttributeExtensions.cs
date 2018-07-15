@@ -5,8 +5,7 @@
         public static IAttrSet PenWidth(this IAttrSet attrSet, decimal value)
         {
             PenWidthAttribute a = new PenWidthAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

@@ -13,19 +13,24 @@ namespace Prigitsk.Framework
             _items = new List<Tuple<TA, TB>>();
         }
 
+        public PairList(IEnumerable<Tuple<TA, TB>> source)
+        {
+            _items = new List<Tuple<TA, TB>>(source);
+        }
+
         public int Count => _items.Count;
 
         public bool IsReadOnly => false;
 
         public Tuple<TA, TB> this[int index]
         {
-            get =>  _items[index];
+            get => _items[index];
             set => _items[index] = value;
         }
 
         public void Add(Tuple<TA, TB> item)
         {
-           _items.Add(item);
+            _items.Add(item);
         }
 
         public void Add(TA a, TB b)

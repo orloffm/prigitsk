@@ -8,8 +8,7 @@
         public static IAttrSet Label(this IAttrSet attrSet, string value)
         {
             LabelAttribute a = new LabelAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

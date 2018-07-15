@@ -5,8 +5,7 @@
         public static IAttrSet Shape(this IAttrSet attrSet, Shape value)
         {
             ShapeAttribute a = new ShapeAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

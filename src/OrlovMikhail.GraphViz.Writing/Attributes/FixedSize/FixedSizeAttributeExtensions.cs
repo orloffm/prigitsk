@@ -5,8 +5,7 @@
         public static IAttrSet FixedSize(this IAttrSet attrSet, bool value)
         {
             FixedSizeAttribute a = new FixedSizeAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

@@ -10,8 +10,7 @@
         public static IAttrSet Url(this IAttrSet attrSet, string value)
         {
             UrlAttribute a = new UrlAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

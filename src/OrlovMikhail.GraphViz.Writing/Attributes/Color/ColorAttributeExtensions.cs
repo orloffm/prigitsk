@@ -7,8 +7,7 @@ namespace OrlovMikhail.GraphViz.Writing
         public static IAttrSet Color(this IAttrSet attrSet, IGraphVizColor value)
         {
             ColorAttribute a = new ColorAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
 
         public static IAttrSet Color(this IAttrSet attrSet, Color value)

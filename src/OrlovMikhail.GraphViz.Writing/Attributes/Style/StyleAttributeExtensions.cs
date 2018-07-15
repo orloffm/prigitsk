@@ -5,8 +5,7 @@
         public static IAttrSet Style(this IAttrSet attrSet, Style value)
         {
             StyleAttribute a = new StyleAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

@@ -9,24 +9,50 @@ namespace OrlovMikhail.GraphViz.Writing
     {
         private readonly Dictionary<string, IAttribute> _set;
 
-        public AttrSet()
+        private AttrSet(IDictionary<string, IAttribute> values = null)
         {
-            _set = new Dictionary<string, IAttribute>(StringComparer.OrdinalIgnoreCase);
+            if (values == null)
+            {
+                _set = new Dictionary<string, IAttribute>(StringComparer.OrdinalIgnoreCase);
+            }
+            else
+            {
+                _set = new Dictionary<string, IAttribute>(values, StringComparer.OrdinalIgnoreCase);
+            }
         }
 
         public static IAttrSet Empty => new AttrSet();
 
-        public void Add(IAttribute a)
+        public IAttrSet Add(IAttribute a)
         {
-            _set.Remove(a.Key);
-
             bool shouldAdd = a.StringValue != null;
             if (!shouldAdd)
             {
-                return;
+                // Since no change
+                return this;
             }
 
-            _set.Add(a.Key, a);
+            AttrSet clonedSet = new AttrSet(_set);
+            clonedSet._set[a.Key] = a;
+            return clonedSet;
+        }
+
+        public IAttrSet Add(IAttrSet attrSet)
+        {
+            bool shouldAdd = attrSet.Any();
+            if (!shouldAdd)
+            {
+                // Since no change
+                return this;
+            }
+
+            AttrSet clonedSet = new AttrSet(_set);
+            foreach (IAttribute item in attrSet)
+            {
+                clonedSet._set[item.Key] = item;
+            }
+
+            return clonedSet;
         }
 
         public IEnumerator<IAttribute> GetEnumerator()

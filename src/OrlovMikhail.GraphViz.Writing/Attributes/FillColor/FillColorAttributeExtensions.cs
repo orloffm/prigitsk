@@ -7,8 +7,7 @@ namespace OrlovMikhail.GraphViz.Writing
         public static IAttrSet FillColor(this IAttrSet attrSet, IGraphVizColor value)
         {
             FillColorAttribute a = new FillColorAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
 
         public static IAttrSet FillColor(this IAttrSet attrSet, Color value)

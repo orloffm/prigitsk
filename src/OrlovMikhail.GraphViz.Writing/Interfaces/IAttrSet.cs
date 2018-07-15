@@ -4,6 +4,8 @@ namespace OrlovMikhail.GraphViz.Writing
 {
     public interface IAttrSet : IEnumerable<IAttribute>
     {
-        void Add(IAttribute attr);
+        IAttrSet Add(IAttribute attr);
+
+        IAttrSet Add(IAttrSet attrSet);
     }
 }

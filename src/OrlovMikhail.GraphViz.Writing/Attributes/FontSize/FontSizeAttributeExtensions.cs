@@ -8,8 +8,7 @@
         public static IAttrSet FontSize(this IAttrSet attrSet, decimal value)
         {
             FontSizeAttribute a = new FontSizeAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

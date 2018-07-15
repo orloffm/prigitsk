@@ -10,6 +10,16 @@ namespace Prigitsk.Core.Rendering
             writer.Edge(a.Treeish, b.Treeish, attrSet);
         }
 
+        public static void Edge(this IGraphVizWriter writer, ITreeish a, string b, IAttrSet attrSet = null)
+        {
+            writer.Edge(a.Treeish, b, attrSet);
+        }
+
+        public static void Edge(this IGraphVizWriter writer, string a, ITreeish b, IAttrSet attrSet = null)
+        {
+            writer.Edge(a, b.Treeish, attrSet);
+        }
+
         public static void Node(this IGraphVizWriter writer, ITreeish n, IAttrSet attrSet = null)
         {
             writer.Node(n.Treeish, attrSet);

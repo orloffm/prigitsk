@@ -8,8 +8,7 @@
         public static IAttrSet FontName(this IAttrSet attrSet, string value)
         {
             FontNameAttribute a = new FontNameAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

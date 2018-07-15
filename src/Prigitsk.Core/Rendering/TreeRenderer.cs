@@ -8,6 +8,7 @@ using Prigitsk.Core.Entities;
 using Prigitsk.Core.Entities.Comparers;
 using Prigitsk.Core.Graph;
 using Prigitsk.Core.Remotes;
+using Prigitsk.Core.Rendering.Styling;
 using Prigitsk.Core.Strategy;
 using Prigitsk.Framework;
 
@@ -18,14 +19,17 @@ namespace Prigitsk.Core.Rendering
         private readonly IGraphVizWriter _gvWriter;
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
+        private readonly IStyleProvider _style;
 
         public TreeRenderer(
             ILogger<TreeRenderer> log,
             IGraphVizWriter gvWriter,
+            IStyleProvider style,
             IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {
             _log = log;
             _gvWriter = gvWriter;
+            _style = style;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
@@ -40,71 +44,222 @@ namespace Prigitsk.Core.Rendering
 
             WriteHeader();
 
-            IBranch[] currentBranches = tree.Branches.Where(b => tree.EnumerateNodes(b).Any()).ToArray();
-            WriteCurrentBranchesLabels(currentBranches, remoteUrlProvider);
+            IBranch[] branchesWithNodes = tree.Branches.Where(b => tree.EnumerateNodes(b).Any()).ToArray();
+            IBranch[] currentBranchesSorted = OrderByFirstCommitDate(branchesWithNodes, tree).ToArray();
 
-            // Tags and orphaned branches names,
+            IPairList<INode, INode> unwrittenMerges = new PairList<INode, INode>();
+            IPairList<INode, INode> writtenMerges = new PairList<INode, INode>();
+
+            // Main branches.
+            foreach (IBranch b in currentBranchesSorted)
+            {
+                _gvWriter.EmptyLine();
+                _gvWriter.Comment($"Branch {b.Label}.");
+
+                using (_gvWriter.StartSubGraph())
+                {
+                    _gvWriter.SetNodeAttributes(AttrSet.Empty.Group(b.Label));
+
+                    Color drawColor = branchesKnowledge.GetSuggestedDrawingColorFor(b);
+                    bool isLesser = branchesKnowledge.IsAWorkItemBranch(b);
+
+                    IAttrSet nodeStyle = _style.GetBranchNodeStyle(drawColor, isLesser);
+                    IAttrSet edgeStyle = _style.GetBranchEdgeStyle(drawColor, isLesser);
+
+                    _gvWriter.SetNodeAttributes(nodeStyle);
+                    _gvWriter.SetEdgeAttributes(edgeStyle);
+
+                    INode[] nodes = tree.EnumerateNodes(b).ToArray();
+
+                    for (int i = 0; i < nodes.Length; i++)
+                    {
+                        INode currentNode = nodes[i];
+
+                        WriteNode(currentNode, remoteUrlProvider);
+
+                        if (i == 0)
+                        {
+                            // Starting node.
+                            INode parent = currentNode.Parents.FirstOrDefault();
+                            bool hasParent = parent != null;
+                            if (!hasParent)
+                            {
+                                _gvWriter.Comment("Starting line.");
+                                string id = string.Format($"{currentNode.Treeish}_start");
+                                // Write starting empty node.
+                                using (_gvWriter.StartSubGraph())
+                                {
+                                    _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Source));
+
+                                    _gvWriter.Node(id, AttrSet.Empty.Width(0).Height(0).PenWidth(0));
+                                }
+
+                                _gvWriter.Edge(id, currentNode, _style.EdgeBranchStartVirtual);
+                                _gvWriter.EmptyLine();
+                            }
+                            else
+                            {
+                                // It is some other branch, and we draw that edge.
+                                WriteEdge(parent, currentNode, remoteUrlProvider);
+                                writtenMerges.Add(parent, currentNode);
+                            }
+                        }
+
+                        bool isLast = i == nodes.Length - 1;
+                        INode nextNode = isLast ? null : nodes[i + 1];
+
+                        if (!isLast)
+                        {
+                            // Edge to the next node.
+                            WriteEdge(currentNode, nextNode, remoteUrlProvider);
+                        }
+                        else
+                        {
+                            WriteBranchPointer(b, tree, isLesser, remoteUrlProvider);
+                        }
+
+                        INode[] otherChildren = currentNode.Children.Except(nextNode).ToArray();
+                        foreach (INode child in otherChildren)
+                        {
+                            unwrittenMerges.Add(currentNode, child);
+                        }
+                    }
+                }
+            }
+
+            IBranch[] branchesWithoutNodes = tree.Branches.Except(branchesWithNodes).ToArray();
+            foreach (IBranch b in branchesWithoutNodes)
+            {
+                bool isLesser = branchesKnowledge.IsAWorkItemBranch(b);
+                WriteBranchPointer(b, tree, isLesser, remoteUrlProvider);
+            }
+
+            // Tags.
             ITag[] tags = tree.Tags.ToArray();
+            foreach (ITag t in tags)
+            {
+                _gvWriter.EmptyLine();
 
-            IBranch[] orphanedBranches = tree.Branches.Where(b => !tree.EnumerateNodes(b).Any()).ToArray();
+                INode n = tree.GetNode(t.Tip);
+                string id = MakeNodeIdForPointerLabel(n, t);
 
-            WriteTagsAndOrphanedBranches(tags, orphanedBranches, remoteUrlProvider);
+                using (_gvWriter.StartSubGraph())
+                {
+                    _gvWriter.Comment($"Tag {t.Label}.");
+                    _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Same));
 
-            // Now the graph itself.
-            var otherLinks = new PairList<INode, INode>();
-            WriteNodes(tree, branchesKnowledge, currentBranches, remoteUrlProvider, otherLinks);
+                    string url = remoteUrlProvider?.GetTagLink(t);
 
-            // Render all other edges
-            WriteOtherEdges(otherLinks, remoteUrlProvider);
+                    _gvWriter.Node(id, _style.LabelTag.Label(t.Label).Url(url));
 
-            // Tags and orphaned branches
-            WriteTagsAndOrphanedBranchesConnections(tags, orphanedBranches);
-            WriteFooter();
-        }
+                    _gvWriter.Edge(n, id, _style.EdgeTagLabel);
+                }
+            }
 
-        private IEnumerable<IBranch> SortByFirstNodeDates(
-            IEnumerable<IBranch> currentBranches,
-            IDictionary<IBranch, DateTimeOffset?> firstNodeDates)
-        {
-            IComparer<IBranch> byDateComparer = new BranchSorterByDate(firstNodeDates);
-
-            return currentBranches.OrderBy(b => b, byDateComparer);
-        }
-
-        private void WriteCurrentBranchesLabels(
-            IEnumerable<IBranch> currentBranches,
-            IRemoteWebUrlProvider remoteUrlProvider)
-        {
-            _gvWriter.Comment("ContainingBranch names.");
-
-            _gvWriter.SetNodeAttributes(
-                AttrSet.Empty
-                    .Shape(Shape.None)
-                    .FixedSize(false)
-                    .PenWidth(0)
-                    .FillColor(GraphVizColor.None)
-                    .Width(0)
-                    .Height(0)
-                    .Margin(0.05m)
-            );
-
-            foreach (IBranch b in currentBranches)
+            INode[] allLeftOvers = tree.Nodes.Where(n => tree.GetContainingBranch(n) == null).ToArray();
+            if (allLeftOvers.Length > 0)
             {
                 using (_gvWriter.StartSubGraph())
                 {
-                    _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Sink));
+                    _gvWriter.EmptyLine();
+                    _gvWriter.Comment("Leftover nodes.");
+                    _gvWriter.SetNodeAttributes(_style.NodeOrphaned);
 
-                    string url = remoteUrlProvider?.GetBranchLink(b);
-
-                    _gvWriter.Node(
-                        b,
-                        AttrSet.Empty
-                            .Label(b.Label)
-                            .Group(b.Label)
-                            .Url(url)
-                    );
+                    foreach (INode currentNode in allLeftOvers)
+                    {
+                        WriteNode(currentNode, remoteUrlProvider);
+                        // Remember children.
+                        foreach (INode child in currentNode.Children)
+                        {
+                            unwrittenMerges.Add(currentNode, child);
+                        }
+                    }
                 }
             }
+
+            PairList<INode, INode> edgesToWrite = unwrittenMerges.Except(writtenMerges).ToPairList();
+            if (edgesToWrite.Count > 0)
+            {
+                using (_gvWriter.StartSubGraph())
+                {
+                    _gvWriter.EmptyLine();
+                    _gvWriter.Comment("Other edges.");
+                    _gvWriter.SetEdgeAttributes(_style.EdgeOther);
+
+                    foreach (Tuple<INode, INode> edge in edgesToWrite)
+                    {
+                        _gvWriter.Edge(edge.Item1, edge.Item2);
+                    }
+                }
+            }
+
+            WriteFooter();
+        }
+
+        private static string MakeNodeIdForPointerLabel(INode node, IPointer pointer)
+        {
+            string id = string.Format($"{node.Treeish}_{pointer.Label}");
+            return id;
+        }
+
+        private IEnumerable<IBranch> OrderByFirstCommitDate(IEnumerable<IBranch> currentBranches, ITree tree)
+        {
+            var brancheList = new List<IBranch>();
+            var firstNodeDates = new Dictionary<IBranch, DateTimeOffset?>();
+            foreach (IBranch b in currentBranches)
+            {
+                brancheList.Add(b);
+                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.CommittedWhen;
+                firstNodeDates.Add(b, firstNodeDate);
+            }
+
+            IComparer<IBranch> byDateComparer = new BranchSorterByDate(firstNodeDates);
+            brancheList.Sort(byDateComparer);
+            return brancheList;
+        }
+
+        private void WriteBranchLabel(string id, IBranch b, IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            IAttrSet style = _style.LabelBranch;
+            string url = remoteUrlProvider?.GetBranchLink(b);
+
+            _gvWriter.Node(id, style.Label(b.Label).Url(url));
+        }
+
+        private void WriteBranchPointer(IBranch b, ITree tree, bool isLesser, IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            INode pointedNode = tree.GetNode(b.Tip);
+            bool isOwned = tree.GetContainingBranch(pointedNode) == b;
+
+            // Ending textual node.
+            string id = MakeNodeIdForPointerLabel(pointedNode, b);
+
+            bool shouldSink = !isLesser && isOwned;
+            using (_gvWriter.StartSubGraph())
+            {
+                if (shouldSink)
+                {
+                    _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Sink));
+                }
+
+                WriteBranchLabel(id, b, remoteUrlProvider);
+            }
+
+            _gvWriter.Edge(pointedNode, id, _style.EdgeBranchLabel);
+        }
+
+        private void WriteEdge(INode a, INode b, IRemoteWebUrlProvider remoteUrlProvider)
+        {
+            string url = remoteUrlProvider?.GetCompareCommitsLink(a.Commit, b.Commit);
+
+            IAttrSet attrSet = AttrSet.Empty.Url(url);
+            bool hasMergedCommits = b.AbsorbedParentCommits.Any();
+            if (hasMergedCommits)
+            {
+                attrSet = attrSet.Add(_style.EdgeMergedCommits);
+            }
+
+            _gvWriter.Edge(a, b, attrSet);
         }
 
         private void WriteFooter()
@@ -116,265 +271,20 @@ namespace Prigitsk.Core.Rendering
         {
             _gvWriter.StartGraph(GraphMode.Digraph, true);
 
-            _gvWriter.SetGraphAttributes(
-                AttrSet.Empty
-                    .Rankdir(Rankdir.LR)
-                    .NodeSep(0.2m)
-                    .RankSep(0.1m)
-                    .ForceLabels(false));
+            IAttrSet graphStyle = _style.Graph;
 
-            _gvWriter.SetNodeAttributes(AttrSet.Empty.Style(Style.Filled));
-        }
+            _gvWriter.SetGraphAttributes(graphStyle);
 
-        private void WriteInBranchEdge(
-            INode parentNode,
-            INode childNote)
-        {
-            IAttrSet attrSet = AttrSet.Empty;
-            bool drawDotted = childNote.AbsorbedParentCommits.Any();
-            if (drawDotted)
-            {
-                attrSet.Style(Style.Dashed);
-            }
+            IAttrSet genericNodeStyle = _style.NodeGeneric;
 
-            _gvWriter.Edge(parentNode, childNote, attrSet);
+            _gvWriter.SetNodeAttributes(genericNodeStyle);
         }
 
         private void WriteNode(INode n, IRemoteWebUrlProvider remoteUrlProvider)
         {
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
 
-            _gvWriter.Node(
-                n,
-                AttrSet.Empty
-                    .Width(0.2m)
-                    .Height(0.2m)
-                    .Url(url)
-            );
-        }
-
-        private void WriteNodes(
-            ITree tree,
-            IBranchesKnowledge branchesKnowledge,
-            IBranch[] currentBranches,
-            IRemoteWebUrlProvider remoteUrlProvider,
-            IPairList<INode, INode> otherLinks)
-        {
-            _gvWriter.Comment("Graph.");
-
-            _gvWriter.SetNodeAttributes(
-                AttrSet.Empty
-                    .Width(0.2m)
-                    .Height(0.2m)
-                    .FixedSize(true)
-                    .Label(string.Empty)
-                    .Margin(0.11m, 0.055m)
-                    .Shape(Shape.Circle)
-                    .PenWidth(2)
-                    .FillColor(Color.Red)
-            );
-
-            _gvWriter.Comment("Branches.");
-
-            var firstNodeDates = new Dictionary<IBranch, DateTimeOffset?>();
-            foreach (IBranch b in currentBranches)
-            {
-                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.CommittedWhen;
-                firstNodeDates.Add(b, firstNodeDate);
-            }
-
-            IBranch[] currentBranchesSorted = SortByFirstNodeDates(currentBranches, firstNodeDates).ToArray();
-
-            foreach (IBranch b in currentBranchesSorted)
-            {
-                // How to draw this branch's nodes?
-                Color color = branchesKnowledge.GetSuggestedDrawingColorFor(b);
-
-                _gvWriter.SetNodeAttributes(
-                    AttrSet.Empty
-                        .Group(b.Label)
-                        .FillColor(color)
-                        .Color(color)
-                );
-
-                _gvWriter.SetEdgeAttributes(
-                    AttrSet.Empty
-                        .PenWidth(2)
-                        .Color(color)
-                );
-
-                using (_gvWriter.StartSubGraph())
-                {
-                    // All nodes in the branch.
-                    INode[] nodesInBranch = tree.EnumerateNodes(b).ToArray();
-                    var edgesInBranch = new PairList<INode, INode>();
-                    for (int index = 0; index < nodesInBranch.Length; index++)
-                    {
-                        INode currentNode = nodesInBranch[index];
-                        INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
-                        WriteNode(currentNode, remoteUrlProvider);
-                        if (nextNode != null)
-                        {
-                            edgesInBranch.Add(currentNode, nextNode);
-                        }
-
-                        // Other children.
-                        foreach (INode child in currentNode.Children)
-                        {
-                            otherLinks.Add(currentNode, child);
-                        }
-                    }
-
-                    foreach (Tuple<INode, INode> tuple in edgesInBranch)
-                    {
-                        WriteInBranchEdge(tuple.Item1, tuple.Item2);
-                    }
-                }
-
-                // Now link to the branch name node.
-                // 0 - last node in branch
-                // 1 - branch short name
-                _gvWriter.Edge(
-                    b.Tip,
-                    b,
-                    AttrSet.Empty
-                        .Color("#b0b0b0")
-                        .Style(Style.Dotted)
-                        .ArrowHead(ArrowType.None)
-                );
-                _gvWriter.EmptyLine();
-            }
-
-            INode[] allLeftOvers = tree.Nodes.Where(n => tree.GetContainingBranch(n) == null).ToArray();
-            if (allLeftOvers.Length > 0)
-            {
-                // Left-overs, without branches.
-                _gvWriter.SetNodeAttributes(
-                    AttrSet.Empty
-                        .Group("")
-                        .FillColor(Color.White)
-                        .Color(Color.Black)
-                );
-                foreach (INode currentNode in allLeftOvers)
-                {
-                    WriteNode(currentNode, remoteUrlProvider);
-                    // Remember children.
-                    foreach (INode child in currentNode.Children)
-                    {
-                        otherLinks.Add(currentNode, child);
-                    }
-                }
-            }
-        }
-
-        private void WriteOtherEdges(
-            IPairList<INode, INode> otherLinks,
-            IRemoteWebUrlProvider remoteUrlProvider)
-        {
-            _gvWriter.Comment("All other edges.");
-            _gvWriter.SetEdgeAttributes(
-                AttrSet.Empty
-                    .PenWidth(1)
-                    .Color(Color.Black)
-            );
-
-            foreach (Tuple<INode, INode> pair in otherLinks)
-            {
-                INode nodeA = pair.Item1;
-                INode nodeB = pair.Item2;
-                string url = remoteUrlProvider?.GetCompareCommitsLink(nodeA.Commit, nodeB.Commit);
-
-                _gvWriter.Edge(
-                    nodeA,
-                    nodeB,
-                    AttrSet.Empty
-                        .Url(url)
-                );
-            }
-
-            _gvWriter.EmptyLine();
-        }
-
-        private void WriteTagsAndOrphanedBranches(
-            ITag[] tags,
-            IBranch[] orphanedBranches,
-            IRemoteWebUrlProvider remoteUrlProvider)
-        {
-            _gvWriter.Comment("Orphaned branches.");
-
-            foreach (IBranch b in orphanedBranches)
-            {
-                string url = remoteUrlProvider?.GetBranchLink(b);
-
-                _gvWriter.Node(
-                    b,
-                    AttrSet.Empty
-                        .Label(b.Label)
-                        .Url(url)
-                );
-            }
-
-            _gvWriter.Comment("Tags.");
-
-            _gvWriter.SetNodeAttributes(
-                AttrSet.Empty
-                    .Shape(Shape.Cds)
-                    .FixedSize(false)
-                    .FillColor("#C6C6C6")
-                    .PenWidth(1)
-                    .Margin(0.11m, 0.055m)
-            );
-
-            foreach (ITag tag in tags)
-            {
-                string url = remoteUrlProvider?.GetTagLink(tag);
-
-                _gvWriter.Node(
-                    tag,
-                    AttrSet.Empty
-                        .Label(tag.Label)
-                        .Url(url)
-                );
-            }
-        }
-
-        private void WriteTagsAndOrphanedBranchesConnections(
-            IEnumerable<ITag> tags,
-            IEnumerable<IBranch> orphanedBranches)
-        {
-            _gvWriter.Comment("Orphaned branches links.");
-
-            _gvWriter.SetEdgeAttributes(
-                AttrSet.Empty
-                    .Color("#b0b0b0")
-                    .Style(Style.Dotted)
-                    .ArrowHead(ArrowType.None)
-                    .Len(0.3m)
-            );
-
-            foreach (IBranch b in orphanedBranches)
-            {
-                _gvWriter.Edge(b.Tip, b, null);
-            }
-
-            _gvWriter.EmptyLine();
-
-            _gvWriter.Comment("Tags.");
-
-            _gvWriter.SetEdgeAttributes(
-                AttrSet.Empty
-                    .PenWidth(1)
-            );
-
-            foreach (ITag tag in tags)
-            {
-                using (_gvWriter.StartSubGraph())
-                {
-                    _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Same));
-
-                    _gvWriter.Edge(tag.Tip, tag);
-                }
-            }
+            _gvWriter.Node(n, AttrSet.Empty.Url(url));
         }
     }
 }

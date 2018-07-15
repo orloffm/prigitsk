@@ -10,8 +10,7 @@
         public static IAttrSet Group(this IAttrSet attrSet, string value)
         {
             GroupAttribute a = new GroupAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

@@ -5,8 +5,7 @@
         public static IAttrSet ForceLabels(this IAttrSet attrSet, bool value)
         {
             ForceLabelsAttribute a = new ForceLabelsAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }
