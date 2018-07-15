@@ -27,7 +27,8 @@ namespace Prigitsk.Console.CommandLine.Conversion.Draw
                 source.IncludeOrphanedTags,
                 source.NoTags,
                 source.TagCount,
-                source.LesserBranchesRegex
+                source.LesserBranchesRegex,
+                source.IncludeBranchesRegices
             );
         }
     }

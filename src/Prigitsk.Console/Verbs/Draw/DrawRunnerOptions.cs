@@ -1,4 +1,6 @@
-﻿using Prigitsk.Core.Graph;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Prigitsk.Core.Graph;
 using Prigitsk.Core.Strategy;
 
 namespace Prigitsk.Console.Verbs.Draw
@@ -19,7 +21,8 @@ namespace Prigitsk.Console.Verbs.Draw
             bool includeOrphanedTags,
             bool noTags,
             int tagCount,
-            string lesserBranchesRegex)
+            string lesserBranchesRegex,
+            IEnumerable<string> includeBranchesRegices)
         {
             Repository = repository;
             TargetDirectory = target;
@@ -34,6 +37,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IncludeOrphanedTags = includeOrphanedTags;
             TagCount = tagCount;
             LesserBranchesRegex = new LesserBranchRegex(lesserBranchesRegex);
+            IncludeBranchesRegices = includeBranchesRegices?.ToArray();
 
             TagPickingMode = FigureOutTagPickingMode(noTags, tagCount);
         }
@@ -42,11 +46,15 @@ namespace Prigitsk.Console.Verbs.Draw
 
         public string Format { get; }
 
+        public string[] IncludeBranchesRegices { get; }
+
         public bool IncludeOrphanedTags { get; }
 
         public bool KeepAllOrphans { get; }
 
         public bool LeaveHeads { get; }
+
+        public ILesserBranchRegex LesserBranchesRegex { get; }
 
         public string OutputFileName { get; }
 
@@ -63,8 +71,6 @@ namespace Prigitsk.Console.Verbs.Draw
         public TagPickingMode TagPickingMode { get; }
 
         public string TargetDirectory { get; }
-
-        public ILesserBranchRegex LesserBranchesRegex { get; }
 
         private TagPickingMode FigureOutTagPickingMode(bool noTags, int tagCount)
         {

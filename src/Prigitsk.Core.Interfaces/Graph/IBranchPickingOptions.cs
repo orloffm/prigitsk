@@ -6,6 +6,6 @@
     /// </summary>
     public interface IBranchPickingOptions
     {
-        bool CheckIfBranchShouldBePicked(string branchLabel);
+        string[] IncludeBranchesRegices { get; }
     }
 }

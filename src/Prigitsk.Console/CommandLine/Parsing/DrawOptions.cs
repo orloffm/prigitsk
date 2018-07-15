@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using CommandLine;
 using Prigitsk.Console.General;
 
 namespace Prigitsk.Console.CommandLine.Parsing
@@ -15,6 +16,9 @@ namespace Prigitsk.Console.CommandLine.Parsing
 
         [Option("format", Default = "svg", HelpText = "Output file format.")]
         public string Format { get; set; }
+
+        [Option('i', "includeBranches", Separator = ';', HelpText = "Regular expressions for branches to include.")]
+        public IEnumerable<string> IncludeBranchesRegices { get; set; }
 
         [Option(
             "orphanedTags",

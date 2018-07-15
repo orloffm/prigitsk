@@ -94,7 +94,8 @@ namespace Prigitsk.Console.Verbs.Draw
                 Options.TagPickingMode,
                 Options.TagCount,
                 Options.IncludeOrphanedTags);
-            IBranchPickingOptions branchPickingOptions = BranchPickingOptions.Default;
+            IBranchPickingOptions branchPickingOptions = BranchPickingOptions.Set(
+                Options.IncludeBranchesRegices);
 
             ITree tree = _treeBuilder.Build(
                 repositoryData,

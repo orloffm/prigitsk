@@ -8,11 +8,13 @@ namespace Prigitsk.Core.Graph
 {
     public sealed class TreeBuilder : ITreeBuilder
     {
+        private readonly IBranchPickerFactory _branchPickerFactory;
         private readonly ITagPickerFactory _tagPickerFactory;
 
-        public TreeBuilder(ITagPickerFactory tagPickerFactory)
+        public TreeBuilder(ITagPickerFactory tagPickerFactory, IBranchPickerFactory branchPickerFactory)
         {
             _tagPickerFactory = tagPickerFactory;
+            _branchPickerFactory = branchPickerFactory;
         }
 
         public ITree Build(
@@ -33,7 +35,7 @@ namespace Prigitsk.Core.Graph
             return tree;
         }
 
-        private static void AddBranches(
+        private void AddBranches(
             IBranchesKnowledge branchesKnowledge,
             ICommitsData commitsData,
             IBranchPickingOptions branchPickingOptions,
@@ -42,9 +44,10 @@ namespace Prigitsk.Core.Graph
             // Branches in the writing order.
             IBranch[] branchesOrdered = branchesKnowledge.EnumerateBranchesInLogicalOrder().ToArray();
 
+            IBranchPicker branchPicker = _branchPickerFactory.CreateBranchPicker(branchPickingOptions);
+
             // Filter them so that we get only those we want to write.
-            IBranch[] branchesFiltered =
-                branchesOrdered.Where(b => branchPickingOptions.CheckIfBranchShouldBePicked(b.Label)).ToArray();
+            IBranch[] branchesFiltered = branchesOrdered.Where(b => branchPicker.ShouldBePicked(b.Label)).ToArray();
 
             var commitsSet = new HashSet<ICommit>(commitsData);
             foreach (IBranch b in branchesFiltered)

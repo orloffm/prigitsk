@@ -18,6 +18,11 @@ namespace Prigitsk.Console.Verbs.Draw
         string Format { get; }
 
         /// <summary>
+        ///     If specified, only branches whose labels are a match to any of these regular expressions are taken.
+        /// </summary>
+        string[] IncludeBranchesRegices { get; }
+
+        /// <summary>
         ///     Include tags attached to commits not accessible from any tip.
         ///     By default they are removed, and the tag count applies to the remaining tags.
         /// </summary>
@@ -33,6 +38,11 @@ namespace Prigitsk.Console.Verbs.Draw
         ///     In other words, this leaves all final direct commits on a branch untouched.
         /// </summary>
         bool LeaveHeads { get; }
+
+        /// <summary>
+        ///     <see cref="ILesserBranchRegex" />.
+        /// </summary>
+        ILesserBranchRegex LesserBranchesRegex { get; }
 
         /// <summary>
         ///     Output file name.
@@ -68,10 +78,5 @@ namespace Prigitsk.Console.Verbs.Draw
         ///     Target directory.
         /// </summary>
         string TargetDirectory { get; }
-
-        /// <summary>
-        ///     <see cref="ILesserBranchRegex" />.
-        /// </summary>
-        ILesserBranchRegex LesserBranchesRegex { get; }
     }
 }

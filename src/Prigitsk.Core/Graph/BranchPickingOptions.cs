@@ -2,11 +2,16 @@
 {
     public sealed class BranchPickingOptions : IBranchPickingOptions
     {
-        public static BranchPickingOptions Default => new BranchPickingOptions();
-
-        public bool CheckIfBranchShouldBePicked(string branchLabel)
+        private BranchPickingOptions(string[] includeBranchesRegices)
         {
-            return true;
+            IncludeBranchesRegices = includeBranchesRegices;
+        }
+
+        public string[] IncludeBranchesRegices { get; }
+
+        public static IBranchPickingOptions Set(string[] includeBranchesRegices)
+        {
+            return new BranchPickingOptions(includeBranchesRegices);
         }
     }
 }
