@@ -70,8 +70,8 @@ namespace Prigitsk.Console.Verbs.Draw
         string TargetDirectory { get; }
 
         /// <summary>
-        ///     <see cref="IWorkItemSuffixRegex" />.
+        ///     <see cref="ILesserBranchRegex" />.
         /// </summary>
-        IWorkItemSuffixRegex WorkItemBranchesRegex { get; }
+        ILesserBranchRegex LesserBranchesRegex { get; }
     }
 }

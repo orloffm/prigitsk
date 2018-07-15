@@ -7,6 +7,6 @@ namespace Prigitsk.Core.Strategy
     {
         bool IsLesserBranch(IBranch branch);
 
-        void PreProcessAllBranches(IEnumerable<IBranch> branches, IWorkItemSuffixRegex lesserBranchesRegex);
+        void PreProcessAllBranches(IEnumerable<IBranch> branches, ILesserBranchRegex lesserBranchesRegex);
     }
 }

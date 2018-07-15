@@ -40,15 +40,10 @@ namespace Prigitsk.Console.CommandLine.Parsing
         public bool LeaveHeads { get; set; }
 
         [Option(
-            "lesserBranchSuffix",
-            Default = @"-\d+",
-            HelpText = "If a branch name consists of some other branch name and a suffix, then," +
-                       "if any of these regular expressions apply to the whole suffix," +
-                       "the branch is considered a lesser branch and is drawn differently." +
-                       "\r\n" +
-                       "Default value is a number after a minus sign. Thus, if a branch named" +
-                       "\"x\" exists, branches \"x-1\" and \"x-2-a\" will be considered lesser branches.")]
-        public string LesserBranchesSuffix { get; set; }
+            "lesserBranchRegex",
+            Default = @"",
+            HelpText = "If this applies to a branch name, it is considered a lesser one and is drawn differently.")]
+        public string LesserBranchesRegex { get; set; }
 
         /// <summary>
         ///     Disable writing tags.

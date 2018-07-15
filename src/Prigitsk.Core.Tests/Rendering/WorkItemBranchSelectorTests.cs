@@ -27,7 +27,7 @@ namespace Prigitsk.Core.Tests.Rendering
             var expectedSet = new HashSet<string>(expectedLesserBranches);
             IBranch[] branches = _commonList.Select(s => EH.MockBranch(s)).ToArray();
             WorkItemBranchSelector selector = new WorkItemBranchSelector();
-            selector.PreProcessAllBranches(branches, new WorkItemSuffixRegex(regexString));
+            selector.PreProcessAllBranches(branches, new LesserBranchRegex(regexString));
 
             foreach (string branchName in branchesToCheck)
             {

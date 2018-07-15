@@ -11,8 +11,8 @@
         ///     This is the point to inject different strategies in the future.
         /// </summary>
         /// <param name="workItemRegex">
-        ///     See <see cref="IWorkItemSuffixRegex" /> for information.
+        ///     See <see cref="ILesserBranchRegex" /> for information.
         /// </param>
-        IBranchingStrategy GetStrategy(IWorkItemSuffixRegex workItemRegex = null);
+        IBranchingStrategy GetStrategy(ILesserBranchRegex workItemRegex = null);
     }
 }

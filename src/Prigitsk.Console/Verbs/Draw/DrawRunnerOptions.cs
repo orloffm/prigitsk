@@ -33,7 +33,7 @@ namespace Prigitsk.Console.Verbs.Draw
             KeepAllOrphans = keepAllOrphans;
             IncludeOrphanedTags = includeOrphanedTags;
             TagCount = tagCount;
-            WorkItemBranchesRegex = new WorkItemSuffixRegex(lesserBranchesRegex);
+            LesserBranchesRegex = new LesserBranchRegex(lesserBranchesRegex);
 
             TagPickingMode = FigureOutTagPickingMode(noTags, tagCount);
         }
@@ -64,7 +64,7 @@ namespace Prigitsk.Console.Verbs.Draw
 
         public string TargetDirectory { get; }
 
-        public IWorkItemSuffixRegex WorkItemBranchesRegex { get; }
+        public ILesserBranchRegex LesserBranchesRegex { get; }
 
         private TagPickingMode FigureOutTagPickingMode(bool noTags, int tagCount)
         {

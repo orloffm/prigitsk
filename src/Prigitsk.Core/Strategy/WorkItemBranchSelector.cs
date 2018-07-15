@@ -23,7 +23,7 @@ namespace Prigitsk.Core.Strategy
             return _lesserBranches.Contains(branch.Label);
         }
 
-        public void PreProcessAllBranches(IEnumerable<IBranch> branches, IWorkItemSuffixRegex lesserBranchesRegex)
+        public void PreProcessAllBranches(IEnumerable<IBranch> branches, ILesserBranchRegex lesserBranchesRegex)
         {
             _lesserBranches.Clear();
 
@@ -33,57 +33,14 @@ namespace Prigitsk.Core.Strategy
                 return;
             }
 
-            PopulateLesserBranchesList(branches, r);
-        }
-
-        private void PopulateLesserBranchesList(IEnumerable<IBranch> branches, Regex r)
-        {
-            string[] branchNames = branches
-                .Select(b => b.Label)
-                .OrderBy(n => n, StringComparer.OrdinalIgnoreCase)
-                .ToArray();
-
-            for (int i = 1; i < branchNames.Length; i++)
+            string[] lesserBranches = branches.Select(b => b.Label).Where(b => r.IsMatch(b)).ToArray();
+            foreach (string lesserBranch in lesserBranches)
             {
-                string branchName = branchNames[i];
-
-                bool everSawAParent = false;
-
-                for (int p = i - 1; p >= 0; p--)
-                {
-                    string possibleParentBranchName = branchNames[p];
-                    bool isParent = branchName.StartsWith(possibleParentBranchName);
-                    if (!isParent)
-                    {
-                        if (everSawAParent)
-                        {
-                            // There will be no more parents as the array is sorted.
-                            break;
-                        }
-
-                        // There still may be parents before. This can be optimised further.
-                        continue;
-                    }
-
-                    // Remember for future.
-                    everSawAParent = true;
-
-                    string suffix = branchName.Substring(possibleParentBranchName.Length);
-                    bool suffixDoesMatch = r.IsMatch(suffix);
-                    if (!suffixDoesMatch)
-                    {
-                        // Nope, try next one.
-                        continue;
-                    }
-
-                    // OK, this is a lesser branch. Remember it and try the next one.
-                    _lesserBranches.Add(branchName);
-                    break;
-                }
+                _lesserBranches.Add(lesserBranch);
             }
         }
 
-        private bool TryCreateRegex(IWorkItemSuffixRegex regexObject, out Regex regex)
+        private bool TryCreateRegex(ILesserBranchRegex regexObject, out Regex regex)
         {
             regex = null;
 

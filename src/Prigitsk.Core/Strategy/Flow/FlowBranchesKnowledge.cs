@@ -18,11 +18,11 @@ namespace Prigitsk.Core.Strategy.Flow
 
         private readonly Dictionary<FlowBranchLogicalType, Color> _typesToColors;
         private readonly IMultipleDictionary<FlowBranchLogicalType, string> _typesToRegices;
-        private readonly IWorkItemSuffixRegex _workItemRegex;
+        private readonly ILesserBranchRegex _workItemRegex;
 
         public FlowBranchesKnowledge(
             FlowBranchingStrategy strategy,
-            IWorkItemSuffixRegex workItemRegex,
+            ILesserBranchRegex workItemRegex,
             IWorkItemBranchSelectorFactory workItemBranchSelectorFactory)
         {
             _strategy = strategy;

@@ -85,7 +85,7 @@ namespace Prigitsk.Console.Verbs.Draw
             IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
 
             // Create the tree.
-            IBranchingStrategy strategy = _strategyProvider.GetStrategy(Options.WorkItemBranchesRegex);
+            IBranchingStrategy strategy = _strategyProvider.GetStrategy(Options.LesserBranchesRegex);
             IBranch[] allBranches = repositoryData.Branches.GetFor(remoteToUse).ToArray();
             IBranchesKnowledge branchesKnowledge = strategy.CreateKnowledge(allBranches);
 

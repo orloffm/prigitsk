@@ -1,8 +1,8 @@
 ﻿namespace Prigitsk.Core.Strategy
 {
-    public sealed class WorkItemSuffixRegex : IWorkItemSuffixRegex
+    public sealed class LesserBranchRegex : ILesserBranchRegex
     {
-        public WorkItemSuffixRegex(string regex)
+        public LesserBranchRegex(string regex)
         {
             RegexString = regex;
         }

@@ -6,13 +6,13 @@ namespace Prigitsk.Core.Strategy.Flow
 {
     public sealed class FlowBranchingStrategy : IBranchingStrategy
     {
-        private readonly Func<FlowBranchingStrategy, IWorkItemSuffixRegex, IBranchesKnowledge> _knowledgeMaker;
+        private readonly Func<FlowBranchingStrategy, ILesserBranchRegex, IBranchesKnowledge> _knowledgeMaker;
 
-        private readonly IWorkItemSuffixRegex _workItemRegex;
+        private readonly ILesserBranchRegex _workItemRegex;
 
         public FlowBranchingStrategy(
-            IWorkItemSuffixRegex workItemRegex,
-            Func<FlowBranchingStrategy, IWorkItemSuffixRegex, IBranchesKnowledge> knowledgeMaker)
+            ILesserBranchRegex workItemRegex,
+            Func<FlowBranchingStrategy, ILesserBranchRegex, IBranchesKnowledge> knowledgeMaker)
         {
             _workItemRegex = workItemRegex;
             _knowledgeMaker = knowledgeMaker;
