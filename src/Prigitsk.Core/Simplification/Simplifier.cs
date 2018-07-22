@@ -220,14 +220,15 @@ namespace Prigitsk.Core.Simplification
 
             foreach (IBranch b in branches)
             {
-                INode[] nodesInBranch = tree.EnumerateNodes(b).ToArray();
+                List<INode> nodesInBranch = tree.EnumerateNodes(b).ToList();
                 var laterNodesInBranchSet = new HashSet<INode>(nodesInBranch);
 
-                for (int index = 0; index < nodesInBranch.Length; index++)
+                for (int index = 0; index < nodesInBranch.Count;)
                 {
+                    bool removedNode = false;
                     INode currentNode = nodesInBranch[index];
                     laterNodesInBranchSet.Remove(currentNode);
-                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
+                    INode nextNode = index < nodesInBranch.Count - 1 ? nodesInBranch[index + 1] : null;
 
                     // Remove edges that we got from cleaning up.
                     removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, tree);
@@ -236,10 +237,20 @@ namespace Prigitsk.Core.Simplification
                     if (canRemoveTheNode)
                     {
                         // Now, can we remove this node altogether?
-                        removedAnything |= RemoveNodeIfItIsOnlyConnecting(
+                        removedNode = RemoveNodeIfItIsOnlyConnecting(
                             tree,
                             currentNode,
                             options.LeaveTails);
+                    }
+
+                    if (removedNode)
+                    {
+                        removedAnything = true;
+                        nodesInBranch.RemoveAt(index);
+                    }
+                    else
+                    {
+                        index++;
                     }
                 }
             }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Prigitsk.Framework
 {
-    public class OrderedSet<T> : IOrderedSet<T>
+    public sealed class OrderedSet<T> : IOrderedSet<T>
     {
         private readonly IDictionary<T, LinkedListNode<T>> _dictionary;
         private readonly LinkedList<T> _linkedList;
