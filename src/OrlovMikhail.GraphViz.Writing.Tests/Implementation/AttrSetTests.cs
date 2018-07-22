@@ -7,19 +7,16 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
         [Fact]
         public void GivenAttributeWithNullValue_ThenDoesntEnumerateIt()
         {
-            IAttrSet set = AttrSet.Empty;
-
             UrlAttribute a1 = new UrlAttribute("abc");
             LabelAttribute a2 = new LabelAttribute("xyz");
 
-            set.Add(a1);
-            set.Add(a2);
+            IAttrSet set = AttrSet.Empty.Add(a1).Add(a2);
 
             Assert.Equal(new IAttribute[] {a1, a2}, set);
 
             UrlAttribute a3 = new UrlAttribute(null);
 
-            set.Add(a3);
+            set = set.Add(a3);
 
             Assert.Equal(new IAttribute[] {a2}, set);
         }

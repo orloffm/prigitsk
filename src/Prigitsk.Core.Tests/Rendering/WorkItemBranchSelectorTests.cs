@@ -15,7 +15,8 @@ namespace Prigitsk.Core.Tests.Rendering
             "-1234-develop"
         };
 
-        private readonly string[] _expectedLesserOnes = {"dev-ob-1234", "dev-ob-1234-a", "dev-ob-POP-1234-c"};
+        private readonly string[] _expectedLesserOnes = {"dev-ob-1234", "dev-ob-1234-a", "dev-ob-POP-1234-c", "fake-1234",
+            "-1234-develop"};
 
         private const string DefaultRegexString = @"-\d+";
 

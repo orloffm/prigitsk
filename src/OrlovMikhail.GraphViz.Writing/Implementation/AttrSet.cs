@@ -25,15 +25,26 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public IAttrSet Add(IAttribute a)
         {
-            bool shouldAdd = a.StringValue != null;
-            if (!shouldAdd)
+            bool hasValue = _set.ContainsKey(a.Key);
+            bool newValueGiven = a.StringValue != null;
+            if (!hasValue && !newValueGiven)
             {
-                // Since no change
+                // Since no change,
                 return this;
             }
 
             AttrSet clonedSet = new AttrSet(_set);
-            clonedSet._set[a.Key] = a;
+            string key = a.Key;
+
+            if (newValueGiven)
+            {
+                clonedSet._set[key] = a;
+            }
+            else
+            {
+                clonedSet._set.Remove(key);
+            }
+
             return clonedSet;
         }
 
