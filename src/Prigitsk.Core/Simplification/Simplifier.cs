@@ -23,7 +23,7 @@ namespace Prigitsk.Core.Simplification
             // First, remove orphans, if applicable.
             if (!options.KeepAllOrphans)
             {
-                RemoveOrphans(tree, options.KeepOrphansWithTags);
+                RemoveOrphans(tree);
             }
 
             int pass = 0;
@@ -220,14 +220,15 @@ namespace Prigitsk.Core.Simplification
 
             foreach (IBranch b in branches)
             {
-                INode[] nodesInBranch = tree.EnumerateNodes(b).ToArray();
+                List<INode> nodesInBranch = tree.EnumerateNodes(b).ToList();
                 var laterNodesInBranchSet = new HashSet<INode>(nodesInBranch);
 
-                for (int index = 0; index < nodesInBranch.Length; index++)
+                for (int index = 0; index < nodesInBranch.Count;)
                 {
+                    bool removedNode = false;
                     INode currentNode = nodesInBranch[index];
                     laterNodesInBranchSet.Remove(currentNode);
-                    INode nextNode = index < nodesInBranch.Length - 1 ? nodesInBranch[index + 1] : null;
+                    INode nextNode = index < nodesInBranch.Count - 1 ? nodesInBranch[index + 1] : null;
 
                     // Remove edges that we got from cleaning up.
                     removedAnything |= CleanUpChildEdges(currentNode, nextNode, laterNodesInBranchSet, tree);
@@ -236,10 +237,20 @@ namespace Prigitsk.Core.Simplification
                     if (canRemoveTheNode)
                     {
                         // Now, can we remove this node altogether?
-                        removedAnything |= RemoveNodeIfItIsOnlyConnecting(
+                        removedNode = RemoveNodeIfItIsOnlyConnecting(
                             tree,
                             currentNode,
                             options.LeaveTails);
+                    }
+
+                    if (removedNode)
+                    {
+                        removedAnything = true;
+                        nodesInBranch.RemoveAt(index);
+                    }
+                    else
+                    {
+                        index++;
                     }
                 }
             }
@@ -282,13 +293,12 @@ namespace Prigitsk.Core.Simplification
         /// <summary>
         ///     Removes orphaned nodes (i.e. not contained in branches) that don't have tags.
         /// </summary>
-        private void RemoveOrphans(ITree tree, bool keepOrphansWithTags)
+        private void RemoveOrphans(ITree tree)
         {
             INode[] nodes = tree.Nodes.ToArray();
 
-            for (int index = 0; index < nodes.Length; index++)
+            foreach (INode node in nodes)
             {
-                INode node = nodes[index];
                 // It shouldn't be on any branch.
                 IBranch containingBranch = tree.GetContainingBranch(node);
                 if (containingBranch != null)
@@ -296,19 +306,11 @@ namespace Prigitsk.Core.Simplification
                     continue;
                 }
 
-                // Tags.
-                ITag[] tags = tree.GetPointingTags(node).ToArray();
-                if (tags.Length != 0)
+                // It shouldn't have tags.
+                bool hasTags = tree.GetPointingTags(node).Any();
+                if (hasTags)
                 {
-                    if (keepOrphansWithTags)
-                    {
-                        continue;
-                    }
-
-                    foreach (ITag tag in tags)
-                    {
-                        tree.DropTag(tag);
-                    }
+                    continue;
                 }
 
                 tree.RemoveNode(node);

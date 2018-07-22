@@ -45,7 +45,7 @@ namespace Prigitsk.Core.Graph
                 _containedInBranch.Add(node, branch);
             }
 
-            // Branch and all its nodes ordered from the start. The tip is the last one.
+            // ContainingBranch and all its nodes ordered from the start. The tip is the last one.
             _branches.Add(branch, branchNodes);
 
             // Especially save the tip.

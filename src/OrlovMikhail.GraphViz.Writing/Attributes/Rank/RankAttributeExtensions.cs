@@ -5,8 +5,7 @@
         public static IAttrSet Rank(this IAttrSet attrSet, RankType value)
         {
             RankAttribute a = new RankAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

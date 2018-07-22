@@ -5,16 +5,19 @@ namespace Prigitsk.Core.Entities
 {
     public sealed class Commit : IEquatable<Commit>, ICommit
     {
-        public Commit(IHash hash, IEnumerable<IHash> parentsHashes, DateTimeOffset? commiterTimeStamp)
+        public Commit(IHash hash, IEnumerable<IHash> parentsHashes, DateTimeOffset? commiterTimeStamp, string message)
         {
             Parents = new List<IHash>(parentsHashes);
             Hash = hash;
             CommittedWhen = commiterTimeStamp;
+            Message = message;
         }
 
         public DateTimeOffset? CommittedWhen { get; }
 
         public IHash Hash { get; }
+
+        public string Message { get; }
 
         public IEnumerable<IHash> Parents { get; }
 

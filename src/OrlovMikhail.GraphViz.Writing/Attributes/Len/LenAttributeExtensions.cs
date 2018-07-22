@@ -8,8 +8,7 @@
         public static IAttrSet Len(this IAttrSet attrSet, decimal value)
         {
             LenAttribute a = new LenAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

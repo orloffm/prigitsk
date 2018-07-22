@@ -1,10 +1,19 @@
-﻿namespace Prigitsk.Core.Strategy
+﻿using System;
+
+namespace Prigitsk.Core.Strategy
 {
-    public class BranchingStrategyProvider : IBranchingStrategyProvider
+    public sealed class BranchingStrategyProvider : IBranchingStrategyProvider
     {
-        public IBranchingStrategy GetStrategy()
+        private readonly Func<ILesserBranchRegex, IBranchingStrategy> _strategyMaker;
+
+        public BranchingStrategyProvider(Func<ILesserBranchRegex, IBranchingStrategy> strategyMaker)
         {
-            return new CommonFlowBranchingStrategy();
+            _strategyMaker = strategyMaker;
+        }
+
+        public IBranchingStrategy GetStrategy(ILesserBranchRegex workItemRegex = null)
+        {
+            return _strategyMaker(workItemRegex);
         }
     }
 }

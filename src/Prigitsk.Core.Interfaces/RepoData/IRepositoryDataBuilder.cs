@@ -7,7 +7,7 @@ namespace Prigitsk.Core.RepoData
     /// </summary>
     public interface IRepositoryDataBuilder
     {
-        void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen);
+        void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen, string message);
 
         void AddRemote(string remoteName, string remoteUrl);
 

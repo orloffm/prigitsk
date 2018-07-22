@@ -5,5 +5,10 @@
         protected StringAttribute(string value) : base(value)
         {
         }
+
+        protected override string GetStringValueRaw()
+        {
+            return Value;
+        }
     }
 }

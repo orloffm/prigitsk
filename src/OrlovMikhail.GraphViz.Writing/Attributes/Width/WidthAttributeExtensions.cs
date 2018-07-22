@@ -5,8 +5,7 @@
         public static IAttrSet Width(this IAttrSet attrSet, decimal value)
         {
             WidthAttribute a = new WidthAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

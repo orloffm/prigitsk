@@ -10,8 +10,7 @@
         public static IAttrSet Margin(this IAttrSet attrSet, decimal horizontal, decimal vertical)
         {
             MarginAttribute a = new MarginAttribute(horizontal, vertical);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

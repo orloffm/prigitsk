@@ -9,6 +9,8 @@ namespace Prigitsk.Framework
     {
         bool Add(TKey key, TValue value);
 
+        bool Add(TKey key, IEnumerable<TValue> values);
+
         bool Remove(TKey key, TValue value);
 
         /// <summary>

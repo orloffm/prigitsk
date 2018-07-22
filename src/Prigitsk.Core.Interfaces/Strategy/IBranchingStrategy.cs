@@ -1,29 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Strategy
 {
     /// <summary>
-    ///     Represents a branching strategy applicable to the repository.
+    ///     The branching strategy used in the repository.
     /// </summary>
     public interface IBranchingStrategy
     {
         /// <summary>
-        ///     Returns HTML color for the branch. TODO: return an enum.
+        ///     Creates a branches knowledge object that contains the information
+        ///     about the branches in the repository.
         /// </summary>
-        string GetHexColorFor(IBranch branch);
-
-        /// <summary>
-        ///     Orders branches by their logical creation priority.
-        /// </summary>
-        IEnumerable<IBranch> SortByPriorityDescending(IEnumerable<IBranch> branchesEnumerable);
-
-        /// <summary>
-        ///     Orders branches by their importance.
-        /// </summary>
-        IEnumerable<IBranch> SortForWritingDescending(
-            IEnumerable<IBranch> branchesEnumerable,
-            IDictionary<IBranch, DateTimeOffset> firstNodeDates);
+        IBranchesKnowledge CreateKnowledge(IEnumerable<IBranch> branches);
     }
 }

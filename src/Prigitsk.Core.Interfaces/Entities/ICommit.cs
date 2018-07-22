@@ -12,6 +12,8 @@ namespace Prigitsk.Core.Entities
 
         IHash Hash { get; }
 
+        string Message { get; }
+
         IEnumerable<IHash> Parents { get; }
 
         bool Equals(ICommit other);

@@ -112,6 +112,11 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public void SetEdgeAttributes(IAttrSet attributesSet)
         {
+            if (!AttrSet.NotNullOrEmpty(attributesSet))
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.Append("edge");
             AppendAttributeSet(attributesSet, sb);
@@ -121,6 +126,11 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public void SetGraphAttributes(IAttrSet attributesSet)
         {
+            if (!AttrSet.NotNullOrEmpty(attributesSet))
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.Append("graph");
             AppendAttributeSet(attributesSet, sb);
@@ -130,6 +140,11 @@ namespace OrlovMikhail.GraphViz.Writing
 
         public void SetNodeAttributes(IAttrSet attributesSet)
         {
+            if (!AttrSet.NotNullOrEmpty(attributesSet))
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             sb.Append("node");
             AppendAttributeSet(attributesSet, sb);

@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\StringAttributeTests.cs" />
     <Compile Include="Color\GraphVizColorTests.cs" />
+    <Compile Include="Implementation\AttrSetTests.cs" />
     <Compile Include="Implementation\GraphVizWriterTests.cs" />
     <Compile Include="Implementation\DotHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

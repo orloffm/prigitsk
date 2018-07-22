@@ -1,4 +1,7 @@
-﻿namespace Prigitsk.Console.Verbs.Draw
+﻿using Prigitsk.Core.Graph;
+using Prigitsk.Core.Strategy;
+
+namespace Prigitsk.Console.Verbs.Draw
 {
     public interface IDrawRunnerOptions
         : IVerbRunnerOptions
@@ -15,20 +18,31 @@
         string Format { get; }
 
         /// <summary>
+        ///     If specified, only branches whose labels are a match to any of these regular expressions are taken.
+        /// </summary>
+        string[] IncludeBranchesRegices { get; }
+
+        /// <summary>
+        ///     Include tags attached to commits not accessible from any tip.
+        ///     By default they are removed, and the tag count applies to the remaining tags.
+        /// </summary>
+        bool IncludeOrphanedTags { get; }
+
+        /// <summary>
         ///     Do not remove commits not accessible from any tip.
         /// </summary>
         bool KeepAllOrphans { get; }
-
-        /// <summary>
-        ///     Still remove commits not accessible from any tip, but keep them if they have tags on them.
-        /// </summary>
-        bool KeepOrphansWithTags { get; }
 
         /// <summary>
         ///     Prevent concatenation of nodes on branches after last merge or diversion.
         ///     In other words, this leaves all final direct commits on a branch untouched.
         /// </summary>
         bool LeaveHeads { get; }
+
+        /// <summary>
+        ///     <see cref="ILesserBranchRegex" />.
+        /// </summary>
+        ILesserBranchRegex LesserBranchesRegex { get; }
 
         /// <summary>
         ///     Output file name.
@@ -55,6 +69,10 @@
         ///     Directory containing a .git repository.
         /// </summary>
         string Repository { get; }
+
+        int TagCount { get; }
+
+        TagPickingMode TagPickingMode { get; }
 
         /// <summary>
         ///     Target directory.

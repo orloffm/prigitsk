@@ -6,7 +6,7 @@ namespace Prigitsk.Core.Tests.Helpers
 {
     public static class EH
     {
-        public static IBranch MockBranch(string s, IHash hash)
+        public static IBranch MockBranch(string s, IHash hash = null)
         {
             return Mock.Of<IBranch>(
                 b => b.RemoteName == "origin"

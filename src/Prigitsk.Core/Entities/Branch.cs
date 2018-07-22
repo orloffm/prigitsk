@@ -10,7 +10,7 @@ namespace Prigitsk.Core.Entities
         public Branch(string name, IHash tip) : base(name, tip)
         {
             int indexOfSlash = name.IndexOf('/');
-            RemoteName = name.Substring(0, indexOfSlash);
+            RemoteName = name.Substring(0, Math.Max(0, indexOfSlash));
             Label = name.Substring(indexOfSlash + 1);
         }
 

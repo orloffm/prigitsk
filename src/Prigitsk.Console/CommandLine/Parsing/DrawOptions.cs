@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using CommandLine;
 using Prigitsk.Console.General;
 
 namespace Prigitsk.Console.CommandLine.Parsing
@@ -13,17 +14,27 @@ namespace Prigitsk.Console.CommandLine.Parsing
                 "Forcefully treat the repository as belonging to a GitHub server when rendering. Affects the links.")]
         public bool ForceTreatAsGitHub { get; set; }
 
-        [Option('f', "format", Default = "svg", HelpText = "Output file format.")]
+        [Option("format", Default = "svg", HelpText = "Output file format.")]
         public string Format { get; set; }
 
-        [Option('k', "keepOrphans", Default = false, HelpText = "Do not remove commits not accessible from any tip.")]
-        public bool KeepAllOrphans { get; set; }
+        [Option('i', "includeBranches", Separator = ';', HelpText = "Regular expressions for branches to include.")]
+        public IEnumerable<string> IncludeBranchesRegices { get; set; }
 
         [Option(
-            "keepOrphansWithTags",
+            "orphanedTags",
             Default = false,
-            HelpText = "Still remove commits not accessible from any tip, but keep them if they have tags on them.")]
-        public bool KeepOrphansWithTags { get; set; }
+            HelpText = "Include tags attached to commits not accessible from any tip. " +
+                       "By default they are removed, and the tag count applies to the remaining tags.")]
+        public bool IncludeOrphanedTags { get; set; }
+
+        [Option(
+            'k',
+            "keepOrphans",
+            Default = false,
+            HelpText =
+                "Do not remove orphan commits, i.e. those not accessible from any tip and not having any tags on them. " +
+                "Tags on orphans can be removed by a separate argument.")]
+        public bool KeepAllOrphans { get; set; }
 
         [Option(
             "leaveHeads",
@@ -31,6 +42,22 @@ namespace Prigitsk.Console.CommandLine.Parsing
             HelpText =
                 "Prevent concatenation of nodes on branches after last merge or diversion. In other words, this leaves all final direct commits on a branch untouched.")]
         public bool LeaveHeads { get; set; }
+
+        [Option(
+            "lesserBranchRegex",
+            Default = @"",
+            HelpText = "If this applies to a branch name, it is considered a lesser one and is drawn differently.")]
+        public string LesserBranchesRegex { get; set; }
+
+        /// <summary>
+        ///     Disable writing tags.
+        /// </summary>
+        [Option(
+            'n',
+            "noTags",
+            Default = false,
+            HelpText = "Disable writing tags. Has higher priority than specifying tag count.")]
+        public bool NoTags { get; set; }
 
         /// <summary>
         ///     The target file name.
@@ -61,6 +88,12 @@ namespace Prigitsk.Console.CommandLine.Parsing
         /// </summary>
         [Option('r', "repository", HelpText = "Directory containing a .git repository.")]
         public string Repository { get; set; }
+
+        /// <summary>
+        ///     The number of tags to include.
+        /// </summary>
+        [Option("tagCount", Default = -1, HelpText = "Number of latest tags to include.")]
+        public int TagCount { get; set; }
 
         /// <summary>
         ///     The target directory.

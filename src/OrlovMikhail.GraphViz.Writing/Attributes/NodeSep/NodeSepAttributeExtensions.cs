@@ -5,8 +5,7 @@
         public static IAttrSet NodeSep(this IAttrSet attrSet, decimal value)
         {
             NodeSepAttribute a = new NodeSepAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

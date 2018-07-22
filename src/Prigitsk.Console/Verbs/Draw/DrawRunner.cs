@@ -85,8 +85,24 @@ namespace Prigitsk.Console.Verbs.Draw
             IRemote remoteToUse = _remoteHelper.PickRemote(repositoryData, Options.RemoteToUse);
 
             // Create the tree.
-            IBranchingStrategy strategy = _strategyProvider.GetStrategy();
-            ITree tree = _treeBuilder.Build(repositoryData, remoteToUse, strategy, TreeBuildingOptions.Default);
+            IBranchingStrategy strategy = _strategyProvider.GetStrategy(Options.LesserBranchesRegex);
+            IBranch[] allBranches = repositoryData.Branches.GetFor(remoteToUse).ToArray();
+            IBranchesKnowledge branchesKnowledge = strategy.CreateKnowledge(allBranches);
+
+            // Options for building the tree.
+            ITagPickingOptions tagPickingOptions = TagPickingOptions.Set(
+                Options.TagPickingMode,
+                Options.TagCount,
+                Options.IncludeOrphanedTags);
+            IBranchPickingOptions branchPickingOptions = BranchPickingOptions.Set(
+                Options.IncludeBranchesRegices);
+
+            ITree tree = _treeBuilder.Build(
+                repositoryData,
+                remoteToUse,
+                branchesKnowledge,
+                branchPickingOptions,
+                tagPickingOptions);
 
             SimplifyTree(tree);
 
@@ -105,7 +121,7 @@ namespace Prigitsk.Console.Verbs.Draw
                     IGraphVizWriter graphVizWriter = _graphVizFactory.CreateGraphVizWriter(textWriter);
 
                     ITreeRenderer treeRenderer = _treeRendererFactory.CreateRenderer(graphVizWriter);
-                    treeRenderer.Render(tree, remoteToUse, strategy, renderingOptions);
+                    treeRenderer.Render(tree, remoteToUse, branchesKnowledge, renderingOptions);
                 }
             }
 
@@ -157,7 +173,7 @@ namespace Prigitsk.Console.Verbs.Draw
                 throw new LoggedAsFatalException(message);
             }
 
-            Log.Debug("Using Git repository from {di.FullName}.");
+            Log.Debug($"Using Git repository from {di.FullName}.");
 
             return di;
         }
@@ -188,17 +204,18 @@ namespace Prigitsk.Console.Verbs.Draw
         private void SimplifyTree(ITree tree)
         {
             bool simplify = !Options.PreventSimplification;
-            if (simplify)
+            if (!simplify)
             {
-                // Simplify the tree.
-                SimplificationOptions simplificationOptions = SimplificationOptions.Default;
-                simplificationOptions.LeaveTails = Options.LeaveHeads;
-                simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
-                simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
-                simplificationOptions.KeepOrphansWithTags = Options.KeepOrphansWithTags;
-
-                _simplifier.Simplify(tree, simplificationOptions);
+                return;
             }
+
+            // Simplify the tree.
+            SimplificationOptions simplificationOptions = SimplificationOptions.Default;
+            simplificationOptions.LeaveTails = Options.LeaveHeads;
+            simplificationOptions.FirstBranchNodeMayBeRemoved = Options.RemoveTails;
+            simplificationOptions.KeepAllOrphans = Options.KeepAllOrphans;
+
+            _simplifier.Simplify(tree, simplificationOptions);
         }
 
         /// <summary>

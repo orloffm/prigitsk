@@ -24,12 +24,12 @@ namespace Prigitsk.Core.RepoData
             _tags = new List<Tag>();
         }
 
-        public void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen)
+        public void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen, string message)
         {
             IHash hash = Hash.Create(sha);
             IHash[] parentHashes = parentShas.Select(Hash.Create).ToArray();
 
-            Commit commit = new Commit(hash, parentHashes, committerWhen);
+            Commit commit = new Commit(hash, parentHashes, committerWhen, message);
             _commits.Add(hash, commit);
         }
 

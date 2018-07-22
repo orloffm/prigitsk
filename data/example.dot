@@ -3,7 +3,9 @@ rankdir="LR";
 nodesep=0.2;
 ranksep=0.1;
 forcelabels=false;
-graph [fontname = "consolas", fontcolor="black", fontsize="8pt"]; node [fontname = "consolas", fontcolor="black", fontsize="8pt"]; edge [fontname = "consolas", fontcolor="black", fontsize="8pt"];
+graph [fontname = "consolas", fontcolor="black", fontsize="8pt"]; 
+node [fontname = "consolas", fontcolor="black", fontsize="8pt"];
+edge [fontname = "consolas", fontcolor="black", fontsize="8pt"];
 
 // general
 node [style=filled; color="black"];
@@ -63,7 +65,8 @@ ms [label="", width=0, height=0, penwidth=0];
 }
 
 edge [color="#27E4F9"]; ml -> m2 -> m3 -> m4;
-ms -> ml [style=dashed, arrowhead=none ]; m4 -> me [ style=dashed, arrowhead=none ];
+ms -> ml [style=dashed, arrowhead=none ];
+ m4 -> me [ style=dashed, arrowhead=none ];
 node [group="hotfixes", fillcolor="#FD5965", color="#FD5965", fontcolor="#650108"];
 edge [color="#FD5965"];
 hal [label="HAl", shape=house];

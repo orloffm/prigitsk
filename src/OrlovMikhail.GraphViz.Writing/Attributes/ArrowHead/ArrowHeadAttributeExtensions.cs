@@ -5,8 +5,7 @@
         public static IAttrSet ArrowHead(this IAttrSet attrSet, ArrowType value)
         {
             ArrowHeadAttribute a = new ArrowHeadAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }

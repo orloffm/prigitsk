@@ -1,6 +1,11 @@
-﻿namespace Prigitsk.Console.Verbs.Draw
+﻿using System.Collections.Generic;
+using System.Linq;
+using Prigitsk.Core.Graph;
+using Prigitsk.Core.Strategy;
+
+namespace Prigitsk.Console.Verbs.Draw
 {
-    public class DrawRunnerOptions : IDrawRunnerOptions
+    public sealed class DrawRunnerOptions : IDrawRunnerOptions
     {
         public DrawRunnerOptions(
             string repository,
@@ -13,7 +18,11 @@
             bool removeTails,
             bool preventSimplification,
             bool keepAllOrphans,
-            bool keepOrphansWithTags)
+            bool includeOrphanedTags,
+            bool noTags,
+            int tagCount,
+            string lesserBranchesRegex,
+            IEnumerable<string> includeBranchesRegices)
         {
             Repository = repository;
             TargetDirectory = target;
@@ -25,18 +34,27 @@
             RemoveTails = removeTails;
             PreventSimplification = preventSimplification;
             KeepAllOrphans = keepAllOrphans;
-            KeepOrphansWithTags = keepOrphansWithTags;
+            IncludeOrphanedTags = includeOrphanedTags;
+            TagCount = tagCount;
+            LesserBranchesRegex = new LesserBranchRegex(lesserBranchesRegex);
+            IncludeBranchesRegices = includeBranchesRegices?.ToArray();
+
+            TagPickingMode = FigureOutTagPickingMode(noTags, tagCount);
         }
 
         public bool ForceTreatAsGitHub { get; }
 
         public string Format { get; }
 
+        public string[] IncludeBranchesRegices { get; }
+
+        public bool IncludeOrphanedTags { get; }
+
         public bool KeepAllOrphans { get; }
 
-        public bool KeepOrphansWithTags { get; }
-
         public bool LeaveHeads { get; }
+
+        public ILesserBranchRegex LesserBranchesRegex { get; }
 
         public string OutputFileName { get; }
 
@@ -48,6 +66,27 @@
 
         public string Repository { get; }
 
+        public int TagCount { get; set; }
+
+        public TagPickingMode TagPickingMode { get; }
+
         public string TargetDirectory { get; }
+
+        private TagPickingMode FigureOutTagPickingMode(bool noTags, int tagCount)
+        {
+            bool pickNone = noTags || tagCount == 0;
+            if (pickNone)
+            {
+                return TagPickingMode.None;
+            }
+
+            bool pickAll = tagCount < 0;
+            if (pickAll)
+            {
+                return TagPickingMode.All;
+            }
+
+            return TagPickingMode.Latest;
+        }
     }
 }

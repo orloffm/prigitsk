@@ -5,8 +5,7 @@
         public static IAttrSet Rankdir(this IAttrSet attrSet, Rankdir value)
         {
             RankdirAttribute a = new RankdirAttribute(value);
-            attrSet.Add(a);
-            return attrSet;
+            return attrSet.Add(a);
         }
     }
 }
