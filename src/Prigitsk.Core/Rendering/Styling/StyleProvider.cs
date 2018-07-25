@@ -46,6 +46,7 @@ namespace Prigitsk.Core.Rendering.Styling
         ;
 
         public IAttrSet NodeGeneric => AttrSet.Empty
+            .Label(string.Empty)
             .FontName("Consolas")
             .FontSize(8)
             .Style(Style.Filled);
@@ -68,7 +69,6 @@ namespace Prigitsk.Core.Rendering.Styling
                 .Width(isLesser ? 0.1m : 0.2m)
                 .Height(isLesser ? 0.1m : 0.2m)
                 .FixedSize(true)
-                .Label(string.Empty)
                 .Margin(0.11m, 0.055m)
                 .Shape(Shape.Circle)
                 .PenWidth(isLesser ? 1 : 2)
