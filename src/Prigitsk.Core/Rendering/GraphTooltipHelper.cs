@@ -10,7 +10,7 @@ namespace Prigitsk.Core.Rendering
         {
             string MakeSignature(ISignature whom, string prefix = "")
             {
-                return $"{Environment.NewLine}{prefix}{whom.Name} @ {whom.When})";
+                return $"{Environment.NewLine}{prefix}{whom.Name} @ {whom.When}";
             }
 
             string tooltip = $"{node.Treeish} - {node.Commit.Message}";

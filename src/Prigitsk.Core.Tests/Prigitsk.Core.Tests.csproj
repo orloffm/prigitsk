@@ -72,7 +72,6 @@
     <Compile Include="Graph\TagPickerTestCase.cs" />
     <Compile Include="Graph\BranchPickerTests.cs" />
     <Compile Include="Graph\TagPickerTests.cs" />
-    <Compile Include="Helpers\EH.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Graph\TreeTests.cs" />
     <Compile Include="Graph\TreeWalkerTests.cs" />
@@ -80,6 +79,11 @@
     <Compile Include="Rendering\GraphTooltipHelperTests.cs" />
     <Compile Include="Rendering\WorkItemBranchSelectorTests.cs" />
     <Compile Include="RepoData\CommitsDataTests.cs" />
+    <Compile Include="StubEntities\BranchStub.cs" />
+    <Compile Include="StubEntities\CommitStub.cs" />
+    <Compile Include="StubEntities\HashStub.cs" />
+    <Compile Include="StubEntities\NodeStub.cs" />
+    <Compile Include="StubEntities\SignatureStub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -117,6 +121,7 @@
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.8.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
