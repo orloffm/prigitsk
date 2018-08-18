@@ -7,6 +7,11 @@ namespace Prigitsk.Console.Verbs.Draw
         : IVerbRunnerOptions
     {
         /// <summary>
+        ///     If specified, the branches whose labels match any of these regular expressions are not taken.
+        /// </summary>
+        string[] ExcludeBranchesRegices { get; }
+
+        /// <summary>
         ///     Forcefully treat the repository as belonging to GitHub server when rendering.
         ///     Affects the links.
         /// </summary>
@@ -18,7 +23,7 @@ namespace Prigitsk.Console.Verbs.Draw
         string Format { get; }
 
         /// <summary>
-        ///     If specified, only branches whose labels are a match to any of these regular expressions are taken.
+        ///     If specified, only branches whose labels match any of these regular expressions are taken.
         /// </summary>
         string[] IncludeBranchesRegices { get; }
 

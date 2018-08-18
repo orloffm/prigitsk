@@ -6,35 +6,40 @@ namespace Prigitsk.Core.Graph
 {
     public sealed class BranchPicker : IBranchPicker
     {
-        private readonly Regex[] _regices;
+        private readonly Regex[] _excludeRegices;
+        private readonly Regex[] _includeRegices;
 
         public BranchPicker(IBranchPickingOptions options)
         {
-            Regex[] regices = CreateRegices(options.IncludeBranchesRegices).ToArray();
-            if (regices.Length > 0)
-            {
-                _regices = regices;
-            }
+            _excludeRegices = CreateRegices(options.ExcludeBranchesRegices);
+            _includeRegices = CreateRegices(options.IncludeBranchesRegices);
         }
 
         public bool ShouldBePicked(string branchLabel)
         {
-            if (_regices == null)
+            if (_includeRegices != null)
             {
-                return true;
+                bool isExplicitInclude = _includeRegices.Any(r => r.IsMatch(branchLabel));
+                return isExplicitInclude;
             }
 
-            bool anyMatches = _regices.Any(r => r.IsMatch(branchLabel));
-            return anyMatches;
+            if (_excludeRegices != null)
+            {
+                bool isExplicitExclude = _excludeRegices.Any(r => r.IsMatch(branchLabel));
+                return !isExplicitExclude;
+            }
+
+            return true;
         }
 
-        private IEnumerable<Regex> CreateRegices(IEnumerable<string> regexStrings)
+        private Regex[] CreateRegices(IEnumerable<string> regexStrings)
         {
             if (regexStrings == null)
             {
-                yield break;
+                return null;
             }
 
+            var regices = new List<Regex>();
             foreach (string regexString in regexStrings)
             {
                 if (string.IsNullOrWhiteSpace(regexString))
@@ -42,9 +47,16 @@ namespace Prigitsk.Core.Graph
                     continue;
                 }
 
-                Regex r = new Regex(regexString, RegexOptions.IgnoreCase);
-                yield return r;
+                Regex r = new Regex(regexString, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                regices.Add(r);
             }
+
+            if (regices.Count == 0)
+            {
+                return null;
+            }
+
+            return regices.ToArray();
         }
     }
 }

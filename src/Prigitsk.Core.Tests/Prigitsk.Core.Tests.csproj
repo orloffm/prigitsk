@@ -68,7 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Graph\BranchPickerTestCase.cs" />
     <Compile Include="Graph\TagPickerTestCase.cs" />
+    <Compile Include="Graph\BranchPickerTests.cs" />
     <Compile Include="Graph\TagPickerTests.cs" />
     <Compile Include="Helpers\EH.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
