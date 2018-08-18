@@ -20,16 +20,19 @@ namespace Prigitsk.Core.Rendering
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
         private readonly IStyleProvider _style;
+        private readonly IGraphTooltipHelper _tooltipHelper;
 
         public TreeRenderer(
             ILogger<TreeRenderer> log,
             IGraphVizWriter gvWriter,
             IStyleProvider style,
+            IGraphTooltipHelper tooltipHelper,
             IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {
             _log = log;
             _gvWriter = gvWriter;
             _style = style;
+            _tooltipHelper = tooltipHelper;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
@@ -251,8 +254,12 @@ namespace Prigitsk.Core.Rendering
         private void WriteEdge(INode a, INode b, IRemoteWebUrlProvider remoteUrlProvider)
         {
             string url = remoteUrlProvider?.GetCompareCommitsLink(a.Commit, b.Commit);
+            string tooltip = _tooltipHelper.MakeEdgeTooltip(a, b);
 
-            IAttrSet attrSet = AttrSet.Empty.Url(url);
+            IAttrSet attrSet = AttrSet.Empty
+                .Url(url)
+                .Tooltip(tooltip);
+
             bool hasMergedCommits = b.AbsorbedParentCommits.Any();
             if (hasMergedCommits)
             {
@@ -286,18 +293,8 @@ namespace Prigitsk.Core.Rendering
 
         private void WriteNode(INode n, IRemoteWebUrlProvider remoteUrlProvider)
         {
-            string MakeSignature( ISignature whom, string prefix = "")
-            {
-               return $"{Environment.NewLine}{prefix}{whom.Name} @ {whom.When})";
-            }
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
-
-            string tooltip = $"{n.Treeish} - {n.Commit.Message}";
-            tooltip += MakeSignature(n.Commit.Author);
-            if (n.Commit.Author.Name != n.Commit.Committer.Name)
-            {
-                tooltip += MakeSignature(n.Commit.Committer, "Committed by: ");
-            }
+            string tooltip = _tooltipHelper.MakeNodeTooltip(n);
 
             IAttrSet nodeAttrs = AttrSet.Empty
                 .Url(url)
