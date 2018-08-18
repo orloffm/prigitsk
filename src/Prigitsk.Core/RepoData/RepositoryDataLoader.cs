@@ -36,7 +36,7 @@ namespace Prigitsk.Core.RepoData
             {
                 string[] parentShas = c.Parents.Select(p => p.Sha).ToArray();
 
-                builder.AddCommit(c.Sha, parentShas, c.Committer.When, c.Message);
+                builder.AddCommit(c.Sha, parentShas, c.Author, c.Committer, c.Message);
             }
 
             // Remotes

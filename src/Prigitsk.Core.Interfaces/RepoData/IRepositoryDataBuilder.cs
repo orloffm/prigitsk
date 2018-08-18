@@ -1,4 +1,6 @@
 ﻿using System;
+using OrlovMikhail.Git;
+using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.RepoData
 {
@@ -7,7 +9,7 @@ namespace Prigitsk.Core.RepoData
     /// </summary>
     public interface IRepositoryDataBuilder
     {
-        void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen, string message);
+        void AddCommit(string sha, string[] parentShas, IGitSignature author, IGitSignature committer, string message);
 
         void AddRemote(string remoteName, string remoteUrl);
 

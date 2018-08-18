@@ -209,7 +209,7 @@ namespace Prigitsk.Core.Rendering
             foreach (IBranch b in currentBranches)
             {
                 brancheList.Add(b);
-                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.CommittedWhen;
+                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.Committer?.When;
                 firstNodeDates.Add(b, firstNodeDate);
             }
 
@@ -286,9 +286,18 @@ namespace Prigitsk.Core.Rendering
 
         private void WriteNode(INode n, IRemoteWebUrlProvider remoteUrlProvider)
         {
+            string MakeSignature( ISignature whom, string prefix = "")
+            {
+               return $"{Environment.NewLine}{prefix}{whom.Name} @ {whom.When})";
+            }
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
 
-            string tooltip = $"{n.Treeish} - {n.Commit.Message} ({n.Commit.CommittedWhen.Value})";
+            string tooltip = $"{n.Treeish} - {n.Commit.Message}";
+            tooltip += MakeSignature(n.Commit.Author);
+            if (n.Commit.Author.Name != n.Commit.Committer.Name)
+            {
+                tooltip += MakeSignature(n.Commit.Committer, "Committed by: ");
+            }
 
             IAttrSet nodeAttrs = AttrSet.Empty
                 .Url(url)

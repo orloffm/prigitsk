@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\OrlovMikhail.Git.Abstractions\OrlovMikhail.Git.Abstractions.csproj" />
     <ProjectReference Include="..\OrlovMikhail.GraphViz.Writing\OrlovMikhail.GraphViz.Writing.csproj" />
+    <ProjectReference Include="..\Prigitsk.Core.Entities.Interfaces\Prigitsk.Core.Entities.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

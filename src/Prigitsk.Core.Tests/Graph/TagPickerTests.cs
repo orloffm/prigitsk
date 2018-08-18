@@ -12,7 +12,7 @@ namespace Prigitsk.Core.Tests.Graph
         {
             INode MockNode(DateTimeOffset? date)
             {
-                ICommit commit = Mock.Of<ICommit>(c => c.CommittedWhen == date);
+                ICommit commit = Mock.Of<ICommit>(c => c.Committer.When == date);
                 INode node = Mock.Of<INode>(n => n.Commit == commit);
                 return node;
             }

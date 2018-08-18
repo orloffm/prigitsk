@@ -139,6 +139,10 @@
       <Project>{9660dbb4-5201-4fc3-a018-8e473f55b172}</Project>
       <Name>OrlovMikhail.GraphViz.Writing</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Entities.Interfaces\Prigitsk.Core.Entities.Interfaces.csproj">
+      <Project>{7C30432F-F235-4E4C-83F9-7FA223AEC598}</Project>
+      <Name>Prigitsk.Core.Entities.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj">
       <Project>{1aef4d1d-70eb-48cc-8b60-8592c71d5615}</Project>
       <Name>Prigitsk.Core.Interfaces</Name>

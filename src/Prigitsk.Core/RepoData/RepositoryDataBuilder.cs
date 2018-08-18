@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using OrlovMikhail.Git;
 using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.RepoData
@@ -24,12 +25,15 @@ namespace Prigitsk.Core.RepoData
             _tags = new List<Tag>();
         }
 
-        public void AddCommit(string sha, string[] parentShas, DateTimeOffset committerWhen, string message)
+        public void AddCommit(string sha, string[] parentShas, IGitSignature author, IGitSignature committer, string message)
         {
             IHash hash = Hash.Create(sha);
             IHash[] parentHashes = parentShas.Select(Hash.Create).ToArray();
 
-            Commit commit = new Commit(hash, parentHashes, committerWhen, message);
+            Signature authorSignature = new Signature(author.Name, author.Email, author.When);
+            Signature committerSignature = new Signature(committer.Name, committer.Email, committer.When);
+
+            Commit commit = new Commit(hash, parentHashes, authorSignature, committerSignature, message);
             _commits.Add(hash, commit);
         }
 

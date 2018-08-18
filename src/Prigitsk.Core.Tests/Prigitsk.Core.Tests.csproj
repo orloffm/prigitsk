@@ -85,6 +85,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Prigitsk.Core.Entities.Interfaces\Prigitsk.Core.Entities.Interfaces.csproj">
+      <Project>{7C30432F-F235-4E4C-83F9-7FA223AEC598}</Project>
+      <Name>Prigitsk.Core.Entities.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Prigitsk.Core.Entities\Prigitsk.Core.Entities.csproj">
+      <Project>{282F0DDA-E2F6-4CC6-98EA-19FF1B98F09D}</Project>
+      <Name>Prigitsk.Core.Entities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj">
       <Project>{fb765e3c-97c2-49d6-9e28-02e301cb4ad4}</Project>
       <Name>Prigitsk.Core.Graph</Name>
