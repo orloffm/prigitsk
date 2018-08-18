@@ -167,7 +167,7 @@ namespace OrlovMikhail.GraphViz.Writing
             }
 
             line += graphMode == GraphMode.Graph ? "graph" : "digraph";
-            line += " {";
+            line += " \"\" {";
 
             Line(line);
 

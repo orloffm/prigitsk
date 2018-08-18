@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Prigitsk.Core.Rendering;
 using Prigitsk.Core.Tests.StubEntities;
 using Xunit;
@@ -16,6 +17,8 @@ namespace Prigitsk.Core.Tests.Rendering
         private const string CommitterEMail = "cemail";
         private readonly DateTimeOffset _committerWhen = new DateTimeOffset(2018, 09, 18, 1, 2, 3, TimeSpan.Zero);
         private const string Message = "message";
+
+        private const string LineSeparator = " // ";
 
         private CommitStub CreateCommitWithAuthor()
         {
@@ -39,8 +42,8 @@ namespace Prigitsk.Core.Tests.Rendering
 
             Assert.Equal(
                 $"{Treeish1} - {Message}" +
-                $"{Environment.NewLine}{AuthorName} @ {_authorWhen}" +
-                $"{Environment.NewLine}Committed by: {CommitterName} @ {_committerWhen}",
+                $"{LineSeparator}{AuthorName} @ {_authorWhen}" +
+                $"{LineSeparator}Committed by: {CommitterName} @ {_committerWhen}",
                 result);
         }
 
@@ -55,20 +58,38 @@ namespace Prigitsk.Core.Tests.Rendering
 
             Assert.Equal(
                 $"{Treeish1} - {Message}" +
-                $"{Environment.NewLine}{AuthorName} @ {_authorWhen}",
+                $"{LineSeparator}{AuthorName} @ {_authorWhen}",
                 result);
         }
 
         [Fact]
-        public void GivenTwoNodes_ThenReturnsExpectedTextForEdge()
+        public void GivenTwoSimpleNodes_ThenReturnsExpectedTextForEdge()
         {
-            NodeStub node1 = new NodeStub(new CommitStub {Treeish = Treeish1});
-            NodeStub node2 = new NodeStub(new CommitStub {Treeish = Treeish2});
+            NodeStub node1 = new NodeStub(new CommitStub { Treeish = Treeish1 });
+            NodeStub node2 = new NodeStub(new CommitStub { Treeish = Treeish2 });
 
             GraphTooltipHelper helper = new GraphTooltipHelper();
             string result = helper.MakeEdgeTooltip(node1, node2);
 
             Assert.Equal($"{Treeish1} -> {Treeish2}", result);
+        }
+
+        [Fact]
+        public void GivenTwoNodesWithAbsorbedCommits_ThenReturnsExpectedTextForEdgeWithTheSecondNumberIncluded()
+        {
+            int absorbedCount1 = 2;
+            int absorbedCount2 = 3;
+
+            var absorbedCommits1 = Enumerable.Repeat(new CommitStub(), absorbedCount1).ToArray();
+            var absorbedCommits2 = Enumerable.Repeat(new CommitStub(), absorbedCount2).ToArray();
+
+            NodeStub node1 = new NodeStub(new CommitStub {Treeish = Treeish1}) {AbsorbedParentCommits = absorbedCommits1};
+            NodeStub node2 = new NodeStub(new CommitStub { Treeish = Treeish2 }) { AbsorbedParentCommits = absorbedCommits2 };
+
+            GraphTooltipHelper helper = new GraphTooltipHelper();
+            string result = helper.MakeEdgeTooltip(node1, node2);
+
+            Assert.Equal($"{Treeish1} -> ({absorbedCount2} more commits), {Treeish2}", result);
         }
     }
 }

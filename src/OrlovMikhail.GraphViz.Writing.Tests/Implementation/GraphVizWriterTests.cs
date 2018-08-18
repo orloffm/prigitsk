@@ -28,5 +28,19 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
 
             Assert.Equal(expected, result);
         }
+
+        [Fact]
+        public void WritesEmptyStrictGraph()
+        {
+            IStringWriter writer = new StringWriterAdapter();
+            GraphVizWriter g = new GraphVizWriter(writer, Mock.Of<IDotHelper>());
+            g.StartGraph(GraphMode.Graph, strict: true);
+            g.EndGraph();
+
+            string result = writer.GetStringBuilder().ToString().Trim();
+            string expected = "strict graph \"\" {" + Environment.NewLine + "}";
+
+            Assert.Equal(expected, result);
+        }
     }
 }

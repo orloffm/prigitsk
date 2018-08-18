@@ -23,6 +23,11 @@
             return string.Equals(StringValue, otherTyped.StringValue);
         }
 
+        public override string ToString()
+        {
+            return StringValue;
+        }
+
         protected virtual string GetStringValueRaw()
         {
             return Value.ToString();
