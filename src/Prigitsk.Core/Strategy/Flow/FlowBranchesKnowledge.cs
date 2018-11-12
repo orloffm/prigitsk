@@ -1,149 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Prigitsk.Core.Entities;
-using Prigitsk.Core.Entities.Comparers;
 using Prigitsk.Framework;
 
 namespace Prigitsk.Core.Strategy.Flow
 {
-    public sealed class FlowBranchesKnowledge : IBranchesKnowledge
+    public sealed class FlowBranchesKnowledge : BranchesKnowledgeBase
     {
-        private readonly List<IBranch> _branchesInLogicalOrder;
-        private readonly Dictionary<IBranch, FlowBranchLogicalType> _branchesToTypes;
-        private readonly IWorkItemBranchSelector _lesserBranchSelector;
-        private readonly FlowBranchingStrategy _strategy;
-
-        private readonly Dictionary<FlowBranchLogicalType, Color> _typesToColors;
-        private readonly IMultipleDictionary<FlowBranchLogicalType, string> _typesToRegices;
-        private readonly ILesserBranchRegex _workItemRegex;
+        private readonly Dictionary<BranchLogicalType, Color> _typesToColors;
+        private readonly IMultipleDictionary<BranchLogicalType, string> _typesToRegices;
 
         public FlowBranchesKnowledge(
-            FlowBranchingStrategy strategy,
             ILesserBranchRegex workItemRegex,
-            IWorkItemBranchSelectorFactory workItemBranchSelectorFactory)
+            IWorkItemBranchSelectorFactory workItemBranchSelectorFactory
+        ) : base(workItemRegex, workItemBranchSelectorFactory)
         {
-            _strategy = strategy;
-            _workItemRegex = workItemRegex;
-            _lesserBranchSelector = workItemBranchSelectorFactory.MakeSelector();
-
-            _branchesToTypes = new Dictionary<IBranch, FlowBranchLogicalType>();
-            _branchesInLogicalOrder = new List<IBranch>();
-
-            _typesToColors = new Dictionary<FlowBranchLogicalType, Color>
+            _typesToColors = new Dictionary<BranchLogicalType, Color>
             {
-                {FlowBranchLogicalType.Master, Color.FromArgb(39, 228, 249)},
-                {FlowBranchLogicalType.Develop, Color.FromArgb(255, 227, 51)},
-                {FlowBranchLogicalType.DevelopFeature, Color.FromArgb(251, 61, 181)},
-                {FlowBranchLogicalType.Release, Color.FromArgb(82, 195, 34)},
-                {FlowBranchLogicalType.MasterHotfix, Color.FromArgb(253, 89, 101)},
-                {FlowBranchLogicalType.WorkItem, Color.FromArgb(201, 130, 175)}
+                // Master goes first, because we need to see "these guys are on PROD".
+                {BranchLogicalType.Master, Color.FromArgb(82, 0, 198)},
+                // Hotfix are on top of master.
+                {BranchLogicalType.MasterHotfix, Color.FromArgb(253, 89, 101)},
+                // What will get in the next release?
+                {BranchLogicalType.Release, Color.FromArgb(82, 195, 34)},
+                // What is integrated and planned for the next release?
+                {BranchLogicalType.Integration, Color.FromArgb(127, 171, 232)},
+                // What is in develop that is not in any other branches?
+                {BranchLogicalType.Develop, Color.FromArgb(234, 175, 0)},
+                // What are the features developed on top of develop?
+                {BranchLogicalType.DevelopFeature, Color.FromArgb(186, 83, 27)},
+                // What are the work items developed on top of develop.
+                {BranchLogicalType.WorkItem, Color.FromArgb(201, 130, 175)}
             };
 
-            _typesToRegices = new MultipleDictionary<FlowBranchLogicalType, string>
+            _typesToRegices = new MultipleDictionary<BranchLogicalType, string>
             {
-                {FlowBranchLogicalType.Master, new[] {"^master$"}},
-                {FlowBranchLogicalType.Develop, new[] {"^develop$"}},
-                {FlowBranchLogicalType.DevelopFeature, new[] {"^dev", "-dev-"}},
-                {FlowBranchLogicalType.Release, new[] {"^release", "-RC$"}},
-                {FlowBranchLogicalType.MasterHotfix, new[] {"hotfix", "^master"}}
+                {BranchLogicalType.Master, new[] {"^master$"}},
+                {BranchLogicalType.Develop, new[] {"^develop$"}},
+                {BranchLogicalType.DevelopFeature, new[] {"^dev", "-dev-"}},
+                {BranchLogicalType.Release, new[] {"^release", "-RC$"}},
+                {BranchLogicalType.MasterHotfix, new[] {"hotfix", "^master"}},
+                {BranchLogicalType.Integration, new[] {"^int"}}
             };
         }
 
-        public IBranchingStrategy Strategy => _strategy;
-
-        public IEnumerable<IBranch> EnumerateBranchesInLogicalOrder()
+        protected override Color GetColorInternal(BranchLogicalType ft)
         {
-            return _branchesInLogicalOrder.WrapAsEnumerable();
-        }
-
-        public Color GetSuggestedDrawingColorFor(IBranch branch)
-        {
-            FlowBranchLogicalType ft = _branchesToTypes[branch];
             return _typesToColors[ft];
         }
 
-        public void Initialise(IEnumerable<IBranch> branches)
+        protected override bool TryGetRegexStringsInternal(BranchLogicalType flowType, out ISet<string> regexStrings)
         {
-            _branchesToTypes.Clear();
-            _branchesInLogicalOrder.Clear();
-
-            List<IBranch> allBranches = branches.ToList();
-
-            _lesserBranchSelector.PreProcessAllBranches(allBranches, _workItemRegex);
-
-            FlowBranchLogicalType[] allBranchLogicalTypes = GetAllFlowBranchLogicalTypes();
-            foreach (FlowBranchLogicalType flowType in allBranchLogicalTypes)
-            {
-                var selectedBranches = new List<IBranch>(allBranches.Count / 2);
-
-                Regex[] regices = GetRegicesFor(flowType);
-
-                for (int i = allBranches.Count - 1; i >= 0; i--)
-                {
-                    IBranch b = allBranches[i];
-
-                    bool isMatch = regices.Any(r => r.IsMatch(b.Label));
-                    if (!isMatch)
-                    {
-                        continue;
-                    }
-
-                    selectedBranches.Add(b);
-                    allBranches.RemoveAt(i);
-                }
-
-                AddBranchesAs(selectedBranches, flowType);
-            }
-
-            // Leftovers.
-            AddBranchesAs(allBranches, FlowBranchLogicalType.WorkItem);
-        }
-
-        public bool IsAWorkItemBranch(IBranch branch)
-        {
-            return _branchesToTypes[branch] == FlowBranchLogicalType.WorkItem;
-        }
-
-        private void AddBranchesAs(IEnumerable<IBranch> branches, FlowBranchLogicalType figuredOutFlowType)
-        {
-            BranchSorterByName branchSorterByName = new BranchSorterByName();
-
-            IBranch[] branchesSorted = branches.OrderBy(b => b, branchSorterByName).ToArray();
-
-            foreach (IBranch branch in branchesSorted)
-            {
-                FlowBranchLogicalType typeToAddAs = figuredOutFlowType;
-                if (typeToAddAs != FlowBranchLogicalType.WorkItem)
-                {
-                    bool isActuallyLesser = _lesserBranchSelector.IsLesserBranch(branch);
-                    if (isActuallyLesser)
-                    {
-                        typeToAddAs = FlowBranchLogicalType.WorkItem;
-                    }
-                }
-
-                _branchesToTypes.Add(branch, typeToAddAs);
-                _branchesInLogicalOrder.Add(branch);
-            }
-        }
-
-        private static FlowBranchLogicalType[] GetAllFlowBranchLogicalTypes()
-        {
-            return Enum.GetValues(typeof(FlowBranchLogicalType)).Cast<FlowBranchLogicalType>().ToArray();
-        }
-
-        private Regex[] GetRegicesFor(FlowBranchLogicalType flowType)
-        {
-            if (!_typesToRegices.TryGetValue(flowType, out ISet<string> regexStrings))
-            {
-                return new Regex[0];
-            }
-
-            Regex[] regices = regexStrings.Select(s => new Regex(s, RegexOptions.IgnoreCase)).ToArray();
-            return regices;
+            return _typesToRegices.TryGetValue(flowType, out regexStrings);
         }
     }
 }

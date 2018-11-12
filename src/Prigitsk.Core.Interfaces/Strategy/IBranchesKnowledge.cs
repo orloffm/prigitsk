@@ -7,11 +7,6 @@ namespace Prigitsk.Core.Strategy
     public interface IBranchesKnowledge
     {
         /// <summary>
-        ///     The branching strategy used to create this knowledge object.
-        /// </summary>
-        IBranchingStrategy Strategy { get; }
-
-        /// <summary>
         ///     Returns all branches in their order.
         /// </summary>
         IEnumerable<IBranch> EnumerateBranchesInLogicalOrder();

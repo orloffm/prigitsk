@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using Prigitsk.Core.Entities;
 
-namespace Prigitsk.Core.Strategy.Flow
+namespace Prigitsk.Core.Strategy
 {
-    public sealed class FlowBranchingStrategy : IBranchingStrategy
+    public sealed class BranchingStrategy : IBranchingStrategy
     {
-        private readonly Func<FlowBranchingStrategy, ILesserBranchRegex, IBranchesKnowledge> _knowledgeMaker;
+        private readonly Func<BranchingStrategy, ILesserBranchRegex, IBranchesKnowledge> _knowledgeMaker;
 
         private readonly ILesserBranchRegex _workItemRegex;
 
-        public FlowBranchingStrategy(
+        public BranchingStrategy(
             ILesserBranchRegex workItemRegex,
-            Func<FlowBranchingStrategy, ILesserBranchRegex, IBranchesKnowledge> knowledgeMaker)
+            Func<BranchingStrategy, ILesserBranchRegex, IBranchesKnowledge> knowledgeMaker)
         {
             _workItemRegex = workItemRegex;
             _knowledgeMaker = knowledgeMaker;
