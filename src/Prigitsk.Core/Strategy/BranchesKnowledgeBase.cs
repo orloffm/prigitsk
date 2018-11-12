@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Entities.Comparers;
 using Prigitsk.Framework;
@@ -14,15 +15,17 @@ namespace Prigitsk.Core.Strategy
         private readonly List<IBranch> _branchesInLogicalOrder;
         private readonly Dictionary<IBranch, BranchLogicalType> _branchesToTypes;
         private readonly IWorkItemBranchSelector _lesserBranchSelector;
-
         private readonly ILesserBranchRegex _workItemRegex;
+        private readonly ILogger _logger;
 
         protected BranchesKnowledgeBase(
-            ILesserBranchRegex workItemRegex,
-            IWorkItemBranchSelectorFactory workItemBranchSelectorFactory
+            ILesserBranchRegex workItemRegex
+            , IWorkItemBranchSelectorFactory workItemBranchSelectorFactory
+            , ILogger logger
         )
         {
             _workItemRegex = workItemRegex;
+            _logger = logger;
             _lesserBranchSelector = workItemBranchSelectorFactory.MakeSelector();
 
             _branchesToTypes = new Dictionary<IBranch, BranchLogicalType>();
@@ -49,7 +52,7 @@ namespace Prigitsk.Core.Strategy
 
             _lesserBranchSelector.PreProcessAllBranches(allBranches, _workItemRegex);
 
-            BranchLogicalType[] allBranchLogicalTypes = GetAllBranchLogicalTypes();
+            BranchLogicalType[] allBranchLogicalTypes = GetAllBranchLogicalTypesOrdered();
             foreach (BranchLogicalType flowType in allBranchLogicalTypes)
             {
                 var selectedBranches = new List<IBranch>(allBranches.Count / 2);
@@ -104,13 +107,12 @@ namespace Prigitsk.Core.Strategy
 
                 _branchesToTypes.Add(branch, typeToAddAs);
                 _branchesInLogicalOrder.Add(branch);
+
+                _logger.Debug("{0} added as {1}.", branch, typeToAddAs);
             }
         }
 
-        private static BranchLogicalType[] GetAllBranchLogicalTypes()
-        {
-            return Enum.GetValues(typeof(BranchLogicalType)).Cast<BranchLogicalType>().ToArray();
-        }
+        protected abstract BranchLogicalType[] GetAllBranchLogicalTypesOrdered();
 
         private Regex[] GetRegicesFor(BranchLogicalType flowType)
         {
