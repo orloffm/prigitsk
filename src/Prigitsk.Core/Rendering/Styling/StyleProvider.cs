@@ -12,7 +12,7 @@ namespace Prigitsk.Core.Rendering.Styling
         public IAttrSet EdgeGeneric => AttrSet.Empty
             .ArrowHead(ArrowType.Vee)
             .PenWidth(1)
-            .Color("#b0b0b0");
+            .Color("#e4e4e4");
 
         public IAttrSet EdgeMergedCommits => AttrSet.Empty.Style(Style.Dashed);
 
