@@ -235,7 +235,7 @@ namespace Prigitsk.Core.Rendering
             bool isOwned = tree.GetContainingBranch(pointedNode) == b;
 
             // Ending textual node.
-            string id = MakeNodeIdForPointerLabel(pointedNode, b);
+            string branchLabelId = MakeNodeIdForPointerLabel(pointedNode, b);
 
             bool shouldSink = !isLesser && isOwned;
             using (_gvWriter.StartSubGraph())
@@ -245,10 +245,23 @@ namespace Prigitsk.Core.Rendering
                     _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Sink));
                 }
 
-                WriteBranchLabel(id, b, remoteUrlProvider);
+                WriteBranchLabel(branchLabelId, b, remoteUrlProvider);
             }
 
-            _gvWriter.Edge(pointedNode, id, _style.EdgeBranchLabel);
+            WriteBranchEndingEdge(pointedNode, branchLabelId, b, remoteUrlProvider);
+        }
+
+        private void WriteBranchEndingEdge(
+            INode pointedNode,
+            string id,
+            IBranch b,
+            IRemoteWebUrlProvider remoteUrlProvider
+        )
+        {
+            IAttrSet style = _style.EdgeBranchLabel;
+            string url = remoteUrlProvider?.GetBranchLink(b);
+
+            _gvWriter.Edge(pointedNode, id, style.Url(url));
         }
 
         private void WriteEdge(INode a, INode b, IRemoteWebUrlProvider remoteUrlProvider)

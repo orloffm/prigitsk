@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Prigitsk.Core.Graph;
 using Xunit;
@@ -17,7 +18,7 @@ namespace Prigitsk.Core.Tests.Graph
 
             var expectedPickedSet = new HashSet<string>(testCase.ExpectedPicked, StringComparer.OrdinalIgnoreCase);
 
-            BranchPicker picker = new BranchPicker(pickingOptionsMock.Object);
+            BranchPicker picker = new BranchPicker(pickingOptionsMock.Object, Mock.Of<ILogger<BranchPicker>>());
 
             // Act.
             var pickedLabels = new List<string>();
