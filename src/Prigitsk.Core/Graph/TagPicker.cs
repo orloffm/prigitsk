@@ -47,7 +47,7 @@ namespace Prigitsk.Core.Graph
             if (_options.Mode == TagPickingMode.Latest)
             {
                 ITagInfo[] allSuitableOrdered = allSuitable
-                    .OrderByDescending(ti => ti.Node.Commit.CommittedWhen)
+                    .OrderByDescending(ti => ti.Node.Commit.Committer.When)
                     .Take(_options.LatestCount)
                     .ToArray();
 

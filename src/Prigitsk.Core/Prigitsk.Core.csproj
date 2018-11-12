@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OrlovMikhail.Git.Abstractions\OrlovMikhail.Git.Abstractions.csproj" />
     <ProjectReference Include="..\OrlovMikhail.GraphViz.Writing\OrlovMikhail.GraphViz.Writing.csproj" />
+    <ProjectReference Include="..\Prigitsk.Core.Entities\Prigitsk.Core.Entities.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Interfaces\Prigitsk.Core.Interfaces.csproj" />
     <ProjectReference Include="..\Prigitsk.Core.Graph\Prigitsk.Core.Graph.csproj" />
     <ProjectReference Include="..\Prigitsk.Framework\Prigitsk.Framework.csproj" />

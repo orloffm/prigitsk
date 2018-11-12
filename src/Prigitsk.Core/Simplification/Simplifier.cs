@@ -205,7 +205,7 @@ namespace Prigitsk.Core.Simplification
             // The whole parent tree of the particular child node in question. We don't go earlier than the source node.
             IEnumerable<INode> parents = _walker.EnumerateAllParentsBreadthFirst(
                 childNodeInQuestion,
-                sourceNode.Commit.CommittedWhen);
+                sourceNode.Commit.Committer.When);
 
             // Is any of them linked from other children of source node?
             bool someParentIsLinked = parents.Any(otherChildren.Contains);

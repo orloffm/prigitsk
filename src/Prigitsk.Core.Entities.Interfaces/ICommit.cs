@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Prigitsk.Core.Entities
 {
@@ -8,7 +7,9 @@ namespace Prigitsk.Core.Entities
     /// </summary>
     public interface ICommit : ITreeish
     {
-        DateTimeOffset? CommittedWhen { get; }
+        ISignature Author { get; }
+
+        ISignature Committer { get; }
 
         IHash Hash { get; }
 

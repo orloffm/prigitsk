@@ -2,16 +2,19 @@
 {
     public sealed class BranchPickingOptions : IBranchPickingOptions
     {
-        private BranchPickingOptions(string[] includeBranchesRegices)
+        private BranchPickingOptions(string[] includeBranchesRegices, string[] excludeBranchesRegices)
         {
             IncludeBranchesRegices = includeBranchesRegices;
+            ExcludeBranchesRegices = excludeBranchesRegices;
         }
+
+        public string[] ExcludeBranchesRegices { get; }
 
         public string[] IncludeBranchesRegices { get; }
 
-        public static IBranchPickingOptions Set(string[] includeBranchesRegices)
+        public static IBranchPickingOptions Set(string[] includeBranchesRegices, string[] excludeBranchesRegices)
         {
-            return new BranchPickingOptions(includeBranchesRegices);
+            return new BranchPickingOptions(includeBranchesRegices, excludeBranchesRegices);
         }
     }
 }

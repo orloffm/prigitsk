@@ -2,7 +2,7 @@
 using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Strategy;
-using Prigitsk.Core.Tests.Helpers;
+using Prigitsk.Core.Tests.StubEntities;
 using Xunit;
 
 namespace Prigitsk.Core.Tests.Rendering
@@ -29,13 +29,13 @@ namespace Prigitsk.Core.Tests.Rendering
             string regexString)
         {
             var expectedSet = new HashSet<string>(expectedLesserBranches);
-            IBranch[] branches = _commonList.Select(s => EH.MockBranch(s)).ToArray();
+            IBranch[] branches = _commonList.Select(s => new BranchStub(s)).ToArray();
             WorkItemBranchSelector selector = new WorkItemBranchSelector();
             selector.PreProcessAllBranches(branches, new LesserBranchRegex(regexString));
 
             foreach (string branchName in branchesToCheck)
             {
-                bool isLesser = selector.IsLesserBranch(EH.MockBranch(branchName));
+                bool isLesser = selector.IsLesserBranch(new BranchStub(branchName));
                 bool shouldBeMarked = expectedSet.Contains(branchName);
 
                 Assert.Equal(shouldBeMarked, isLesser);

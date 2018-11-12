@@ -20,16 +20,19 @@ namespace Prigitsk.Core.Rendering
         private readonly ILogger _log;
         private readonly IRemoteWebUrlProviderFactory _remoteWebUrlProviderFactory;
         private readonly IStyleProvider _style;
+        private readonly IGraphTooltipHelper _tooltipHelper;
 
         public TreeRenderer(
             ILogger<TreeRenderer> log,
             IGraphVizWriter gvWriter,
             IStyleProvider style,
+            IGraphTooltipHelper tooltipHelper,
             IRemoteWebUrlProviderFactory remoteWebUrlProviderFactory)
         {
             _log = log;
             _gvWriter = gvWriter;
             _style = style;
+            _tooltipHelper = tooltipHelper;
             _remoteWebUrlProviderFactory = remoteWebUrlProviderFactory;
         }
 
@@ -209,7 +212,7 @@ namespace Prigitsk.Core.Rendering
             foreach (IBranch b in currentBranches)
             {
                 brancheList.Add(b);
-                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.CommittedWhen;
+                DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.Committer?.When;
                 firstNodeDates.Add(b, firstNodeDate);
             }
 
@@ -232,7 +235,7 @@ namespace Prigitsk.Core.Rendering
             bool isOwned = tree.GetContainingBranch(pointedNode) == b;
 
             // Ending textual node.
-            string id = MakeNodeIdForPointerLabel(pointedNode, b);
+            string branchLabelId = MakeNodeIdForPointerLabel(pointedNode, b);
 
             bool shouldSink = !isLesser && isOwned;
             using (_gvWriter.StartSubGraph())
@@ -242,17 +245,34 @@ namespace Prigitsk.Core.Rendering
                     _gvWriter.RawAttributes(AttrSet.Empty.Rank(RankType.Sink));
                 }
 
-                WriteBranchLabel(id, b, remoteUrlProvider);
+                WriteBranchLabel(branchLabelId, b, remoteUrlProvider);
             }
 
-            _gvWriter.Edge(pointedNode, id, _style.EdgeBranchLabel);
+            WriteBranchEndingEdge(pointedNode, branchLabelId, b, remoteUrlProvider);
+        }
+
+        private void WriteBranchEndingEdge(
+            INode pointedNode,
+            string id,
+            IBranch b,
+            IRemoteWebUrlProvider remoteUrlProvider
+        )
+        {
+            IAttrSet style = _style.EdgeBranchLabel;
+            string url = remoteUrlProvider?.GetBranchLink(b);
+
+            _gvWriter.Edge(pointedNode, id, style.Url(url));
         }
 
         private void WriteEdge(INode a, INode b, IRemoteWebUrlProvider remoteUrlProvider)
         {
             string url = remoteUrlProvider?.GetCompareCommitsLink(a.Commit, b.Commit);
+            string tooltip = _tooltipHelper.MakeEdgeTooltip(a, b);
 
-            IAttrSet attrSet = AttrSet.Empty.Url(url);
+            IAttrSet attrSet = AttrSet.Empty
+                .Url(url)
+                .Tooltip(tooltip);
+
             bool hasMergedCommits = b.AbsorbedParentCommits.Any();
             if (hasMergedCommits)
             {
@@ -287,8 +307,7 @@ namespace Prigitsk.Core.Rendering
         private void WriteNode(INode n, IRemoteWebUrlProvider remoteUrlProvider)
         {
             string url = remoteUrlProvider?.GetCommitLink(n.Commit);
-
-            string tooltip = $"{n.Treeish} - {n.Commit.Message} ({n.Commit.CommittedWhen.Value})";
+            string tooltip = _tooltipHelper.MakeNodeTooltip(n);
 
             IAttrSet nodeAttrs = AttrSet.Empty
                 .Url(url)

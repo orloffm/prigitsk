@@ -9,7 +9,15 @@ namespace Prigitsk.Core.Remotes
     {
         string GetBaseUrl();
 
+        /// <summary>
+        /// Web link to a page representing the branch.
+        /// </summary>
         string GetBranchLink(IBranch branch);
+
+        /// <summary>
+        /// Web link to a page allowing to manage the branch.
+        /// </summary>
+        string GetBranchMetaLink(IBranch branch);
 
         string GetCommitLink(ICommit commit);
 

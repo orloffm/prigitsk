@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 using Prigitsk.Core.Entities;
 
 namespace Prigitsk.Core.Remotes
 {
+    [SuppressMessage("ReSharper", "SuggestBaseTypeForParameter")]
     public sealed class GitHubRemoteWebUrlProvider : IGitHubRemoteWebUrlProvider
     {
         private readonly string _baseUrl;
@@ -22,6 +24,11 @@ namespace Prigitsk.Core.Remotes
         public string GetBranchLink(IBranch branch)
         {
             return $"{_baseUrl}/tree/{branch.Label}";
+        }
+
+        public string GetBranchMetaLink(IBranch branch)
+        {
+            return $"{_baseUrl}/branches/all?query={branch.Label}";
         }
 
         public string GetCommitLink(ICommit commit)

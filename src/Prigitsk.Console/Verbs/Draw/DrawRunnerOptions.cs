@@ -22,7 +22,8 @@ namespace Prigitsk.Console.Verbs.Draw
             bool noTags,
             int tagCount,
             string lesserBranchesRegex,
-            IEnumerable<string> includeBranchesRegices)
+            IEnumerable<string> includeBranchesRegices,
+            IEnumerable<string> excludeBranchesRegices)
         {
             Repository = repository;
             TargetDirectory = target;
@@ -38,6 +39,7 @@ namespace Prigitsk.Console.Verbs.Draw
             TagCount = tagCount;
             LesserBranchesRegex = new LesserBranchRegex(lesserBranchesRegex);
             IncludeBranchesRegices = includeBranchesRegices?.ToArray();
+            ExcludeBranchesRegices = excludeBranchesRegices?.ToArray();
 
             TagPickingMode = FigureOutTagPickingMode(noTags, tagCount);
         }
@@ -47,6 +49,8 @@ namespace Prigitsk.Console.Verbs.Draw
         public string Format { get; }
 
         public string[] IncludeBranchesRegices { get; }
+
+        public string[] ExcludeBranchesRegices { get; }
 
         public bool IncludeOrphanedTags { get; }
 

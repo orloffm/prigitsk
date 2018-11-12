@@ -7,6 +7,9 @@ namespace Prigitsk.Console.CommandLine.Parsing
     [Verb(VerbConstants.Draw, HelpText = "Create a diagram of the branch structure.")]
     public class DrawOptions : IVerbOptions
     {
+        [Option('e', "exclude", Separator = ',', HelpText = "Regular expressions for branches to exclude.")]
+        public IEnumerable<string> ExcludeBranchesRegices { get; set; }
+
         [Option(
             'g',
             Default = false,
@@ -17,7 +20,7 @@ namespace Prigitsk.Console.CommandLine.Parsing
         [Option("format", Default = "svg", HelpText = "Output file format.")]
         public string Format { get; set; }
 
-        [Option('i', "includeBranches", Separator = ';', HelpText = "Regular expressions for branches to include.")]
+        [Option('i', "include", Separator = ',', HelpText = "Regular expressions for branches to include.")]
         public IEnumerable<string> IncludeBranchesRegices { get; set; }
 
         [Option(

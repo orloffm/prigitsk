@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Graph;
-using Prigitsk.Core.Tests.Helpers;
+using Prigitsk.Core.Tests.StubEntities;
 using Xunit;
 
 namespace Prigitsk.Core.Tests.Graph
@@ -13,14 +13,14 @@ namespace Prigitsk.Core.Tests.Graph
         {
             Tree t = new Tree();
 
-            ICommit c1 = EH.MockCommit("h1");
+            ICommit c1 = new CommitStub("h1");
             t.AddCommit(c1);
-            ICommit c2 = EH.MockCommit("h2", c1);
+            ICommit c2 = new CommitStub("h2", c1);
             t.AddCommit(c2);
-            ICommit c3 = EH.MockCommit("h3", c2);
+            ICommit c3 = new CommitStub("h3", c2);
             t.AddCommit(c3);
 
-            IBranch b = EH.MockBranch("b", c3.Hash);
+            IBranch b = new BranchStub("b", c3.Hash);
 
             t.AddBranch(b, new[] {c1.Hash, c2.Hash, c3.Hash});
 
