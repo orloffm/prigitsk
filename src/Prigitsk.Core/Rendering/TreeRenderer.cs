@@ -207,18 +207,18 @@ namespace Prigitsk.Core.Rendering
 
         private IEnumerable<IBranch> OrderByFirstCommitDate(IEnumerable<IBranch> currentBranches, ITree tree)
         {
-            var brancheList = new List<IBranch>();
+            var branchesList = new List<IBranch>();
             var firstNodeDates = new Dictionary<IBranch, DateTimeOffset?>();
             foreach (IBranch b in currentBranches)
             {
-                brancheList.Add(b);
+                branchesList.Add(b);
                 DateTimeOffset? firstNodeDate = tree.EnumerateNodes(b).FirstOrDefault()?.Commit?.Committer?.When;
                 firstNodeDates.Add(b, firstNodeDate);
             }
 
             IComparer<IBranch> byDateComparer = new BranchSorterByDate(firstNodeDates);
-            brancheList.Sort(byDateComparer);
-            return brancheList;
+            branchesList.Sort(byDateComparer);
+            return branchesList;
         }
 
         private void WriteBranchLabel(string id, IBranch b, IRemoteWebUrlProvider remoteUrlProvider)
