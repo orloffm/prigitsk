@@ -10,12 +10,13 @@ with plans to create a web-based version.
 
 1. Download GraphViz. Either add its `bin` folder to PATH or run `prigitsk configure` to specify path to it.
 2. Run from the directory of your Git repository:
-
-   prigitsk draw
-
+````
+prigitsk draw
+````
 For options:
-
-    prigitsk draw --help
+````
+prigitsk draw --help
+````
 
 ## Example output
 
