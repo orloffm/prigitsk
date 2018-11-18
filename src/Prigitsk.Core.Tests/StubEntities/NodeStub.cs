@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Graph;
 
@@ -14,26 +14,32 @@ namespace Prigitsk.Core.Tests.StubEntities
             Parents = new INode[0];
         }
 
-        public NodeStub(ICommit commit)
-            :this()
+        public NodeStub(ICommit commit) : this()
         {
-            this.Commit = commit;
-            this.Treeish = commit.Treeish;
+            Commit = commit;
         }
 
-        public string Treeish { get; set; }
+        public NodeStub(ICommit commit, INode[] parents) : this(commit)
+        {
+            Parents = parents.ToArray();
+        }
 
         public IEnumerable<ICommit> AbsorbedParentCommits { get; set; }
 
         public IEnumerable<INode> Children { get; set; }
 
-        public ICommit Commit { get; set; }
+        public ICommit Commit { get; }
 
         public IEnumerable<INode> Parents { get; set; }
 
         public bool Equals(INode other)
         {
-            throw new NotImplementedException();
+            return ReferenceEquals(this, other);
+        }
+
+        public override string ToString()
+        {
+            return Commit?.Treeish;
         }
     }
 }

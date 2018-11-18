@@ -14,11 +14,9 @@ namespace Prigitsk.Core.Tests.Graph
             Tree t = new Tree();
 
             ICommit c1 = new CommitStub("h1");
-            t.AddCommit(c1);
             ICommit c2 = new CommitStub("h2", c1);
-            t.AddCommit(c2);
             ICommit c3 = new CommitStub("h3", c2);
-            t.AddCommit(c3);
+            t.SetCommits(new[] {c1, c2, c3});
 
             IBranch b = new BranchStub("b", c3.Hash);
 

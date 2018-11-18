@@ -26,7 +26,7 @@ namespace Prigitsk.Core.Graph
         {
             ITree tree = new Tree();
 
-            AddCommits(repository.Commits, tree);
+            tree.SetCommits(repository.Commits);
 
             AddBranches(branchesKnowledge, repository.Commits, branchPickingOptions, tree);
 
@@ -69,15 +69,6 @@ namespace Prigitsk.Core.Graph
 
                 hashesInBranch.Reverse();
                 tree.AddBranch(b, hashesInBranch);
-            }
-        }
-
-        private static void AddCommits(IEnumerable<ICommit> commits, ITree tree)
-        {
-            // Commits.
-            foreach (ICommit commit in commits)
-            {
-                tree.AddCommit(commit);
             }
         }
 

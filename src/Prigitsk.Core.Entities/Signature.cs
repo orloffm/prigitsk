@@ -4,7 +4,7 @@ namespace Prigitsk.Core.Entities
 {
     public sealed class Signature : ISignature
     {
-        public Signature(string name, string email, DateTimeOffset? when)
+        public Signature(string name, string email, DateTimeOffset when)
         {
             Name = name;
             EMail = email;
@@ -15,6 +15,6 @@ namespace Prigitsk.Core.Entities
 
         public string Name { get; }
 
-        public DateTimeOffset? When { get; }
+        public DateTimeOffset When { get; }
     }
 }

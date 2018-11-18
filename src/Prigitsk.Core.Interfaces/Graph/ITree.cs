@@ -16,8 +16,6 @@ namespace Prigitsk.Core.Graph
         /// </summary>
         void AddBranch(IBranch branch, IEnumerable<IHash> hashesInBranch);
 
-        void AddCommit(ICommit commit);
-
         /// <summary>
         ///     Adds tags.
         /// </summary>
@@ -40,7 +38,7 @@ namespace Prigitsk.Core.Graph
         /// <summary>
         ///     Returns node by hash or null if it does not exist.
         /// </summary>
-        INode GetNode(IHash ihash);
+        INode GetNode(IHash hash);
 
         IEnumerable<IBranch> GetPointingBranches(INode node);
 
@@ -54,5 +52,7 @@ namespace Prigitsk.Core.Graph
         void RemoveEdge(INode parent, INode child);
 
         void RemoveNode(INode node);
+
+        void SetCommits(IEnumerable<ICommit> commits);
     }
 }

@@ -29,7 +29,7 @@ namespace Prigitsk.Core.Entities
 
         public IEnumerable<IHash> Parents { get; }
 
-        public string Treeish => Hash.ToShortString();
+        public string Treeish => Hash.Treeish;
 
         public static bool AreEqual(ICommit a, ICommit b)
         {

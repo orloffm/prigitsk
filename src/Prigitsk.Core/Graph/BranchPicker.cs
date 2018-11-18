@@ -34,7 +34,7 @@ namespace Prigitsk.Core.Graph
                 if (matchedBy != null)
                 {
                     _logger.Debug(
-                        "{0} - picked (matched by explicit include regex {1}).",
+                        "{0} - picked (matched by {1}).",
                         branchLabel,
                         matchedBy.ToString()
                     );
@@ -42,9 +42,8 @@ namespace Prigitsk.Core.Graph
                 }
 
                 _logger.Debug(
-                    "{0} - not picked (not matched by any of the explicit include regices that are specified).",
-                    branchLabel,
-                    matchedBy.ToString()
+                    "{0} - not picked (no inclusion regices match).",
+                    branchLabel
                 );
                 return false;
             }
@@ -55,7 +54,7 @@ namespace Prigitsk.Core.Graph
                 if (matchedBy != null)
                 {
                     _logger.Debug(
-                        "{0} - not picked (matched by explicit exclude regex {1}; there are no include regices).",
+                        "{0} - not picked (matched by {1}; no include regices).",
                         branchLabel,
                         matchedBy.ToString()
                     );
@@ -63,13 +62,13 @@ namespace Prigitsk.Core.Graph
                 }
 
                 _logger.Debug(
-                    "{0} - picked (not matched by any of the explicit exclude regices that are specified; there are no include regices).",
+                    "{0} - picked (not exclusion regices match; no include regices).",
                     branchLabel
                 );
                 return true;
             }
 
-            _logger.Debug("{0} - picked (no explicit exclude or include regices specified).", branchLabel);
+            _logger.Debug("{0} - picked (all are).", branchLabel);
             return true;
         }
 

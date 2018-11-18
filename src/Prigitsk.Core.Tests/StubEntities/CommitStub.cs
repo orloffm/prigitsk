@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Prigitsk.Core.Entities;
 
@@ -11,11 +12,20 @@ namespace Prigitsk.Core.Tests.StubEntities
             Parents = new IHash[0];
         }
 
-        public CommitStub(string hashValue, params ICommit[] parents)
-            : this()
+        public CommitStub(string hashValue) : this()
         {
             Hash = new HashStub(hashValue);
+            Treeish = Hash.Treeish;
+        }
+
+        public CommitStub(string hashValue, params ICommit[] parents) : this(hashValue)
+        {
             Parents = parents.Select(c => c.Hash).ToArray();
+        }
+
+        public CommitStub(string hashValue, DateTimeOffset committerTime) : this(hashValue)
+        {
+            Committer = new SignatureStub {When = committerTime};
         }
 
         public ISignature Author { get; set; }

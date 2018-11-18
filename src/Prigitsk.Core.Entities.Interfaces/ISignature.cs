@@ -8,6 +8,6 @@ namespace Prigitsk.Core.Entities
 
         string Name { get; }
 
-        DateTimeOffset? When { get; }
+        DateTimeOffset When { get; }
     }
 }

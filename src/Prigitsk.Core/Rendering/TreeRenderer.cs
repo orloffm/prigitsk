@@ -88,7 +88,7 @@ namespace Prigitsk.Core.Rendering
                             if (!hasParent)
                             {
                                 _gvWriter.Comment("Starting line.");
-                                string id = string.Format($"{currentNode.Treeish}_start");
+                                string id = string.Format($"{currentNode.Commit.Treeish}_start");
                                 // Write starting empty node.
                                 using (_gvWriter.StartSubGraph())
                                 {
@@ -97,7 +97,7 @@ namespace Prigitsk.Core.Rendering
                                     _gvWriter.Node(id, AttrSet.Empty.Width(0).Height(0).PenWidth(0));
                                 }
 
-                                _gvWriter.Edge(id, currentNode, _style.EdgeBranchStartVirtual);
+                                _gvWriter.Edge(id, currentNode.Commit, _style.EdgeBranchStartVirtual);
                                 _gvWriter.EmptyLine();
                             }
                             else
@@ -155,7 +155,7 @@ namespace Prigitsk.Core.Rendering
 
                     _gvWriter.Node(id, _style.LabelTag.Label(t.Label).Url(url));
 
-                    _gvWriter.Edge(n, id, _style.EdgeTagLabel);
+                    _gvWriter.Edge(n.Commit, id, _style.EdgeTagLabel);
                 }
             }
 
@@ -191,7 +191,7 @@ namespace Prigitsk.Core.Rendering
 
                     foreach (Tuple<INode, INode> edge in edgesToWrite)
                     {
-                        _gvWriter.Edge(edge.Item1, edge.Item2);
+                        _gvWriter.Edge(edge.Item1.Commit, edge.Item2.Commit);
                     }
                 }
             }
@@ -201,7 +201,7 @@ namespace Prigitsk.Core.Rendering
 
         private static string MakeNodeIdForPointerLabel(INode node, IPointer pointer)
         {
-            string id = string.Format($"{node.Treeish}_{pointer.Label}");
+            string id = string.Format($"{node.Commit.Treeish}_{pointer.Label}");
             return id;
         }
 
@@ -259,9 +259,9 @@ namespace Prigitsk.Core.Rendering
         )
         {
             IAttrSet style = _style.EdgeBranchLabel;
-            string url = remoteUrlProvider?.GetBranchLink(b);
+            string url = remoteUrlProvider?.GetBranchMetaLink(b);
 
-            _gvWriter.Edge(pointedNode, id, style.Url(url));
+            _gvWriter.Edge(pointedNode.Commit, id, style.Url(url));
         }
 
         private void WriteEdge(INode a, INode b, IRemoteWebUrlProvider remoteUrlProvider)
@@ -279,7 +279,7 @@ namespace Prigitsk.Core.Rendering
                 attrSet = attrSet.Add(_style.EdgeMergedCommits);
             }
 
-            _gvWriter.Edge(a, b, attrSet);
+            _gvWriter.Edge(a.Commit, b.Commit, attrSet);
         }
 
         private void WriteFooter()
@@ -313,7 +313,7 @@ namespace Prigitsk.Core.Rendering
                 .Url(url)
                 .Tooltip(tooltip);
 
-            _gvWriter.Node(n, nodeAttrs);
+            _gvWriter.Node(n.Commit, nodeAttrs);
         }
     }
 }

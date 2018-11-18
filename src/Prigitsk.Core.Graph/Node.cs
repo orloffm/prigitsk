@@ -9,12 +9,11 @@ namespace Prigitsk.Core.Graph
     {
         private readonly List<ICommit> _absorbedParentCommitsList;
         private readonly int _hashCode;
-        private readonly IHash _initialCommitHash;
 
-        public Node(IHash initialCommitHash)
+        public Node(ICommit commit)
         {
-            _initialCommitHash = initialCommitHash;
-            _hashCode = initialCommitHash.GetHashCode();
+            Commit = commit;
+            _hashCode = commit.Hash.GetHashCode();
 
             ParentsSet = new OrderedSet<Node>();
             ChildrenSet = new HashSet<Node>();
@@ -25,11 +24,9 @@ namespace Prigitsk.Core.Graph
 
         public IEnumerable<INode> Children => ChildrenSet.WrapAsEnumerable();
 
-        public ICommit Commit { get; private set; }
+        public ICommit Commit { get; }
 
         public IEnumerable<INode> Parents => ParentsSet.WrapAsEnumerable();
-
-        public string Treeish => _initialCommitHash.ToShortString();
 
         internal ISet<Node> ChildrenSet { get; }
 
@@ -70,11 +67,6 @@ namespace Prigitsk.Core.Graph
             _absorbedParentCommitsList.AddRange(node._absorbedParentCommitsList);
             node._absorbedParentCommitsList.Clear();
             _absorbedParentCommitsList.Add(node.Commit);
-        }
-
-        internal void SetCommit(ICommit commit)
-        {
-            Commit = commit;
         }
     }
 }

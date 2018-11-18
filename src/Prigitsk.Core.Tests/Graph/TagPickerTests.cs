@@ -2,6 +2,7 @@
 using Moq;
 using Prigitsk.Core.Entities;
 using Prigitsk.Core.Graph;
+using Prigitsk.Core.Tests.StubEntities;
 using Xunit;
 
 namespace Prigitsk.Core.Tests.Graph
@@ -10,10 +11,10 @@ namespace Prigitsk.Core.Tests.Graph
     {
         private void Run(TagPickerTestCase testCase)
         {
-            INode MockNode(DateTimeOffset? date)
+            INode MockNode(string hash, DateTimeOffset? date)
             {
-                ICommit commit = Mock.Of<ICommit>(c => c.Committer.When == date);
-                INode node = Mock.Of<INode>(n => n.Commit == commit);
+                ICommit commit = new CommitStub(hash, date ?? DateTimeOffset.MinValue);
+                INode node = new NodeStub(commit);
                 return node;
             }
 
@@ -37,9 +38,9 @@ namespace Prigitsk.Core.Tests.Graph
             ITag tb = new Tag(testCase.TagBName, null);
             ITag tc = new Tag(testCase.TagCName, null);
 
-            INode na = MockNode(testCase.CommitADate);
-            INode nb = MockNode(testCase.CommitBDate);
-            INode nc = MockNode(testCase.CommitCDate);
+            INode na = MockNode("na", testCase.CommitADate);
+            INode nb = MockNode("nb", testCase.CommitBDate);
+            INode nc = MockNode("nc", testCase.CommitCDate);
 
             IBranch ba = MockBranch(testCase.BranchAName);
             IBranch bb = MockBranch(testCase.BranchBName);

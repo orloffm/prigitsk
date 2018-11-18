@@ -38,7 +38,7 @@ namespace Prigitsk.Core.Graph
 
             foreach (IHash hash in hashesInBranch)
             {
-                Node node = GetOrCreateNode(hash);
+                Node node = GetNodeInternal(hash);
                 branchNodes.Add(node);
 
                 // Link it to the branch.
@@ -49,22 +49,32 @@ namespace Prigitsk.Core.Graph
             _branches.Add(branch, branchNodes);
 
             // Especially save the tip.
-            Node branchTip = GetOrCreateNode(branch.Tip);
+            Node branchTip = GetNodeInternal(branch.Tip);
             _pointingBranches.Add(branchTip, branch);
         }
 
-        public void AddCommit(ICommit commit)
+        public void SetCommits(IEnumerable<ICommit> commits)
         {
-            Node node = GetOrCreateNode(commit.Hash);
-            node.SetCommit(commit);
+            if (_nodes.Count != 0)
+                throw new InvalidOperationException("Commits have been already set.");
 
-            foreach (IHash parent in commit.Parents)
+            // First create the nodes.
+            foreach (var commit in commits)
             {
-                Node parentNode = GetOrCreateNode(parent);
+                CreateNode(commit);
+            }
 
-                // Link both.
-                node.ParentsSet.Add(parentNode);
-                parentNode.ChildrenSet.Add(node);
+            // Now auto-link them.
+            foreach (Node node in _nodes.Values)
+            {
+                foreach (IHash parent in node.Commit.Parents)
+                {
+                    Node parentNode = GetNodeInternal(parent);
+
+                    // Link both.
+                    node.ParentsSet.Add(parentNode);
+                    parentNode.ChildrenSet.Add(node);
+                }
             }
         }
 
@@ -72,7 +82,7 @@ namespace Prigitsk.Core.Graph
         {
             _tags.Add(tag);
 
-            Node tagTip = GetOrCreateNode(tag.Tip);
+            Node tagTip = GetNodeInternal(tag.Tip);
             _pointingTags.Add(tagTip, tag);
         }
 
@@ -136,10 +146,15 @@ namespace Prigitsk.Core.Graph
             return branch;
         }
 
-        public INode GetNode(IHash ihash)
+        public INode GetNode(IHash hash)
         {
-            _nodes.TryGetValue(ihash, out Node value);
+            _nodes.TryGetValue(hash, out Node value);
             return value;
+        }
+
+        private Node GetNodeInternal(IHash hash)
+        {
+            return _nodes[hash];
         }
 
         public IEnumerable<IBranch> GetPointingBranches(INode node)
@@ -262,14 +277,14 @@ namespace Prigitsk.Core.Graph
             }
         }
 
-        private Node GetOrCreateNode(IHash hash)
+        private Node CreateNode(ICommit commit)
         {
-            Node node;
-            if (!_nodes.TryGetValue(hash, out node))
-            {
-                node = new Node(hash);
-                _nodes.Add(hash, node);
-            }
+            bool exists = GetNode(commit.Hash) != null;
+            if(exists)
+                throw new InvalidOperationException();
+
+            Node node = new Node(commit);
+            _nodes.Add(commit.Hash, node);
 
             return node;
         }

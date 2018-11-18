@@ -22,7 +22,7 @@ namespace Prigitsk.Core.Rendering
                 return $" // {prefix}{whom.Name} @ {whom.When}";
             }
 
-            string tooltip = $"{node.Treeish} - {node.Commit.Message}";
+            string tooltip = $"{node.Commit.Treeish} - {node.Commit.Message}";
             tooltip += MakeSignature(node.Commit.Author);
             if (node.Commit.Author.Name != node.Commit.Committer.Name)
             {

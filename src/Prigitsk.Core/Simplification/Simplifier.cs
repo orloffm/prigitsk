@@ -84,7 +84,7 @@ namespace Prigitsk.Core.Simplification
                 // Remove edge to a child if there is an edge to a parent of the child:
                 // the change was effectively merged already. This edge is a derivative of
                 // some other simplification.
-                bool parentIsLinked = IsSomeParentLinked(currentNode, child, currentNode.Children);
+                bool parentIsLinked = IsSomeParentLinked(currentNode, child);
                 if (parentIsLinked)
                 {
                     // Remove this child.
@@ -195,17 +195,14 @@ namespace Prigitsk.Core.Simplification
 
         private bool IsSomeParentLinked(
             INode sourceNode,
-            INode childNodeInQuestion,
-            IEnumerable<INode> allChildren)
+            INode itsChildNode)
         {
             // Is any of these children actually a parent of node in question?
-            var otherChildren = new HashSet<INode>(allChildren);
-            otherChildren.Remove(childNodeInQuestion);
+            var otherChildren = new HashSet<INode>(sourceNode.Children);
+            otherChildren.Remove(itsChildNode);
 
             // The whole parent tree of the particular child node in question. We don't go earlier than the source node.
-            IEnumerable<INode> parents = _walker.EnumerateAllParentsBreadthFirst(
-                childNodeInQuestion,
-                sourceNode.Commit.Committer.When);
+            IEnumerable<INode> parents = _walker.EnumerateAllParentsBreadthFirst(itsChildNode, dontGoEarlierThan: sourceNode);
 
             // Is any of them linked from other children of source node?
             bool someParentIsLinked = parents.Any(otherChildren.Contains);
