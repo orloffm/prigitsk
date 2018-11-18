@@ -2,7 +2,7 @@
 
 namespace OrlovMikhail.GraphViz.Writing.Tests
 {
-    public class DotHelperTests
+    public sealed class DotHelperTests
     {
         [Theory]
         [InlineData(@"a", false)]
@@ -25,6 +25,8 @@ namespace OrlovMikhail.GraphViz.Writing.Tests
         [InlineData("1.2", "1.2")]
         [InlineData("1,2", "\"1,2\"")]
         [InlineData("\"1,2\"", "\"1,2\"")]
+        [InlineData("\"1,\"2\"", "\"\\\"1,\\\"2\\\"\"")]
+        [InlineData("a\"b", "\"a\\\"b\"")]
         public void GivenString_ThenEscapesItWhenNeeded(string input, string expected)
         {
             DotHelper dh = new DotHelper();
