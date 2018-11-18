@@ -1,20 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
-using Microsoft.Extensions.Logging;
 using Prigitsk.Framework;
 
 namespace Prigitsk.Core.Strategy.Flow
 {
-    public sealed class FlowBranchesKnowledge : BranchesKnowledgeBase
+    public sealed class FlowBranchesColorsAndRegices : IBranchesColorsAndRegices
     {
         private readonly Dictionary<BranchLogicalType, Color> _typesToColors;
         private readonly IMultipleDictionary<BranchLogicalType, string> _typesToRegices;
 
-        public FlowBranchesKnowledge(
-            ILesserBranchRegex workItemRegex
-            , IWorkItemBranchSelectorFactory workItemBranchSelectorFactory
-            , ILogger<FlowBranchesKnowledge> logger
-        ) : base(workItemRegex, workItemBranchSelectorFactory, logger)
+        public FlowBranchesColorsAndRegices()
         {
             _typesToColors = new Dictionary<BranchLogicalType, Color>
             {
@@ -37,12 +32,7 @@ namespace Prigitsk.Core.Strategy.Flow
             };
         }
 
-        protected override Color GetColorInternal(BranchLogicalType ft)
-        {
-            return _typesToColors[ft];
-        }
-
-        protected override BranchLogicalType[] GetAllBranchLogicalTypesOrdered()
+        public BranchLogicalType[] GetAllBranchLogicalTypesOrdered()
         {
             return new[]
             {
@@ -63,7 +53,12 @@ namespace Prigitsk.Core.Strategy.Flow
             };
         }
 
-        protected override bool TryGetRegexStringsInternal(BranchLogicalType flowType, out ISet<string> regexStrings)
+        public Color GetColor(BranchLogicalType ft)
+        {
+            return _typesToColors[ft];
+        }
+
+        public bool TryGetRegexStringsInternal(BranchLogicalType flowType, out ISet<string> regexStrings)
         {
             return _typesToRegices.TryGetValue(flowType, out regexStrings);
         }

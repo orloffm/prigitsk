@@ -17,8 +17,6 @@ namespace Prigitsk.Core.Strategy
         /// </summary>
         Color GetSuggestedDrawingColorFor(IBranch branch);
 
-        void Initialise(IEnumerable<IBranch> branches);
-
         /// <summary>
         ///     Returns whether the given branch is a per-workitem one.
         ///     For example, serving for a particular Jira number.

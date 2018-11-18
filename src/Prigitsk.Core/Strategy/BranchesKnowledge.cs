@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,26 +9,32 @@ using Prigitsk.Framework;
 
 namespace Prigitsk.Core.Strategy
 {
-    public abstract class BranchesKnowledgeBase : IBranchesKnowledge
+    public sealed class BranchesKnowledge : IBranchesKnowledge
     {
         private readonly List<IBranch> _branchesInLogicalOrder;
         private readonly Dictionary<IBranch, BranchLogicalType> _branchesToTypes;
+        private readonly IBranchesColorsAndRegices _colorsAndRegices;
         private readonly IWorkItemBranchSelector _lesserBranchSelector;
-        private readonly ILesserBranchRegex _workItemRegex;
         private readonly ILogger _logger;
+        private readonly ILesserBranchRegex _workItemRegex;
 
-        protected BranchesKnowledgeBase(
+        public BranchesKnowledge(
             ILesserBranchRegex workItemRegex
             , IWorkItemBranchSelectorFactory workItemBranchSelectorFactory
-            , ILogger logger
+            , IBranchesColorsAndRegices colorsAndRegices
+            , IEnumerable<IBranch> branches
+            , ILogger<BranchesKnowledge> logger
         )
         {
             _workItemRegex = workItemRegex;
+            _colorsAndRegices = colorsAndRegices;
             _logger = logger;
             _lesserBranchSelector = workItemBranchSelectorFactory.MakeSelector();
 
             _branchesToTypes = new Dictionary<IBranch, BranchLogicalType>();
             _branchesInLogicalOrder = new List<IBranch>();
+
+            Initialise(branches);
         }
 
         public IEnumerable<IBranch> EnumerateBranchesInLogicalOrder()
@@ -40,10 +45,53 @@ namespace Prigitsk.Core.Strategy
         public Color GetSuggestedDrawingColorFor(IBranch branch)
         {
             BranchLogicalType ft = _branchesToTypes[branch];
-            return GetColorInternal(ft);
+            return _colorsAndRegices.GetColor(ft);
         }
 
-        public void Initialise(IEnumerable<IBranch> branches)
+        public bool IsAWorkItemBranch(IBranch branch)
+        {
+            return _branchesToTypes[branch] == BranchLogicalType.WorkItem;
+        }
+
+        private void AddBranchesAs(IEnumerable<IBranch> branches, BranchLogicalType figuredOutFlowType)
+        {
+            BranchSorterByName branchSorterByName = new BranchSorterByName();
+
+            IBranch[] branchesSorted = branches.OrderBy(b => b, branchSorterByName)
+                .ToArray();
+
+            foreach (IBranch branch in branchesSorted)
+            {
+                BranchLogicalType typeToAddAs = figuredOutFlowType;
+                if (typeToAddAs != BranchLogicalType.WorkItem)
+                {
+                    bool isActuallyLesser = _lesserBranchSelector.IsLesserBranch(branch);
+                    if (isActuallyLesser)
+                    {
+                        typeToAddAs = BranchLogicalType.WorkItem;
+                    }
+                }
+
+                _branchesToTypes.Add(branch, typeToAddAs);
+                _branchesInLogicalOrder.Add(branch);
+
+                _logger.Debug("{0} added as {1}.", branch, typeToAddAs);
+            }
+        }
+
+        private Regex[] GetRegicesFor(BranchLogicalType flowType)
+        {
+            if (!_colorsAndRegices.TryGetRegexStringsInternal(flowType, out ISet<string> regexStrings))
+            {
+                return new Regex[0];
+            }
+
+            Regex[] regices = regexStrings.Select(s => new Regex(s, RegexOptions.IgnoreCase))
+                .ToArray();
+            return regices;
+        }
+
+        private void Initialise(IEnumerable<IBranch> branches)
         {
             _branchesToTypes.Clear();
             _branchesInLogicalOrder.Clear();
@@ -52,7 +100,8 @@ namespace Prigitsk.Core.Strategy
 
             _lesserBranchSelector.PreProcessAllBranches(allBranches, _workItemRegex);
 
-            BranchLogicalType[] allBranchLogicalTypes = GetAllBranchLogicalTypesOrdered();
+            BranchLogicalType[] allBranchLogicalTypes = _colorsAndRegices.GetAllBranchLogicalTypesOrdered();
+
             foreach (BranchLogicalType flowType in allBranchLogicalTypes)
             {
                 var selectedBranches = new List<IBranch>(allBranches.Count / 2);
@@ -79,52 +128,5 @@ namespace Prigitsk.Core.Strategy
             // Leftovers.
             AddBranchesAs(allBranches, BranchLogicalType.WorkItem);
         }
-
-        public bool IsAWorkItemBranch(IBranch branch)
-        {
-            return _branchesToTypes[branch] == BranchLogicalType.WorkItem;
-        }
-
-        protected abstract Color GetColorInternal(BranchLogicalType ft);
-
-        private void AddBranchesAs(IEnumerable<IBranch> branches, BranchLogicalType figuredOutFlowType)
-        {
-            BranchSorterByName branchSorterByName = new BranchSorterByName();
-
-            IBranch[] branchesSorted = branches.OrderBy(b => b, branchSorterByName).ToArray();
-
-            foreach (IBranch branch in branchesSorted)
-            {
-                BranchLogicalType typeToAddAs = figuredOutFlowType;
-                if (typeToAddAs != BranchLogicalType.WorkItem)
-                {
-                    bool isActuallyLesser = _lesserBranchSelector.IsLesserBranch(branch);
-                    if (isActuallyLesser)
-                    {
-                        typeToAddAs = BranchLogicalType.WorkItem;
-                    }
-                }
-
-                _branchesToTypes.Add(branch, typeToAddAs);
-                _branchesInLogicalOrder.Add(branch);
-
-                _logger.Debug("{0} added as {1}.", branch, typeToAddAs);
-            }
-        }
-
-        protected abstract BranchLogicalType[] GetAllBranchLogicalTypesOrdered();
-
-        private Regex[] GetRegicesFor(BranchLogicalType flowType)
-        {
-            if (!TryGetRegexStringsInternal(flowType, out ISet<string> regexStrings))
-            {
-                return new Regex[0];
-            }
-
-            Regex[] regices = regexStrings.Select(s => new Regex(s, RegexOptions.IgnoreCase)).ToArray();
-            return regices;
-        }
-
-        protected abstract bool TryGetRegexStringsInternal(BranchLogicalType flowType, out ISet<string> regexStrings);
     }
 }
